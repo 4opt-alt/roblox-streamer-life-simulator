@@ -45,6 +45,7 @@ end
 local HOVERBOARD_ITEM_ID = "Hoverboard"
 local HOVER_SPEED = 34    -- відрегульована швидкість (повільніше і безпечніше за машину)
 local TURN_SPEED = 3.2    -- швидкість повороту
+local MAX_TILT_RADIANS = math.rad(7) -- невеликий нахил вперед/назад при русі (не сильний)
 
 -- Стандартні ідентифікатори базових анімацій "стояти" від Roblox (публічні,
 -- вбудовані в кожен стандартний Animate-скрипт) — використовуємо їх, щоб
@@ -157,8 +158,10 @@ local function setupHoverboard()
         local hrp = character:FindFirstChild("HumanoidRootPart") :: BasePart?
         if not humanoid or not hrp then return end
 
-        -- Ставимо персонажа рівно на дошку, обличчям туди, куди дивиться гіроскутер
-        hrp.CFrame = deck.CFrame * CFrame.new(0, deck.Size.Y / 2 + 3.0, 0)
+        -- Ставимо персонажа боком до напрямку руху (як на реальному гіроскутері/скейті),
+        -- ногами вздовж дошки — по одній нозі приблизно на кожну чорну накладку
+        -- (FootpadFront/FootpadBack), а не обличчям вперед.
+        hrp.CFrame = deck.CFrame * CFrame.new(0, deck.Size.Y / 2 + 3.0, 0) * CFrame.Angles(0, math.rad(90), 0)
 
         humanoid.PlatformStand = true
         humanoid.AutoRotate = false
@@ -279,7 +282,10 @@ local function setupHoverboard()
             bav.MaxTorque = Vector3.new(0, 2.2e5, 0)
             bav.AngularVelocity = Vector3.new(0, -steer * TURN_SPEED, 0)
 
-            bg.CFrame = CFrame.new(deck.Position, deck.Position + deck.CFrame.LookVector)
+            -- Невеликий нахил дошки (і персонажа, бо він до неї приварений) вперед
+            -- при русі вперед і назад при русі назад — як на реальному гіроскутері.
+            local tiltAngle = -throttle * MAX_TILT_RADIANS
+            bg.CFrame = CFrame.new(deck.Position, deck.Position + deck.CFrame.LookVector) * CFrame.Angles(tiltAngle, 0, 0)
         else
             bv.MaxForce = Vector3.new(2.2e5, 0, 2.2e5)
             bv.Velocity = Vector3.zero
