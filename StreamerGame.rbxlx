@@ -5249,9 +5249,22 @@ end
 --------------------------------------------------------------------------------
 local DESK_POSITION = Vector3.new(0, 4.5, -70)
 
-local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platformStr: string?)
+--------------------------------------------------------------------------------
+-- Керування ПК-монітором, веб-камерою та сетапом (PC Battlestation WebCam)
+--------------------------------------------------------------------------------
+local DESK_POSITION = Vector3.new(0, 4.5, -70)
+local webcamLoopThread: thread? = nil
+
+local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platformStr: string?, player: Player?)
     local mainMon = workspace:FindFirstChild("MainMonitorScreen", true) :: BasePart?
+    local leftMon = workspace:FindFirstChild("LeftMonitorScreen", true) :: BasePart?
     if not mainMon then return end
+
+    -- Cancel previous webcam animation
+    if webcamLoopThread then
+        task.cancel(webcamLoopThread)
+        webcamLoopThread = nil
+    end
 
     local sg = mainMon:FindFirstChild("MonitorGui") :: SurfaceGui?
     if not sg then
@@ -5260,82 +5273,310 @@ local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platf
         sg.Face = Enum.NormalId.Back
         sg.CanvasSize = Vector2.new(800, 420)
         sg.LightInfluence = 0
+        sg.SizingMode = Enum.SurfaceGuiSizingMode.FixedSize
         sg.Parent = mainMon
-
-        local frame = Instance.new("Frame")
-        frame.Name = "MonitorBg"
-        frame.Size = UDim2.new(1, 0, 1, 0)
-        frame.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
-        frame.BorderSizePixel = 0
-        frame.Parent = sg
-
-        local statusLabel = Instance.new("TextLabel")
-        statusLabel.Name = "StatusLabel"
-        statusLabel.Size = UDim2.new(1, 0, 0.5, 0)
-        statusLabel.Position = UDim2.new(0, 0, 0.15, 0)
-        statusLabel.BackgroundTransparency = 1
-        statusLabel.Font = Enum.Font.GothamBold
-        statusLabel.TextSize = 34
-        statusLabel.TextColor3 = Color3.fromRGB(120, 140, 180)
-        statusLabel.Text = "🖥️ Battlestation OS"
-        statusLabel.Parent = frame
-
-        local subLabel = Instance.new("TextLabel")
-        subLabel.Name = "SubLabel"
-        subLabel.Size = UDim2.new(1, 0, 0.35, 0)
-        subLabel.Position = UDim2.new(0, 0, 0.55, 0)
-        subLabel.BackgroundTransparency = 1
-        subLabel.Font = Enum.Font.GothamMedium
-        subLabel.TextSize = 22
-        subLabel.TextColor3 = Color3.fromRGB(160, 175, 205)
-        subLabel.Text = "[Ready to Stream]"
-        subLabel.Parent = frame
     end
 
-    local frame = sg:FindFirstChild("MonitorBg")
-    if frame then
-        local statusLabel = frame:FindFirstChild("StatusLabel") :: TextLabel?
-        local subLabel = frame:FindFirstChild("SubLabel") :: TextLabel?
+    sg:ClearAllChildren()
 
-        if isLive then
-            mainMon.Material = Enum.Material.Neon
-            if categoryKey == "Gaming" then
-                mainMon.Color = Color3.fromRGB(140, 60, 230)
-                frame.BackgroundColor3 = Color3.fromRGB(30, 15, 50)
-                if statusLabel then
-                    statusLabel.Text = "🎮 LIVE: PC GAMING"
-                    statusLabel.TextColor3 = Color3.fromRGB(255, 120, 255)
-                end
-                if subLabel then
-                    subLabel.Text = `● STREAMING TO {platformStr or "TWITCH"}`
-                    subLabel.TextColor3 = Color3.fromRGB(100, 240, 140)
-                end
-            elseif categoryKey == "JustChatting" then
-                mainMon.Color = Color3.fromRGB(240, 140, 20)
-                frame.BackgroundColor3 = Color3.fromRGB(45, 25, 10)
-                if statusLabel then
-                    statusLabel.Text = "🎙️ LIVE: TALK SHOW"
-                    statusLabel.TextColor3 = Color3.fromRGB(255, 200, 80)
-                end
-                if subLabel then
-                    subLabel.Text = `● STREAMING TO {platformStr or "YOUTUBE"}`
-                    subLabel.TextColor3 = Color3.fromRGB(100, 240, 140)
-                end
-            end
+    local bgFrame = Instance.new("Frame")
+    bgFrame.Name = "MonitorBg"
+    bgFrame.Size = UDim2.new(1, 0, 1, 0)
+    bgFrame.BackgroundColor3 = Color3.fromRGB(12, 15, 22)
+    bgFrame.BorderSizePixel = 0
+    bgFrame.Parent = sg
+
+    -- Setup left secondary monitor (Chat / Dashboard)
+    if leftMon then
+        local leftSg = leftMon:FindFirstChild("LeftMonitorGui") :: SurfaceGui?
+        if not leftSg then
+            leftSg = Instance.new("SurfaceGui")
+            leftSg.Name = "LeftMonitorGui"
+            leftSg.Face = Enum.NormalId.Back
+            leftSg.CanvasSize = Vector2.new(600, 420)
+            leftSg.LightInfluence = 0
+            leftSg.SizingMode = Enum.SurfaceGuiSizingMode.FixedSize
+            leftSg.Parent = leftMon
+        end
+        leftSg:ClearAllChildren()
+
+        local leftBg = Instance.new("Frame")
+        leftBg.Size = UDim2.new(1, 0, 1, 0)
+        leftBg.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
+        leftBg.BorderSizePixel = 0
+        leftBg.Parent = leftSg
+
+        local leftHeader = Instance.new("TextLabel")
+        leftHeader.Size = UDim2.new(1, 0, 0, 38)
+        leftHeader.BackgroundColor3 = Color3.fromRGB(24, 28, 40)
+        leftHeader.BorderSizePixel = 0
+        leftHeader.Font = Enum.Font.GothamBold
+        leftHeader.TextSize = 16
+        leftHeader.TextColor3 = Color3.fromRGB(255, 215, 0)
+        leftHeader.Text = isLive and `📊 LIVE METRICS ({platformStr or "STREAM"})` or "📊 DASHBOARD STANDBY"
+        leftHeader.Parent = leftBg
+
+        local leftStats = Instance.new("TextLabel")
+        leftStats.Size = UDim2.new(1, -20, 0, 95)
+        leftStats.Position = UDim2.new(0, 10, 0, 48)
+        leftStats.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
+        leftStats.Font = Enum.Font.GothamMedium
+        leftStats.TextSize = 14
+        leftStats.TextColor3 = Color3.fromRGB(200, 220, 255)
+        leftStats.TextXAlignment = Enum.TextXAlignment.Left
+        local lsCorner = Instance.new("UICorner"); lsCorner.CornerRadius = UDim.new(0, 8); lsCorner.Parent = leftStats
+
+        if isLive and player then
+            local leaderstats = player:FindFirstChild("leaderstats")
+            local cash = leaderstats and leaderstats:FindFirstChild("Money") and (leaderstats.Money :: IntValue).Value or 0
+            local subs = leaderstats and leaderstats:FindFirstChild("Hype") and (leaderstats.Hype :: IntValue).Value or 0
+            leftStats.Text = `  • Total Revenue: ${cash}\n  • Total Subscribers: {subs}\n  • Live Bitrate: 6000 Kbps (Clean)`
         else
-            mainMon.Material = Enum.Material.Neon
-            mainMon.Color = Color3.fromRGB(20, 24, 34)
-            frame.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
-            if statusLabel then
-                statusLabel.Text = "🖥️ Battlestation OS"
-                statusLabel.TextColor3 = Color3.fromRGB(120, 140, 180)
+            leftStats.Text = "  • Status: Idle (Ready to broadcast)\n  • Streamer Chair: Available\n  • Battlestation OS: Ready"
+        end
+        leftStats.Parent = leftBg
+    end
+
+    if not isLive or not player then
+        -- OFFLINE / STANDBY SCREEN
+        mainMon.Material = Enum.Material.Neon
+        mainMon.Color = Color3.fromRGB(25, 30, 42)
+
+        local offlineTitle = Instance.new("TextLabel")
+        offlineTitle.Size = UDim2.new(1, 0, 0, 60)
+        offlineTitle.Position = UDim2.new(0, 0, 0.35, 0)
+        offlineTitle.BackgroundTransparency = 1
+        offlineTitle.Font = Enum.Font.GothamBlack
+        offlineTitle.TextSize = 36
+        offlineTitle.TextColor3 = Color3.fromRGB(100, 130, 180)
+        offlineTitle.Text = "🖥️ Battlestation OS v2.4"
+        offlineTitle.Parent = bgFrame
+
+        local offlineSub = Instance.new("TextLabel")
+        offlineSub.Size = UDim2.new(1, 0, 0, 30)
+        offlineSub.Position = UDim2.new(0, 0, 0.52, 0)
+        offlineSub.BackgroundTransparency = 1
+        offlineSub.Font = Enum.Font.GothamMedium
+        offlineSub.TextSize = 20
+        offlineSub.TextColor3 = Color3.fromRGB(150, 170, 200)
+        offlineSub.Text = "[Sit at Battlestation & Click Start Stream]"
+        offlineSub.Parent = bgFrame
+        return
+    end
+
+    -- =========================================================================
+    -- ONLINE STREAMING SCREEN WITH LIVE AVATAR WEBCAM!
+    -- =========================================================================
+    mainMon.Material = Enum.Material.Neon
+    mainMon.Color = (categoryKey == "Gaming") and Color3.fromRGB(130, 60, 220) or Color3.fromRGB(240, 140, 20)
+
+    -- 1. Top OBS Status Bar
+    local topBar = Instance.new("Frame")
+    topBar.Name = "TopBar"
+    topBar.Size = UDim2.new(1, 0, 0, 38)
+    topBar.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
+    topBar.BorderSizePixel = 0
+    topBar.Parent = bgFrame
+
+    local recDot = Instance.new("TextLabel")
+    recDot.Size = UDim2.new(0, 30, 1, 0)
+    recDot.Position = UDim2.new(0, 10, 0, 0)
+    recDot.BackgroundTransparency = 1
+    recDot.Font = Enum.Font.GothamBlack
+    recDot.TextSize = 18
+    recDot.TextColor3 = Color3.fromRGB(231, 76, 60)
+    recDot.Text = "●"
+    recDot.Parent = topBar
+
+    local obsTitle = Instance.new("TextLabel")
+    obsTitle.Size = UDim2.new(0, 240, 1, 0)
+    obsTitle.Position = UDim2.new(0, 36, 0, 0)
+    obsTitle.BackgroundTransparency = 1
+    obsTitle.Font = Enum.Font.GothamBold
+    obsTitle.TextSize = 13
+    obsTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    obsTitle.TextXAlignment = Enum.TextXAlignment.Left
+    obsTitle.Text = "LIVE BROADCAST | OBS Studio"
+    obsTitle.Parent = topBar
+
+    local platBadge = Instance.new("TextLabel")
+    platBadge.Size = UDim2.new(0, 220, 0, 26)
+    platBadge.Position = UDim2.new(0.5, -110, 0.5, -13)
+    platBadge.BackgroundColor3 = (categoryKey == "Gaming") and Color3.fromRGB(90, 40, 150) or Color3.fromRGB(180, 80, 20)
+    platBadge.Font = Enum.Font.GothamBold
+    platBadge.TextSize = 12
+    platBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
+    platBadge.Text = `📡 {platformStr or "YOUTUBE"}`
+    platBadge.Parent = topBar
+    local pbCorner = Instance.new("UICorner"); pbCorner.CornerRadius = UDim.new(0, 6); pbCorner.Parent = platBadge
+
+    local statsText = Instance.new("TextLabel")
+    statsText.Size = UDim2.new(0, 220, 1, 0)
+    statsText.Position = UDim2.new(1, -230, 0, 0)
+    statsText.BackgroundTransparency = 1
+    statsText.Font = Enum.Font.Gotham
+    statsText.TextSize = 12
+    statsText.TextColor3 = Color3.fromRGB(160, 175, 200)
+    statsText.TextXAlignment = Enum.TextXAlignment.Right
+    statsText.Text = "60 FPS | 6,000 Kbps | 0 Drop"
+    statsText.Parent = topBar
+
+    -- 2. Left Main Gameplay / Talk Viewport (488 x 366)
+    local leftArea = Instance.new("Frame")
+    leftArea.Name = "LeftArea"
+    leftArea.Size = UDim2.new(0, 488, 0, 366)
+    leftArea.Position = UDim2.new(0, 12, 0, 44)
+    leftArea.BackgroundColor3 = Color3.fromRGB(16, 20, 28)
+    leftArea.BorderSizePixel = 0
+    leftArea.Parent = bgFrame
+    local laCorner = Instance.new("UICorner"); laCorner.CornerRadius = UDim.new(0, 8); laCorner.Parent = leftArea
+    local laStroke = Instance.new("UIStroke"); laStroke.Color = Color3.fromRGB(40, 50, 70); laStroke.Thickness = 1.2; laStroke.Parent = leftArea
+
+    local laHeader = Instance.new("TextLabel")
+    laHeader.Size = UDim2.new(1, 0, 0, 32)
+    laHeader.BackgroundColor3 = Color3.fromRGB(22, 27, 38)
+    laHeader.Font = Enum.Font.GothamBold
+    laHeader.TextSize = 12
+    laHeader.TextColor3 = (categoryKey == "Gaming") and Color3.fromRGB(210, 140, 255) or Color3.fromRGB(255, 200, 80)
+    laHeader.Text = (categoryKey == "Gaming") and "🎮 GAMEPLAY: CYBERSHOOTER 2026 (Ranked)" or "🎙️ STUDIO TALK SHOW: COMMUNITY Q&A"
+    laHeader.Parent = leftArea
+    local lahCorner = Instance.new("UICorner"); lahCorner.CornerRadius = UDim.new(0, 8); lahCorner.Parent = laHeader
+
+    local laScreen = Instance.new("Frame")
+    laScreen.Size = UDim2.new(1, -16, 1, -44)
+    laScreen.Position = UDim2.new(0, 8, 0, 36)
+    laScreen.BackgroundColor3 = Color3.fromRGB(10, 12, 18)
+    laScreen.BorderSizePixel = 0
+    laScreen.Parent = leftArea
+    local lasCorner = Instance.new("UICorner"); lasCorner.CornerRadius = UDim.new(0, 6); lasCorner.Parent = laScreen
+
+    local gameOverlay = Instance.new("TextLabel")
+    gameOverlay.Size = UDim2.new(1, 0, 1, 0)
+    gameOverlay.BackgroundTransparency = 1
+    gameOverlay.Font = Enum.Font.GothamBold
+    gameOverlay.TextSize = 17
+    gameOverlay.TextColor3 = Color3.fromRGB(255, 255, 255)
+    if categoryKey == "Gaming" then
+        gameOverlay.Text = "🕹️ 240 FPS ULTRA GAMEPLAY\n\n🏆 SCORE: 148,200  |  💥 KILLS: 16\n🔥 WIN STREAK: 5 WINS IN A ROW!"
+    else
+        gameOverlay.Text = "🎙️ LIVE PODCAST & TALK SHOW\n\n💬 TOPIC: STREAMER LIFE SIMULATOR\n⭐ AUDIENCE PARTICIPATION: ACTIVE"
+    end
+    gameOverlay.Parent = laScreen
+
+    -- 3. Right LIVE WEBCAM WINDOW (280 x 366)
+    local webcamArea = Instance.new("Frame")
+    webcamArea.Name = "WebcamArea"
+    webcamArea.Size = UDim2.new(0, 280, 0, 366)
+    webcamArea.Position = UDim2.new(0, 508, 0, 44)
+    webcamArea.BackgroundColor3 = Color3.fromRGB(14, 16, 24)
+    webcamArea.BorderSizePixel = 0
+    webcamArea.Parent = bgFrame
+    local wCorner = Instance.new("UICorner"); wCorner.CornerRadius = UDim.new(0, 8); wCorner.Parent = webcamArea
+    local wStroke = Instance.new("UIStroke"); wStroke.Color = Color3.fromRGB(46, 204, 113); wStroke.Thickness = 2; wStroke.Parent = webcamArea
+
+    -- Webcam Header
+    local camHeader = Instance.new("Frame")
+    camHeader.Size = UDim2.new(1, 0, 0, 30)
+    camHeader.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
+    camHeader.BorderSizePixel = 0
+    camHeader.Parent = webcamArea
+    local chCorner = Instance.new("UICorner"); chCorner.CornerRadius = UDim.new(0, 8); chCorner.Parent = camHeader
+
+    local camTitle = Instance.new("TextLabel")
+    camTitle.Size = UDim2.new(1, -70, 1, 0)
+    camTitle.Position = UDim2.new(0, 10, 0, 0)
+    camTitle.BackgroundTransparency = 1
+    camTitle.Font = Enum.Font.GothamBold
+    camTitle.TextSize = 11
+    camTitle.TextColor3 = Color3.fromRGB(240, 245, 255)
+    camTitle.TextXAlignment = Enum.TextXAlignment.Left
+    camTitle.Text = "📷 FACECAM 1080p 60FPS"
+    camTitle.Parent = camHeader
+
+    local camLiveTag = Instance.new("TextLabel")
+    camLiveTag.Size = UDim2.new(0, 54, 0, 18)
+    camLiveTag.Position = UDim2.new(1, -60, 0.5, -9)
+    camLiveTag.BackgroundColor3 = Color3.fromRGB(231, 76, 60)
+    camLiveTag.Font = Enum.Font.GothamBold
+    camLiveTag.TextSize = 9
+    camLiveTag.TextColor3 = Color3.fromRGB(255, 255, 255)
+    camLiveTag.Text = "🔴 REC"
+    camLiveTag.Parent = camHeader
+    local clCorner = Instance.new("UICorner"); clCorner.CornerRadius = UDim.new(0, 4); clCorner.Parent = camLiveTag
+
+    -- Real Avatar Facecam Image
+    local camImg = Instance.new("ImageLabel")
+    camImg.Name = "WebcamImage"
+    camImg.Size = UDim2.new(1, -16, 1, -78)
+    camImg.Position = UDim2.new(0, 8, 0, 34)
+    camImg.BackgroundColor3 = Color3.fromRGB(8, 10, 15)
+    camImg.BorderSizePixel = 0
+    camImg.ScaleType = Enum.ScaleType.Fit
+    camImg.Parent = webcamArea
+    local ciCorner = Instance.new("UICorner"); ciCorner.CornerRadius = UDim.new(0, 6); ciCorner.Parent = camImg
+
+    -- Load real avatar headshot/bust thumbnail
+    task.spawn(function()
+        local thumbType = Enum.ThumbnailType.AvatarBust
+        local thumbSize = Enum.ThumbnailSize.Size420x420
+        local content, isReady = Players:GetUserThumbnailAsync(player.UserId, thumbType, thumbSize)
+        if content and camImg.Parent ~= nil then
+            camImg.Image = content
+        end
+    end)
+
+    -- Bottom Streamer Banner (Username + Dynamic Mic Meter)
+    local bottomBanner = Instance.new("Frame")
+    bottomBanner.Size = UDim2.new(1, -16, 0, 34)
+    bottomBanner.Position = UDim2.new(0, 8, 1, -40)
+    bottomBanner.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
+    bottomBanner.BorderSizePixel = 0
+    bottomBanner.Parent = webcamArea
+    local bbCorner = Instance.new("UICorner"); bbCorner.CornerRadius = UDim.new(0, 6); bbCorner.Parent = bottomBanner
+
+    local nameLabel = Instance.new("TextLabel")
+    nameLabel.Size = UDim2.new(0.65, 0, 1, 0)
+    nameLabel.Position = UDim2.new(0, 8, 0, 0)
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.Font = Enum.Font.GothamBold
+    nameLabel.TextSize = 12
+    nameLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+    nameLabel.TextXAlignment = Enum.TextXAlignment.Left
+    nameLabel.TextTruncate = Enum.TextTruncate.AtEnd
+    nameLabel.Text = `👤 {player.DisplayName}`
+    nameLabel.Parent = bottomBanner
+
+    local micMeter = Instance.new("TextLabel")
+    micMeter.Size = UDim2.new(0.35, -8, 1, 0)
+    micMeter.Position = UDim2.new(0.65, 0, 0, 0)
+    micMeter.BackgroundTransparency = 1
+    micMeter.Font = Enum.Font.GothamBold
+    micMeter.TextSize = 11
+    micMeter.TextColor3 = Color3.fromRGB(46, 204, 113)
+    micMeter.TextXAlignment = Enum.TextXAlignment.Right
+    micMeter.Text = "🎙️ ▂▄▆█"
+    micMeter.Parent = bottomBanner
+
+    -- Animate mic VU meter and blinking REC dot
+    webcamLoopThread = task.spawn(function()
+        local patterns = { "🎙️ ▂▃", "🎙️ ▂▄▅", "🎙️ ▂▄▆█", "🎙️ ▂▄▅", "🎙️ ▂▃▄" }
+        local pIdx = 1
+        local blink = true
+        while isLive and webcamArea.Parent ~= nil do
+            task.wait(0.4)
+            pIdx = (pIdx % #patterns) + 1
+            if micMeter.Parent then
+                micMeter.Text = patterns[pIdx]
             end
-            if subLabel then
-                subLabel.Text = "[Ready to Stream]"
-                subLabel.TextColor3 = Color3.fromRGB(160, 175, 205)
+            blink = not blink
+            if camLiveTag.Parent then
+                camLiveTag.Visible = blink
+            end
+            if recDot.Parent then
+                recDot.TextColor3 = blink and Color3.fromRGB(231, 76, 60) or Color3.fromRGB(100, 30, 30)
             end
         end
-    end
+    end)
 end
 
 --------------------------------------------------------------------------------
