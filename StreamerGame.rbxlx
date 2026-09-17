@@ -6783,6 +6783,11 @@ Players.PlayerAdded:Connect(function(player)
     player:SetAttribute("ViralBoostExpiry", 0)
     player:SetAttribute("InfiniteEnergyExpiry", 0)
     player:SetAttribute("IsVIP", false)
+
+    -- ТИМЧАСОВО для тестування гіроскутера: видаємо його безкоштовно одразу
+    -- при заході в гру, щоб не залежати від UI магазину. Прибери цей рядок,
+    -- коли перевіриш катання, і гіроскутер знову буде треба купувати за 250💰.
+    player:SetAttribute("Owned_Hoverboard", true)
 end)
 
 
