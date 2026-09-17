@@ -241,8 +241,8 @@ local StreamConfig: ConfigType = {
     },
 
     Rebirth = {
-        BaseRequiredSubs = 500,
-        BaseRequiredMoney = 250,
+        BaseRequiredSubs = 100,      -- 100 subs for first rebirth (takes ~20s of streaming)
+        BaseRequiredMoney = 50,      -- $50 cash for first rebirth
         MultiplierPerRebirth = 0.50, -- +50% permanent boost per rebirth
         StarterCashBonusPerRebirth = 50, -- +$50 extra starting money per rebirth
         MaxEnergyBonusPerRebirth = 10,   -- +10 max energy capacity per rebirth

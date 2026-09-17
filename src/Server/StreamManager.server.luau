@@ -583,15 +583,15 @@ local function startStream(player: Player, platformKey: string)
                     local gamesCount = (player:GetAttribute("GamesOwnedCount") :: number?) or 0
                     local gearCount = (player:GetAttribute("GearOwnedCount") :: number?) or 0
 
-                    -- Реалістичний старт: без ігор та заліза гроші і підписники йдуть дуже повільно!
+                    -- Динамічний старт: дохід та підписники йдуть стабільно та захоплююче!
                     local baseMoney = 0
                     local baseHype = 0
 
                     if math.random() < StreamConfig.BaseDonationChance then
-                        baseMoney = 1
+                        baseMoney = math.random(2, 4)
                     end
                     if math.random() < StreamConfig.BaseSubChance then
-                        baseHype = 1
+                        baseHype = math.random(3, 7)
                     end
 
                     -- Бонуси від купленого заліза та ігор (CyberByte Tech Store)
@@ -962,7 +962,7 @@ task.spawn(function()
                 local maxEnergy = (player:GetAttribute("MaxEnergy") :: number?) or StreamConfig.MaxEnergy
                 local currentEnergy = (player:GetAttribute("Energy") :: number?) or maxEnergy
                 if currentEnergy < maxEnergy then
-                    local restored = math.min(maxEnergy, currentEnergy + 1)
+                    local restored = math.min(maxEnergy, currentEnergy + 3)
                     player:SetAttribute("Energy", restored)
                 end
             end
