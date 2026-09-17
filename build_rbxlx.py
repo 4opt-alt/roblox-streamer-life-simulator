@@ -12,6 +12,8 @@ def create_rbxlx(auto_push=True):
         stream_events_src = f.read()
     with open(os.path.join(src_dir, "Shared", "ShopConfig.luau"), "r", encoding="utf-8") as f:
         shop_config_src = f.read()
+    with open(os.path.join(src_dir, "Shared", "EnvironmentConfig.luau"), "r", encoding="utf-8") as f:
+        environment_config_src = f.read()
     with open(os.path.join(src_dir, "Server", "Leaderstats.server.luau"), "r", encoding="utf-8") as f:
         leaderstats_src = f.read()
     with open(os.path.join(src_dir, "Server", "StreamManager.server.luau"), "r", encoding="utf-8") as f:
@@ -24,6 +26,8 @@ def create_rbxlx(auto_push=True):
         leaderboard_manager_src = f.read()
     with open(os.path.join(src_dir, "Server", "VehicleManager.server.luau"), "r", encoding="utf-8") as f:
         vehicle_manager_src = f.read()
+    with open(os.path.join(src_dir, "Server", "EnvironmentManager.server.luau"), "r", encoding="utf-8") as f:
+        environment_manager_src = f.read()
     with open(os.path.join(src_dir, "Client", "StreamGui.client.luau"), "r", encoding="utf-8") as f:
         stream_gui_src = f.read()
     with open(os.path.join(src_dir, "Client", "StreamController.client.luau"), "r", encoding="utf-8") as f:
@@ -635,6 +639,16 @@ def create_rbxlx(auto_push=True):
 			{car_model_xml}
 		</Item>
 		{leaderboard_display_xml}
+		<Item class="Clouds" referent="RBX_Clouds">
+			<Properties>
+				<string name="Name">Clouds</string>
+				<Color3 name="Color">
+					<R>1</R><G>1</G><B>1</B>
+				</Color3>
+				<float name="Cover">0.38</float>
+				<float name="Density">0.55</float>
+			</Properties>
+		</Item>
 	</Item>
 	<Item class="ReplicatedStorage" referent="RBX_ReplicatedStorage">
 		<Properties>
@@ -660,6 +674,12 @@ def create_rbxlx(auto_push=True):
 				<Properties>
 					<string name="Name">ShopConfig</string>
 					<ProtectedString name="Source"><![CDATA[{shop_config_src}]]></ProtectedString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBX_EnvironmentConfig">
+				<Properties>
+					<string name="Name">EnvironmentConfig</string>
+					<ProtectedString name="Source"><![CDATA[{environment_config_src}]]></ProtectedString>
 				</Properties>
 			</Item>
 		</Item>
@@ -771,6 +791,12 @@ def create_rbxlx(auto_push=True):
 				<ProtectedString name="Source"><![CDATA[{vehicle_manager_src}]]></ProtectedString>
 			</Properties>
 		</Item>
+		<Item class="Script" referent="RBX_EnvironmentManager">
+			<Properties>
+				<string name="Name">EnvironmentManager</string>
+				<ProtectedString name="Source"><![CDATA[{environment_manager_src}]]></ProtectedString>
+			</Properties>
+		</Item>
 	</Item>
 	<Item class="StarterPlayer" referent="RBX_StarterPlayer">
 		<Properties>
@@ -834,14 +860,30 @@ def create_rbxlx(auto_push=True):
 		<Properties>
 			<string name="Name">Lighting</string>
 			<Color3 name="Ambient">
-				<R>0.35</R><G>0.35</G><B>0.4</B>
+				<R>0.549</R><G>0.569</G><B>0.647</B>
 			</Color3>
 			<Color3 name="OutdoorAmbient">
-				<R>0.3</R><G>0.3</G><B>0.35</B>
+				<R>0.588</R><G>0.647</G><B>0.765</B>
 			</Color3>
-			<float name="Brightness">1.8</float>
-			<float name="ClockTime">19.0</float>
+			<float name="Brightness">2.6</float>
+			<float name="ClockTime">13.5</float>
+			<float name="GeographicLatitude">35</float>
 		</Properties>
+		<Item class="Atmosphere" referent="RBX_Atmosphere">
+			<Properties>
+				<string name="Name">Atmosphere</string>
+				<float name="Density">0.3</float>
+				<float name="Offset">0.25</float>
+				<Color3 name="Color">
+					<R>0.780</R><G>0.780</G><B>0.780</B>
+				</Color3>
+				<Color3 name="Decay">
+					<R>0.439</R><G>0.490</G><B>0.6</B>
+				</Color3>
+				<float name="Glare">0.2</float>
+				<float name="Haze">1.3</float>
+			</Properties>
+		</Item>
 	</Item>
 </roblox>'''
 
