@@ -488,6 +488,31 @@ local function startStream(player: Player, platformKey: string)
     local validPlatforms, moneyMult, hypeMult = parsePlatformSelection(player, platformKey)
     local displayPlatformStr = table.concat(validPlatforms, " + ")
 
+    local categoryKey = (player:GetAttribute("StreamCategory") :: string?) or "Gaming"
+    local catInfo = StreamConfig.Categories[categoryKey] or StreamConfig.Categories.Gaming
+    local isPC = catInfo.RequiresPC
+
+    if isPC then
+        local char = player.Character
+        local root = char and char:FindFirstChild("HumanoidRootPart") :: BasePart?
+        if root then
+            local dist = (root.Position - DESK_POSITION).Magnitude
+            if dist > 24 then
+                rebirthResultRemote:FireClient(player, "PcRequired", "⚠️ You must be at your Computer Desk for Gaming or Just Chatting! (Sit at chair or switch to 📱 IRL to stream anywhere!)")
+                return
+            end
+        end
+        unequipPhone(player)
+        updateMonitorDisplay(true, categoryKey, displayPlatformStr)
+        player:SetAttribute("IsPCStream", true)
+        player:SetAttribute("IsPhoneStream", false)
+    else
+        equipPhone(player)
+        updateMonitorDisplay(false)
+        player:SetAttribute("IsPCStream", false)
+        player:SetAttribute("IsPhoneStream", true)
+    end
+
     isStreaming[player] = true
     activePlatforms[player] = displayPlatformStr
     streamStateChangedRemote:FireClient(player, true, displayPlatformStr)
@@ -497,7 +522,6 @@ local function startStream(player: Player, platformKey: string)
     player:SetAttribute("IsStreamingTwitch", table.find(validPlatforms, "Twitch") ~= nil)
     player:SetAttribute("IsStreamingTikTok", table.find(validPlatforms, "TikTok") ~= nil)
 
-    equipPhone(player)
     if player.Character then
         updateOverhead(player.Character, player)
     end
