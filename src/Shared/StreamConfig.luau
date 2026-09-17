@@ -93,13 +93,13 @@ local StreamConfig: ConfigType = {
         },
         MultiStream = {
             Id = "MultiStream",
-            Name = "Multi-Stream Combo",
+            Name = "Split Stream (YT+Twitch)",
             ColorHex = "#FFAA00",
             MoneyMultiplier = 1.85,
             HypeMultiplier = 1.50,
-            Description = "Dual broadcast to YouTube & Twitch simultaneously! +85% Money and +50% Subs bonus!",
+            Description = "Split broadcast to YouTube + Twitch simultaneously! +85% Money and +50% Subs bonus! (Robux Exclusive)",
             RequiresLicense = true,
-            LicensePrice = 350,
+            LicensePrice = 0, -- Robux Exclusive!
         },
     },
 

@@ -4243,13 +4243,13 @@ local StreamConfig: ConfigType = {
         },
         MultiStream = {
             Id = "MultiStream",
-            Name = "Multi-Stream Combo",
+            Name = "Split Stream (YT+Twitch)",
             ColorHex = "#FFAA00",
             MoneyMultiplier = 1.85,
             HypeMultiplier = 1.50,
-            Description = "Dual broadcast to YouTube & Twitch simultaneously! +85% Money and +50% Subs bonus!",
+            Description = "Split broadcast to YouTube + Twitch simultaneously! +85% Money and +50% Subs bonus! (Robux Exclusive)",
             RequiresLicense = true,
-            LicensePrice = 350,
+            LicensePrice = 0, -- Robux Exclusive!
         },
     },
 
@@ -4604,19 +4604,6 @@ local ShopConfig: { [string]: ShopItem } = {
         EnergyRestore = 75,
         Description = "Hearty meal for long streaming grinds! Restores +75% Energy.",
         IconText = "🍔",
-    },
-
-    -- 4. Multi-Stream License (Cash)
-    MultiStreamLicense = {
-        Id = "MultiStreamLicense",
-        Category = "License",
-        Name = "Cross-Platform License (YouTube + Twitch)",
-        Price = 350,
-        MoneyBonusPerTick = 0,
-        HypeBonusPerTick = 0,
-        EnergyRestore = 0,
-        Description = "Permanently unlocks Multi-Stream mode! Combines audiences for +85% Money and +50% Subs!",
-        IconText = "📡",
     },
 }
 
@@ -5560,6 +5547,11 @@ end
 
 buyItemRemote.OnServerEvent:Connect(function(player: Player, itemId: any)
     if typeof(itemId) ~= "string" then return end
+
+    if itemId == "MultiStreamLicense" then
+        shopResultRemote:FireClient(player, itemId, false, "Multi-Stream Split is Robux-exclusive!")
+        return
+    end
 
     local item = ShopConfig[itemId]
     if not item then return end
@@ -7250,49 +7242,46 @@ for order, platKey in platformOrder do
         updateSelectionVisuals()
     end
 
-    -- For MultiStream: Show BOTH In-Game Cash and Robux purchase options!
+    -- For MultiStream: ONLY Robux purchase option (Split stream is Robux-exclusive)
     if platKey == "MultiStream" then
-        card.Size = UDim2.new(1, -10, 0, 76)
+        card.Size = UDim2.new(1, -10, 0, 72)
 
         local actionContainer = Instance.new("Frame")
         actionContainer.Name = "ActionContainer"
-        actionContainer.Size = UDim2.new(0, 150, 1, -12)
-        actionContainer.Position = UDim2.new(1, -160, 0, 6)
+        actionContainer.Size = UDim2.new(0, 160, 1, -12)
+        actionContainer.Position = UDim2.new(1, -170, 0, 6)
         actionContainer.BackgroundTransparency = 1
         actionContainer.ZIndex = 34
         actionContainer.Parent = card
 
-        local btnCash = Instance.new("TextButton")
-        btnCash.Name = "BtnCash"
-        btnCash.Size = UDim2.new(1, 0, 0, 28)
-        btnCash.Position = UDim2.new(0, 0, 0, 2)
-        btnCash.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
-        btnCash.TextColor3 = Color3.fromRGB(255, 255, 255)
-        btnCash.Font = Enum.Font.GothamBold
-        btnCash.TextSize = 12
-        btnCash.Text = "💵 $350 Cash"
-        btnCash.ZIndex = 35
-        btnCash.Parent = actionContainer
-
-        local cCorner = Instance.new("UICorner")
-        cCorner.CornerRadius = UDim.new(0, 6)
-        cCorner.Parent = btnCash
-
         local btnRobux = Instance.new("TextButton")
         btnRobux.Name = "BtnRobux"
-        btnRobux.Size = UDim2.new(1, 0, 0, 28)
-        btnRobux.Position = UDim2.new(0, 0, 0, 34)
-        btnRobux.BackgroundColor3 = Color3.fromRGB(243, 156, 18)
+        btnRobux.Size = UDim2.new(1, 0, 0, 38)
+        btnRobux.Position = UDim2.new(0, 0, 0.5, -19)
+        btnRobux.BackgroundColor3 = Color3.fromRGB(230, 140, 10)
         btnRobux.TextColor3 = Color3.fromRGB(255, 255, 255)
         btnRobux.Font = Enum.Font.GothamBold
-        btnRobux.TextSize = 12
-        btnRobux.Text = "💎 49 R$ Robux"
+        btnRobux.TextSize = 13
+        btnRobux.Text = "💎 49 R$ (Robux Only)"
         btnRobux.ZIndex = 35
+        btnRobux.AutoButtonColor = false
         btnRobux.Parent = actionContainer
 
         local rCorner = Instance.new("UICorner")
-        rCorner.CornerRadius = UDim.new(0, 6)
+        rCorner.CornerRadius = UDim.new(0, 8)
         rCorner.Parent = btnRobux
+
+        local rStroke = Instance.new("UIStroke")
+        rStroke.Color = Color3.fromRGB(255, 215, 0)
+        rStroke.Thickness = 1.5
+        rStroke.Parent = btnRobux
+
+        btnRobux.MouseEnter:Connect(function()
+            TweenService:Create(btnRobux, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(255, 165, 20)}):Play()
+        end)
+        btnRobux.MouseLeave:Connect(function()
+            TweenService:Create(btnRobux, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(230, 140, 10)}):Play()
+        end)
 
         local btnOwnedSelect = Instance.new("TextButton")
         btnOwnedSelect.Name = "BtnOwnedSelect"
@@ -7308,25 +7297,19 @@ for order, platKey in platformOrder do
         btnOwnedSelect.Parent = actionContainer
 
         local oCorner = Instance.new("UICorner")
-        oCorner.CornerRadius = UDim.new(0, 6)
+        oCorner.CornerRadius = UDim.new(0, 8)
         oCorner.Parent = btnOwnedSelect
 
         local function updateMultiStreamButtons()
             local isOwned = LocalPlayer:GetAttribute("Owned_MultiStreamLicense") == true
             if isOwned then
-                btnCash.Visible = false
                 btnRobux.Visible = false
                 btnOwnedSelect.Visible = true
             else
-                btnCash.Visible = true
                 btnRobux.Visible = true
                 btnOwnedSelect.Visible = false
             end
         end
-
-        btnCash.MouseButton1Click:Connect(function()
-            buyItemRemote:FireServer("MultiStreamLicense")
-        end)
 
         btnRobux.MouseButton1Click:Connect(function()
             promptRobuxRemote:FireServer("MultiStreamLicense")

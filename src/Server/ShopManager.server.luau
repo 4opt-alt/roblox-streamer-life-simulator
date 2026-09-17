@@ -72,6 +72,11 @@ end
 buyItemRemote.OnServerEvent:Connect(function(player: Player, itemId: any)
     if typeof(itemId) ~= "string" then return end
 
+    if itemId == "MultiStreamLicense" then
+        shopResultRemote:FireClient(player, itemId, false, "Multi-Stream Split is Robux-exclusive!")
+        return
+    end
+
     local item = ShopConfig[itemId]
     if not item then return end
 

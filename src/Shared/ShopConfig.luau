@@ -119,19 +119,6 @@ local ShopConfig: { [string]: ShopItem } = {
         Description = "Hearty meal for long streaming grinds! Restores +75% Energy.",
         IconText = "🍔",
     },
-
-    -- 4. Multi-Stream License (Cash)
-    MultiStreamLicense = {
-        Id = "MultiStreamLicense",
-        Category = "License",
-        Name = "Cross-Platform License (YouTube + Twitch)",
-        Price = 350,
-        MoneyBonusPerTick = 0,
-        HypeBonusPerTick = 0,
-        EnergyRestore = 0,
-        Description = "Permanently unlocks Multi-Stream mode! Combines audiences for +85% Money and +50% Subs!",
-        IconText = "📡",
-    },
 }
 
 export type RobuxProduct = {
