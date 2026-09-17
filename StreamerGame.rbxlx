@@ -5509,16 +5509,21 @@ end
 -- Керування ПК-монітором, веб-камерою та сетапом (PC Battlestation WebCam)
 --------------------------------------------------------------------------------
 local webcamLoopThread: thread? = nil
+local monitorChatLoopThread: thread? = nil
 
 local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platformStr: string?, player: Player?)
     local mainMon = workspace:FindFirstChild("MainMonitorScreen", true) :: BasePart?
     local leftMon = workspace:FindFirstChild("LeftMonitorScreen", true) :: BasePart?
     if not mainMon then return end
 
-    -- Cancel previous webcam animation
+    -- Cancel previous webcam and monitor chat animation loops
     if webcamLoopThread then
         task.cancel(webcamLoopThread)
         webcamLoopThread = nil
+    end
+    if monitorChatLoopThread then
+        task.cancel(monitorChatLoopThread)
+        monitorChatLoopThread = nil
     end
 
     local sg = mainMon:FindFirstChild("MonitorGui") :: SurfaceGui?
@@ -5541,7 +5546,7 @@ local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platf
     bgFrame.BorderSizePixel = 0
     bgFrame.Parent = sg
 
-    -- Setup left secondary monitor (Chat / Dashboard)
+    -- Setup left secondary monitor (Live Scrolling Fast Chat!)
     if leftMon then
         local leftSg = leftMon:FindFirstChild("LeftMonitorGui") :: SurfaceGui?
         if not leftSg then
@@ -5557,39 +5562,200 @@ local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platf
 
         local leftBg = Instance.new("Frame")
         leftBg.Size = UDim2.new(1, 0, 1, 0)
-        leftBg.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
+        leftBg.BackgroundColor3 = Color3.fromRGB(14, 16, 22)
         leftBg.BorderSizePixel = 0
         leftBg.Parent = leftSg
 
-        local leftHeader = Instance.new("TextLabel")
-        leftHeader.Size = UDim2.new(1, 0, 0, 38)
-        leftHeader.BackgroundColor3 = Color3.fromRGB(24, 28, 40)
+        -- Header Bar
+        local leftHeader = Instance.new("Frame")
+        leftHeader.Size = UDim2.new(1, 0, 0, 42)
+        leftHeader.BackgroundColor3 = Color3.fromRGB(22, 26, 38)
         leftHeader.BorderSizePixel = 0
-        leftHeader.Font = Enum.Font.GothamBold
-        leftHeader.TextSize = 16
-        leftHeader.TextColor3 = Color3.fromRGB(255, 215, 0)
-        leftHeader.Text = isLive and `📊 LIVE METRICS ({platformStr or "STREAM"})` or "📊 DASHBOARD STANDBY"
         leftHeader.Parent = leftBg
 
-        local leftStats = Instance.new("TextLabel")
-        leftStats.Size = UDim2.new(1, -20, 0, 95)
-        leftStats.Position = UDim2.new(0, 10, 0, 48)
-        leftStats.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
-        leftStats.Font = Enum.Font.GothamMedium
-        leftStats.TextSize = 14
-        leftStats.TextColor3 = Color3.fromRGB(200, 220, 255)
-        leftStats.TextXAlignment = Enum.TextXAlignment.Left
-        local lsCorner = Instance.new("UICorner"); lsCorner.CornerRadius = UDim.new(0, 8); lsCorner.Parent = leftStats
+        local headerStroke = Instance.new("UIStroke")
+        headerStroke.Color = Color3.fromRGB(45, 55, 75)
+        headerStroke.Thickness = 1
+        headerStroke.Parent = leftHeader
 
-        if isLive and player then
-            local leaderstats = player:FindFirstChild("leaderstats")
-            local cash = leaderstats and leaderstats:FindFirstChild("Money") and (leaderstats.Money :: IntValue).Value or 0
-            local subs = leaderstats and leaderstats:FindFirstChild("Hype") and (leaderstats.Hype :: IntValue).Value or 0
-            leftStats.Text = `  • Total Revenue: ${cash}\n  • Total Subscribers: {subs}\n  • Live Bitrate: 6000 Kbps (Clean)`
+        local titlePlat = platformStr and platformStr:gsub("+", " + ") or "STREAM"
+        local headerLabel = Instance.new("TextLabel")
+        headerLabel.Size = UDim2.new(1, -140, 1, 0)
+        headerLabel.Position = UDim2.new(0, 14, 0, 0)
+        headerLabel.BackgroundTransparency = 1
+        headerLabel.Font = Enum.Font.GothamBold
+        headerLabel.TextSize = 15
+        headerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        headerLabel.TextXAlignment = Enum.TextXAlignment.Left
+        headerLabel.Text = isLive and `💬 {titlePlat} LIVE CHAT` or "💬 STREAM CHAT • STANDBY"
+        headerLabel.Parent = leftHeader
+
+        local liveBadge = Instance.new("TextLabel")
+        liveBadge.Size = UDim2.new(0, 110, 0, 26)
+        liveBadge.Position = UDim2.new(1, -120, 0.5, -13)
+        liveBadge.BackgroundColor3 = isLive and Color3.fromRGB(231, 76, 60) or Color3.fromRGB(45, 55, 70)
+        liveBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
+        liveBadge.Font = Enum.Font.GothamBold
+        liveBadge.TextSize = 12
+        liveBadge.Text = isLive and "🔴 LIVE CHAT" or "⚪ OFFLINE"
+        liveBadge.Parent = leftHeader
+        local lbc = Instance.new("UICorner"); lbc.CornerRadius = UDim.new(0, 6); lbc.Parent = liveBadge
+
+        if not isLive or not player then
+            -- Offline message
+            local offlineBox = Instance.new("Frame")
+            offlineBox.Size = UDim2.new(1, -40, 0, 140)
+            offlineBox.Position = UDim2.new(0, 20, 0.5, -70)
+            offlineBox.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
+            offlineBox.BorderSizePixel = 0
+            offlineBox.Parent = leftBg
+            local obc = Instance.new("UICorner"); obc.CornerRadius = UDim.new(0, 10); obc.Parent = offlineBox
+            local obs = Instance.new("UIStroke"); obs.Color = Color3.fromRGB(45, 55, 75); obs.Thickness = 1; obs.Parent = offlineBox
+
+            local offText = Instance.new("TextLabel")
+            offText.Size = UDim2.new(1, -20, 1, 0)
+            offText.Position = UDim2.new(0, 10, 0, 0)
+            offText.BackgroundTransparency = 1
+            offText.Font = Enum.Font.GothamMedium
+            offText.TextSize = 14
+            offText.TextColor3 = Color3.fromRGB(160, 175, 205)
+            offText.TextWrapped = true
+            offText.Text = "📡 Stream Chat is offline.\n\nSit at the Battlestation and click Start Stream to go live and connect your high-speed audience chat!"
+            offText.Parent = offlineBox
         else
-            leftStats.Text = "  • Status: Idle (Ready to broadcast)\n  • Streamer Chair: Available\n  • Battlestation OS: Ready"
+            -- Live scrolling chat container (Біжить чат!)
+            local chatScroll = Instance.new("ScrollingFrame")
+            chatScroll.Name = "ChatScroll"
+            chatScroll.Size = UDim2.new(1, -20, 1, -52)
+            chatScroll.Position = UDim2.new(0, 10, 0, 47)
+            chatScroll.BackgroundTransparency = 1
+            chatScroll.BorderSizePixel = 0
+            chatScroll.ScrollBarThickness = 5
+            chatScroll.ScrollBarImageColor3 = Color3.fromRGB(65, 80, 115)
+            chatScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+            chatScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+            chatScroll.Parent = leftBg
+
+            local chatLayout = Instance.new("UIListLayout")
+            chatLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            chatLayout.Padding = UDim.new(0, 5)
+            chatLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+            chatLayout.Parent = chatScroll
+
+            local chatMessagesList: { Frame } = {}
+            local msgOrder = 0
+
+            local viewerNames = {
+                "AlexPro_UA", "CyberNinja", "NeonValkyrie", "PixelGamer", "Vortex99",
+                "TurboSlayer", "ShadowWolf", "GamerGirl_Kyiv", "StarWatcher", "RoboFanatic",
+                "GlitchMaster", "EchoStream", "HyperClutch", "OmegaGamer", "LunaPlayz",
+                "ZeroCool", "DarkKnight", "LuckyStrike", "PixelQueen", "BlazeRunner"
+            }
+
+            local badges = {
+                { Text = "[VIP]", Color = "#e67e22" },
+                { Text = "[SUB 6m]", Color = "#9b59b6" },
+                { Text = "[MOD]", Color = "#2ecc71" },
+                { Text = "[PRIME]", Color = "#3498db" },
+                { Text = "[FAN]", Color = "#f1c40f" },
+            }
+
+            local normalTexts = {
+                "POGGGGGGG 😲😲",
+                "W STREAMER!! 🔥🔥",
+                "THAT PLAY WAS SO CLEAN!",
+                "bro is on fire today!!",
+                "Ukranian streamer on top 🇺🇦💪",
+                "LMAOOOO 💀💀",
+                "sheeesh 240 FPS looking crisp",
+                "drop the setup specs in chat please!",
+                "CLIP IT RIGHT NOW 🎬🎬",
+                "Hype train level 3 incoming! 🚂🚂",
+                "chat spam W in the chat boys!",
+                "WWWWWWWWWW",
+                "how much did that chair cost bro??",
+                "Silver Play Button soon!! 🥈",
+                "GOAT streamer fr fr 🐐",
+                "Subbed with Prime! Enjoy! ⭐",
+                "BEST STREAM TODAY!! 🎉",
+                "GG WP 🔥🔥",
+                "can you play Horror Night next??",
+                "take my energyyyy ⚡⚡",
+                "INSANE REACTION TIME ⚡",
+                "Bro doesn't miss! 🎯",
+            }
+
+            local function addMessage(richTextStr: string, isSuperChat: boolean?)
+                msgOrder += 1
+
+                local msgCard = Instance.new("Frame")
+                msgCard.Name = `Msg_{msgOrder}`
+                msgCard.LayoutOrder = msgOrder
+                msgCard.BorderSizePixel = 0
+                msgCard.Parent = chatScroll
+
+                if isSuperChat then
+                    msgCard.Size = UDim2.new(1, -6, 0, 36)
+                    msgCard.BackgroundColor3 = Color3.fromRGB(38, 48, 28)
+                    local mcCorner = Instance.new("UICorner"); mcCorner.CornerRadius = UDim.new(0, 6); mcCorner.Parent = msgCard
+                    local mcStroke = Instance.new("UIStroke"); mcStroke.Color = Color3.fromRGB(255, 215, 0); mcStroke.Thickness = 1.2; mcStroke.Parent = msgCard
+                else
+                    msgCard.Size = UDim2.new(1, -6, 0, 26)
+                    msgCard.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
+                    local mcCorner = Instance.new("UICorner"); mcCorner.CornerRadius = UDim.new(0, 5); mcCorner.Parent = msgCard
+                end
+
+                local msgLabel = Instance.new("TextLabel")
+                msgLabel.Size = UDim2.new(1, -12, 1, 0)
+                msgLabel.Position = UDim2.new(0, 8, 0, 0)
+                msgLabel.BackgroundTransparency = 1
+                msgLabel.Font = Enum.Font.GothamMedium
+                msgLabel.TextSize = 13
+                msgLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                msgLabel.TextXAlignment = Enum.TextXAlignment.Left
+                msgLabel.RichText = true
+                msgLabel.Text = richTextStr
+                msgLabel.Parent = msgCard
+
+                table.insert(chatMessagesList, msgCard)
+                if #chatMessagesList > 22 then
+                    local oldest = table.remove(chatMessagesList, 1)
+                    if oldest then oldest:Destroy() end
+                end
+
+                chatScroll.CanvasPosition = Vector2.new(0, 999999)
+            end
+
+            -- Seed with initial chat messages so it starts lively
+            addMessage(`<font color="#8892b0"><b>[BOT]</b></font> <font color="#2ecc71">Welcome to the stream! Enjoy the broadcast!</font>`)
+            addMessage(`<font color="#9b59b6"><b>[VIP]</b></font> <font color="#3498db"><b>AlexPro_UA</b></font>: First in chat! Let's go! 🔥`)
+            addMessage(`<font color="#f1c40f"><b>[FAN]</b></font> <font color="#e67e22"><b>PixelGamer</b></font>: W streamer! Ready for ranked!`)
+
+            -- Running chat loop (біжить чат!)
+            monitorChatLoopThread = task.spawn(function()
+                while isStreaming[player] do
+                    task.wait(math.random(35, 80) / 100) -- Generates new message every 0.35s - 0.8s!
+                    if not isStreaming[player] or not chatScroll.Parent then break end
+
+                    local roll = math.random(1, 100)
+                    local vName = viewerNames[math.random(1, #viewerNames)]
+
+                    if roll <= 12 then
+                        -- SuperChat / Donation ($10 - $100)
+                        local donAmt = math.random(10, 100)
+                        addMessage(`💰 <font color="#ffd700"><b>{vName}</b> donated <b>${donAmt}</b>: "Awesome stream, keep it up!"</font>`, true)
+                    elseif roll <= 20 then
+                        -- New Subscriber announcement
+                        addMessage(`⭐ <font color="#55efc4"><b>{vName}</b></font> <font color="#a29bfe">just SUBSCRIBED to the channel! 🌟</font>`)
+                    else
+                        -- Standard live chat message
+                        local badge = badges[math.random(1, #badges)]
+                        local txt = normalTexts[math.random(1, #normalTexts)]
+                        addMessage(`<font color="{badge.Color}"><b>{badge.Text}</b></font> <font color="#74b9ff"><b>{vName}</b></font>: {txt}`)
+                    end
+                end
+            end)
         end
-        leftStats.Parent = leftBg
     end
 
     if not isLive or not player then
