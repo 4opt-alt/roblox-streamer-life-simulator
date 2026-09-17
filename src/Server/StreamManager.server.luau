@@ -791,3 +791,22 @@ task.spawn(function()
     end)
 end)
 
+--------------------------------------------------------------------------------
+-- Пасивне відновлення сил під час відпочинку (поза стрімом)
+--------------------------------------------------------------------------------
+task.spawn(function()
+    while true do
+        task.wait(StreamConfig.EnergyRestRecoverySeconds or 2)
+        for _, player in Players:GetPlayers() do
+            if not isStreaming[player] and player.Parent ~= nil then
+                local maxEnergy = (player:GetAttribute("MaxEnergy") :: number?) or StreamConfig.MaxEnergy
+                local currentEnergy = (player:GetAttribute("Energy") :: number?) or maxEnergy
+                if currentEnergy < maxEnergy then
+                    local restored = math.min(maxEnergy, currentEnergy + 1)
+                    player:SetAttribute("Energy", restored)
+                end
+            end
+        end
+    end
+end)
+
