@@ -688,8 +688,8 @@ updateEnergy()
 -- Row 5: Integrated Live Chat Panel
 local chatContainer = Instance.new("Frame")
 chatContainer.Name = "ChatContainer"
-chatContainer.Size = UDim2.new(1, -16, 1, -146)
-chatContainer.Position = UDim2.new(0, 8, 0, 140)
+chatContainer.Size = UDim2.new(1, -16, 1, -166)
+chatContainer.Position = UDim2.new(0, 8, 0, 160)
 chatContainer.BackgroundColor3 = Color3.fromRGB(16, 19, 27)
 chatContainer.BackgroundTransparency = 0.2
 chatContainer.BorderSizePixel = 0
