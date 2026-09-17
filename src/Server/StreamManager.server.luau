@@ -1255,9 +1255,19 @@ performRebirthRemote.OnServerEvent:Connect(function(player: Player)
             updateOverhead(player.Character, player)
         end
 
+        -- Оновлюємо 3D кнопки YouTube у студії над сетапом
+        updateStudioAwards(player)
+
+        local rewardInfo = (StreamConfig :: any).GetRebirthReward(newRebirths)
+
         -- Сповіщаємо клієнта та відкриваємо вікно вибору нової платформи
-        rebirthResultRemote:FireClient(player, "RebirthSuccess", newRebirths)
+        rebirthResultRemote:FireClient(player, "RebirthSuccess", newRebirths, rewardInfo)
         promptPlatformSelectRemote:FireClient(player, true)
+
+        local broadcastChat = remotesFolder:FindFirstChild("BroadcastSuperChat") :: RemoteEvent?
+        if broadcastChat then
+            broadcastChat:FireAllClients(player.DisplayName, 0, `🎉 Стрімер {player.DisplayName} розблокував {rewardInfo.ButtonIcon} {rewardInfo.ButtonNameUA} ({rewardInfo.MilestoneText})!`)
+        end
     else
         rebirthResultRemote:FireClient(player, "RebirthFailed", `Requires {reqSubs} Subs and ${reqMoney} Cash!`)
     end
@@ -1290,6 +1300,7 @@ setChannelNameRemote.OnServerEvent:Connect(function(player: Player, requestedNam
             equipPhone(player)
         end
     end
+    updateStudioAwards(player)
 end)
 
 local function onPlayerAdded(player: Player)
@@ -1301,9 +1312,16 @@ local function onPlayerAdded(player: Player)
         task.wait(0.5)
         if char.Parent ~= nil then
             updateOverhead(char, player)
+            updateStudioAwards(player)
             if isStreaming[player] then
                 equipPhone(player)
             end
+        end
+    end)
+
+    task.delay(1.5, function()
+        if player.Parent ~= nil then
+            updateStudioAwards(player)
         end
     end)
 end
