@@ -90,6 +90,18 @@ local function ensureSurfaceGui(): boolean
     return true
 end
 
+local function formatNumber(n: number): string
+    if n >= 1_000_000 then
+        return string.format("%.1fM", n / 1_000_000):gsub("%.0M", "M")
+    elseif n >= 10_000 then
+        return string.format("%.1fK", n / 1_000):gsub("%.0K", "K")
+    else
+        local str = tostring(math.floor(n))
+        local formatted = str:reverse():gsub("(%d%d%d)", "%1,"):reverse()
+        return formatted:sub(1, 1) == "," and formatted:sub(2) or formatted
+    end
+end
+
 -- Головна функція оновлення табло
 local function updateLeaderboard()
     if not ensureSurfaceGui() or not container then
@@ -97,16 +109,22 @@ local function updateLeaderboard()
     end
 
     -- Збираємо всіх гравців
-    local playerList: { { Player: Player, Hype: number, Channel: string } } = {}
+    local playerList: { { Player: Player, Hype: number, YouTubeSubs: number, TwitchSubs: number, TikTokSubs: number, Channel: string } } = {}
     for _, player in Players:GetPlayers() do
         local leaderstats = player:FindFirstChild("leaderstats")
         local hypeVal = leaderstats and leaderstats:FindFirstChild("Hype") :: IntValue?
         local hype = hypeVal and hypeVal.Value or 0
+        local yt = (player:GetAttribute("YouTubeSubs") :: number?) or 0
+        local tw = (player:GetAttribute("TwitchSubs") :: number?) or 0
+        local tt = (player:GetAttribute("TikTokSubs") :: number?) or 0
         local channel = player:GetAttribute("ChannelName") or (player.DisplayName .. " TV")
 
         table.insert(playerList, {
             Player = player,
             Hype = hype,
+            YouTubeSubs = yt,
+            TwitchSubs = tw,
+            TikTokSubs = tt,
             Channel = tostring(channel),
         })
     end
@@ -175,7 +193,7 @@ local function updateLeaderboard()
 
         -- НАЗВА КАНАЛУ (Великий золотистий / білий акцент)
         local channelLabel = Instance.new("TextLabel")
-        channelLabel.Size = UDim2.new(1, -290, 0, 28)
+        channelLabel.Size = UDim2.new(1, -345, 0, 28)
         channelLabel.Position = UDim2.new(0, 115, 0, 4)
         channelLabel.BackgroundTransparency = 1
         channelLabel.Font = Enum.Font.GothamBold
@@ -188,7 +206,7 @@ local function updateLeaderboard()
 
         -- Streamer username
         local authorLabel = Instance.new("TextLabel")
-        authorLabel.Size = UDim2.new(1, -290, 0, 20)
+        authorLabel.Size = UDim2.new(1, -345, 0, 20)
         authorLabel.Position = UDim2.new(0, 115, 0, 30)
         authorLabel.BackgroundTransparency = 1
         authorLabel.Font = Enum.Font.Gotham
@@ -198,17 +216,37 @@ local function updateLeaderboard()
         authorLabel.Text = `Streamer: @{data.Player.DisplayName}`
         authorLabel.Parent = row
 
-        -- Кількість підписників (Hype)
-        local hypeLabel = Instance.new("TextLabel")
-        hypeLabel.Size = UDim2.new(0, 160, 1, 0)
-        hypeLabel.Position = UDim2.new(1, -170, 0, 0)
-        hypeLabel.BackgroundTransparency = 1
-        hypeLabel.Font = Enum.Font.GothamBold
-        hypeLabel.TextSize = 18
-        hypeLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
-        hypeLabel.TextXAlignment = Enum.TextXAlignment.Right
-        hypeLabel.Text = `⭐ {data.Hype} Subs`
-        hypeLabel.Parent = row
+        -- Контейнер розділених підписників (Total + YT / TW / TT)
+        local statsContainer = Instance.new("Frame")
+        statsContainer.Name = "StatsContainer"
+        statsContainer.Size = UDim2.new(0, 225, 1, 0)
+        statsContainer.Position = UDim2.new(1, -230, 0, 0)
+        statsContainer.BackgroundTransparency = 1
+        statsContainer.Parent = row
+
+        -- Кількість загальних підписників (Total Subs)
+        local totalLabel = Instance.new("TextLabel")
+        totalLabel.Size = UDim2.new(1, 0, 0, 26)
+        totalLabel.Position = UDim2.new(0, 0, 0, 4)
+        totalLabel.BackgroundTransparency = 1
+        totalLabel.Font = Enum.Font.GothamBold
+        totalLabel.TextSize = 17
+        totalLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+        totalLabel.TextXAlignment = Enum.TextXAlignment.Right
+        totalLabel.Text = `⭐ {formatNumber(data.Hype)} Subs`
+        totalLabel.Parent = statsContainer
+
+        -- Розділені підписники платформ: YouTube, Twitch, TikTok
+        local platformSubsLabel = Instance.new("TextLabel")
+        platformSubsLabel.Size = UDim2.new(1, 0, 0, 20)
+        platformSubsLabel.Position = UDim2.new(0, 0, 0, 30)
+        platformSubsLabel.BackgroundTransparency = 1
+        platformSubsLabel.Font = Enum.Font.GothamMedium
+        platformSubsLabel.TextSize = 11
+        platformSubsLabel.TextColor3 = Color3.fromRGB(195, 210, 235)
+        platformSubsLabel.TextXAlignment = Enum.TextXAlignment.Right
+        platformSubsLabel.Text = `🔴 {formatNumber(data.YouTubeSubs)}  🟣 {formatNumber(data.TwitchSubs)}  🎵 {formatNumber(data.TikTokSubs)}`
+        platformSubsLabel.Parent = statsContainer
     end
 end
 
@@ -216,6 +254,17 @@ end
 local function bindPlayer(player: Player)
     -- Оновлення при зміні атрибуту ChannelName
     player:GetAttributeChangedSignal("ChannelName"):Connect(function()
+        updateLeaderboard()
+    end)
+
+    -- Оновлення при зміні розділених підписників
+    player:GetAttributeChangedSignal("YouTubeSubs"):Connect(function()
+        updateLeaderboard()
+    end)
+    player:GetAttributeChangedSignal("TwitchSubs"):Connect(function()
+        updateLeaderboard()
+    end)
+    player:GetAttributeChangedSignal("TikTokSubs"):Connect(function()
         updateLeaderboard()
     end)
 
