@@ -309,7 +309,101 @@ local function equipPhone(player: Player)
 end
 
 --------------------------------------------------------------------------------
--- Зупинка та запуск стріму з вибором платформи
+-- Керування ПК-монітором та робочим столом (PC Battlestation)
+--------------------------------------------------------------------------------
+local DESK_POSITION = Vector3.new(0, 4.5, -70)
+
+local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platformStr: string?)
+    local mainMon = workspace:FindFirstChild("MainMonitorScreen", true) :: BasePart?
+    if not mainMon then return end
+
+    local sg = mainMon:FindFirstChild("MonitorGui") :: SurfaceGui?
+    if not sg then
+        sg = Instance.new("SurfaceGui")
+        sg.Name = "MonitorGui"
+        sg.Face = Enum.NormalId.Back
+        sg.CanvasSize = Vector2.new(800, 420)
+        sg.LightInfluence = 0
+        sg.Parent = mainMon
+
+        local frame = Instance.new("Frame")
+        frame.Name = "MonitorBg"
+        frame.Size = UDim2.new(1, 0, 1, 0)
+        frame.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
+        frame.BorderSizePixel = 0
+        frame.Parent = sg
+
+        local statusLabel = Instance.new("TextLabel")
+        statusLabel.Name = "StatusLabel"
+        statusLabel.Size = UDim2.new(1, 0, 0.5, 0)
+        statusLabel.Position = UDim2.new(0, 0, 0.15, 0)
+        statusLabel.BackgroundTransparency = 1
+        statusLabel.Font = Enum.Font.GothamBold
+        statusLabel.TextSize = 34
+        statusLabel.TextColor3 = Color3.fromRGB(120, 140, 180)
+        statusLabel.Text = "🖥️ Battlestation OS"
+        statusLabel.Parent = frame
+
+        local subLabel = Instance.new("TextLabel")
+        subLabel.Name = "SubLabel"
+        subLabel.Size = UDim2.new(1, 0, 0.35, 0)
+        subLabel.Position = UDim2.new(0, 0, 0.55, 0)
+        subLabel.BackgroundTransparency = 1
+        subLabel.Font = Enum.Font.GothamMedium
+        subLabel.TextSize = 22
+        subLabel.TextColor3 = Color3.fromRGB(160, 175, 205)
+        subLabel.Text = "[Ready to Stream]"
+        subLabel.Parent = frame
+    end
+
+    local frame = sg:FindFirstChild("MonitorBg")
+    if frame then
+        local statusLabel = frame:FindFirstChild("StatusLabel") :: TextLabel?
+        local subLabel = frame:FindFirstChild("SubLabel") :: TextLabel?
+
+        if isLive then
+            mainMon.Material = Enum.Material.Neon
+            if categoryKey == "Gaming" then
+                mainMon.Color = Color3.fromRGB(140, 60, 230)
+                frame.BackgroundColor3 = Color3.fromRGB(30, 15, 50)
+                if statusLabel then
+                    statusLabel.Text = "🎮 LIVE: PC GAMING"
+                    statusLabel.TextColor3 = Color3.fromRGB(255, 120, 255)
+                end
+                if subLabel then
+                    subLabel.Text = `● STREAMING TO {platformStr or "TWITCH"}`
+                    subLabel.TextColor3 = Color3.fromRGB(100, 240, 140)
+                end
+            elseif categoryKey == "JustChatting" then
+                mainMon.Color = Color3.fromRGB(240, 140, 20)
+                frame.BackgroundColor3 = Color3.fromRGB(45, 25, 10)
+                if statusLabel then
+                    statusLabel.Text = "🎙️ LIVE: TALK SHOW"
+                    statusLabel.TextColor3 = Color3.fromRGB(255, 200, 80)
+                end
+                if subLabel then
+                    subLabel.Text = `● STREAMING TO {platformStr or "YOUTUBE"}`
+                    subLabel.TextColor3 = Color3.fromRGB(100, 240, 140)
+                end
+            end
+        else
+            mainMon.Material = Enum.Material.Neon
+            mainMon.Color = Color3.fromRGB(20, 24, 34)
+            frame.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
+            if statusLabel then
+                statusLabel.Text = "🖥️ Battlestation OS"
+                statusLabel.TextColor3 = Color3.fromRGB(120, 140, 180)
+            end
+            if subLabel then
+                subLabel.Text = "[Ready to Stream]"
+                subLabel.TextColor3 = Color3.fromRGB(160, 175, 205)
+            end
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Зупинка та запуск стріму з вибором платформи та категорії
 --------------------------------------------------------------------------------
 local function stopStream(player: Player)
     isStreaming[player] = false
@@ -317,11 +411,14 @@ local function stopStream(player: Player)
     pendingEventByPlayer[player] = nil
 
     unequipPhone(player)
+    updateMonitorDisplay(false)
 
     player:SetAttribute("ActiveStreamPlatforms", "")
     player:SetAttribute("IsStreamingYouTube", false)
     player:SetAttribute("IsStreamingTwitch", false)
     player:SetAttribute("IsStreamingTikTok", false)
+    player:SetAttribute("IsPCStream", false)
+    player:SetAttribute("IsPhoneStream", false)
 
     if player.Character then
         updateOverhead(player.Character, player)
