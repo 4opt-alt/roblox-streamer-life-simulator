@@ -976,7 +976,7 @@ local function updateRebirthModal()
     local nextLevel = currentRebirths + 1
     local nextReward = (StreamConfig :: any).GetRebirthReward(nextLevel)
 
-    rebirthHudBtn.Text = `🔄 REBIRTH (Lv. {currentRebirths})`
+    rebirthHudBtn.Text = `🔄 REBIRTH Lv.{currentRebirths}`
     statusLabel.Text = `⭐ Current: Rebirth Level {currentRebirths}  |  ⚡ Permanent Boost: +{currentRebirths * 50}%`
 
     local reqSubs, reqMoney = StreamConfig.GetRebirthRequirements(currentRebirths)
