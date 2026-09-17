@@ -4205,15 +4205,16 @@ export type ConfigType = {
 }
 
 local StreamConfig: ConfigType = {
-    -- Real survival starter economy (Streamer Life Simulator style)
+    -- Streamer progression economy
     IncomeIntervalSeconds = 1,
     StarterMoney = 15,          -- Starting pocket change: $15
     StarterHype = 0,            -- 0 Subscribers at start
-    BaseDonationChance = 0.35,  -- 35% chance to earn $1 on starter stream (no gear)
+    BaseDonationChance = 0.90,  -- 90% chance to earn money each second
+    BaseSubChance = 0.95,       -- 95% chance to gain subscribers each second
     MaxEnergy = 100,
-    EnergyDrainSeconds = 1,     -- Перевірка витрати енергії щосекунди
-    EnergyDrainPerSecond = 2,    -- -2% Енергії за секунду стріму (~50 секунд стріму до виснаження)
-    EnergyRestRecoverySeconds = 2, -- Відпочинок: +1% кожні 2 секунди поза стрімом
+    EnergyDrainSeconds = 1,     -- Energy check interval
+    EnergyDrainPerSecond = 1.5, -- -1.5% Energy per second of streaming (~65s stream)
+    EnergyRestRecoverySeconds = 1.5, -- Rest recovery: +3% energy every 1.5s when not streaming
 
     -- Hourly Boost Event Settings
     EventCycleDurationSeconds = 3600,
