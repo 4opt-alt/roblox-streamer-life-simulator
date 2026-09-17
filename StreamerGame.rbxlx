@@ -2955,7 +2955,7 @@
 				</Item>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2143">
+		<Item class="Part" referent="RBX_Part_2151">
 			<Properties>
 				<string name="Name">TechStoreFloor</string>
 				<bool name="Anchored">true</bool>
@@ -2976,7 +2976,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2144">
+		<Item class="Part" referent="RBX_Part_2152">
 			<Properties>
 				<string name="Name">TechStoreRoof</string>
 				<bool name="Anchored">true</bool>
@@ -2997,7 +2997,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2145">
+		<Item class="Part" referent="RBX_Part_2153">
 			<Properties>
 				<string name="Name">TechStoreBackWall</string>
 				<bool name="Anchored">true</bool>
@@ -3018,7 +3018,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2146">
+		<Item class="Part" referent="RBX_Part_2154">
 			<Properties>
 				<string name="Name">TechStoreSideWall1</string>
 				<bool name="Anchored">true</bool>
@@ -3039,7 +3039,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2147">
+		<Item class="Part" referent="RBX_Part_2155">
 			<Properties>
 				<string name="Name">TechStoreSideWall2</string>
 				<bool name="Anchored">true</bool>
@@ -3060,7 +3060,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2148">
+		<Item class="Part" referent="RBX_Part_2156">
 			<Properties>
 				<string name="Name">TechStoreGlassFront</string>
 				<bool name="Anchored">true</bool>
@@ -3081,7 +3081,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2149">
+		<Item class="Part" referent="RBX_Part_2157">
 			<Properties>
 				<string name="Name">TechStoreSignBoard</string>
 				<bool name="Anchored">true</bool>
@@ -3102,7 +3102,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2150">
+		<Item class="Part" referent="RBX_Part_2158">
 			<Properties>
 				<string name="Name">TechStoreSignNeon</string>
 				<bool name="Anchored">true</bool>
@@ -3121,7 +3121,7 @@
 				<token name="Material">288</token>
 				
 			</Properties>
-				<Item class="PointLight" referent="RBX_Part_2150_Light">
+				<Item class="PointLight" referent="RBX_Part_2158_Light">
 					<Properties>
 						<Color3 name="Color"><R>0.2</R><G>0.8</G><B>1.0</B></Color3>
 						<float name="Brightness">2.5</float>
@@ -3131,7 +3131,7 @@
 				</Item>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2151">
+		<Item class="Part" referent="RBX_Part_2159">
 			<Properties>
 				<string name="Name">TechCounter</string>
 				<bool name="Anchored">true</bool>
@@ -3199,7 +3199,7 @@
 				</Item>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2152">
+		<Item class="Part" referent="RBX_Part_2160">
 			<Properties>
 				<string name="Name">TechShowcaseGlass</string>
 				<bool name="Anchored">true</bool>
@@ -3220,7 +3220,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2153">
+		<Item class="Part" referent="RBX_Part_2161">
 			<Properties>
 				<string name="Name">TechShowcasePC1</string>
 				<bool name="Anchored">true</bool>
@@ -3241,7 +3241,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2154">
+		<Item class="Part" referent="RBX_Part_2162">
 			<Properties>
 				<string name="Name">TechShowcasePC2</string>
 				<bool name="Anchored">true</bool>
@@ -3256,13 +3256,13 @@
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
 					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4293994546</Color3uint8>
+				<Color3uint8 name="Color3uint8">4292742930</Color3uint8>
 				<token name="Material">256</token>
 				
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2155">
+		<Item class="Part" referent="RBX_Part_2163">
 			<Properties>
 				<string name="Name">GroceryFloor</string>
 				<bool name="Anchored">true</bool>
@@ -3283,7 +3283,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2156">
+		<Item class="Part" referent="RBX_Part_2164">
 			<Properties>
 				<string name="Name">GroceryRoof</string>
 				<bool name="Anchored">true</bool>
@@ -3304,7 +3304,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2157">
+		<Item class="Part" referent="RBX_Part_2165">
 			<Properties>
 				<string name="Name">GroceryBackWall</string>
 				<bool name="Anchored">true</bool>
@@ -3325,7 +3325,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2158">
+		<Item class="Part" referent="RBX_Part_2166">
 			<Properties>
 				<string name="Name">GrocerySideWall1</string>
 				<bool name="Anchored">true</bool>
@@ -3346,7 +3346,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2159">
+		<Item class="Part" referent="RBX_Part_2167">
 			<Properties>
 				<string name="Name">GrocerySideWall2</string>
 				<bool name="Anchored">true</bool>
@@ -3367,7 +3367,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2160">
+		<Item class="Part" referent="RBX_Part_2168">
 			<Properties>
 				<string name="Name">GroceryGlassFront</string>
 				<bool name="Anchored">true</bool>
@@ -3388,7 +3388,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2161">
+		<Item class="Part" referent="RBX_Part_2169">
 			<Properties>
 				<string name="Name">GrocerySignBoard</string>
 				<bool name="Anchored">true</bool>
@@ -3409,7 +3409,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2162">
+		<Item class="Part" referent="RBX_Part_2170">
 			<Properties>
 				<string name="Name">GrocerySignNeon</string>
 				<bool name="Anchored">true</bool>
@@ -3428,7 +3428,7 @@
 				<token name="Material">288</token>
 				
 			</Properties>
-				<Item class="PointLight" referent="RBX_Part_2162_Light">
+				<Item class="PointLight" referent="RBX_Part_2170_Light">
 					<Properties>
 						<Color3 name="Color"><R>1.0</R><G>0.8</G><B>0.2</B></Color3>
 						<float name="Brightness">2.5</float>
@@ -3438,7 +3438,7 @@
 				</Item>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2163">
+		<Item class="Part" referent="RBX_Part_2171">
 			<Properties>
 				<string name="Name">GroceryCounter</string>
 				<bool name="Anchored">true</bool>
@@ -3506,7 +3506,7 @@
 				</Item>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2164">
+		<Item class="Part" referent="RBX_Part_2172">
 			<Properties>
 				<string name="Name">TownSquarePlaza</string>
 				<bool name="Anchored">true</bool>
@@ -3527,7 +3527,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2165">
+		<Item class="Part" referent="RBX_Part_2173">
 			<Properties>
 				<string name="Name">LB_StandL</string>
 				<bool name="Anchored">true</bool>
@@ -3548,7 +3548,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2166">
+		<Item class="Part" referent="RBX_Part_2174">
 			<Properties>
 				<string name="Name">LB_StandR</string>
 				<bool name="Anchored">true</bool>
@@ -3569,7 +3569,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2167">
+		<Item class="Part" referent="RBX_Part_2175">
 			<Properties>
 				<string name="Name">LB_BackPanel</string>
 				<bool name="Anchored">true</bool>
@@ -3590,7 +3590,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2168">
+		<Item class="Part" referent="RBX_Part_2176">
 			<Properties>
 				<string name="Name">LB_NeonGlow</string>
 				<bool name="Anchored">true</bool>
@@ -3609,7 +3609,7 @@
 				<token name="Material">288</token>
 				
 			</Properties>
-				<Item class="PointLight" referent="RBX_Part_2168_Light">
+				<Item class="PointLight" referent="RBX_Part_2176_Light">
 					<Properties>
 						<Color3 name="Color"><R>1.0</R><G>0.85</G><B>0.0</B></Color3>
 						<float name="Brightness">2.0</float>
@@ -3639,70 +3639,70 @@
 			</Properties>
 		</Item>
 			
-		<Item class="Model" referent="RBX_Hoverboard">
+		<Item class="Model" referent="RBX_StarterCar">
 			<Properties>
-				<string name="Name">Hoverboard</string>
+				<string name="Name">StarterCar</string>
 			</Properties>
 			
 		<Item class="Part" referent="RBX_Part_2134">
 			<Properties>
-				<string name="Name">HoverboardBody</string>
+				<string name="Name">CarChassis</string>
 				<bool name="Anchored">true</bool>
-				<bool name="CanCollide">false</bool>
+				<bool name="CanCollide">true</bool>
 				<float name="Transparency">0</float>
 				<Vector3 name="size">
-					<X>1.6</X><Y>0.3</Y><Z>4.4</Z>
+					<X>7.0</X><Y>0.8</Y><Z>13.0</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>14</X><Y>2.0</Y><Z>-42</Z>
+					<X>14</X><Y>1.8</Y><Z>-42</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
 					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4279376444</Color3uint8>
-				<token name="Material">256</token>
+				<Color3uint8 name="Color3uint8">4292742930</Color3uint8>
+				<token name="Material">800</token>
 				
 			</Properties>
-				<Item class="ProximityPrompt" referent="RBX_HoverRidePrompt">
+				<Item class="ProximityPrompt" referent="RBX_CarDrivePrompt">
 					<Properties>
-						<string name="Name">RidePrompt</string>
-						<string name="ObjectText">Galaxy Hoverboard</string>
-						<string name="ActionText">Ride (E)</string>
-						<float name="MaxActivationDistance">10</float>
+						<string name="Name">DrivePrompt</string>
+						<string name="ObjectText">Starter Sedan</string>
+						<string name="ActionText">Drive Car (E)</string>
+						<float name="MaxActivationDistance">14</float>
 						<float name="HoldDuration">0</float>
 						<token name="KeyboardKeyCode">101</token>
 						<bool name="RequiresLineOfSight">false</bool>
 					</Properties>
 				</Item>
-				<Item class="BillboardGui" referent="RBX_HoverBadge">
+				<Item class="BillboardGui" referent="RBX_CarBadge">
 					<Properties>
-						<string name="Name">HoverBadge</string>
-						<Vector3 name="StudsOffset"><X>0</X><Y>2.6</Y><Z>0</Z></Vector3>
-						<UDim2 name="Size"><XS>0</XS><XO>190</XO><YS>0</YS><YO>42</YO></UDim2>
+						<string name="Name">CarBadge</string>
+						<Vector3 name="StudsOffset"><X>0</X><Y>4.8</Y><Z>0</Z></Vector3>
+						<UDim2 name="Size"><XS>0</XS><XO>160</XO><YS>0</YS><YO>42</YO></UDim2>
 						<bool name="AlwaysOnTop">true</bool>
 						<float name="MaxDistance">90</float>
 						<float name="LightInfluence">0</float>
 					</Properties>
-					<Item class="Frame" referent="RBX_HoverBadgeF">
+					<Item class="Frame" referent="RBX_CarBadgeF">
 						<Properties>
 							<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
 							<Color3 name="BackgroundColor3"><R>0.08</R><G>0.1</G><B>0.14</B></Color3>
 							<float name="BackgroundTransparency">0.2</float>
 						</Properties>
-						<Item class="UICorner" referent="RBX_HoverBadgeC">
+						<Item class="UICorner" referent="RBX_CarBadgeC">
 							<Properties><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
 						</Item>
-						<Item class="UIStroke" referent="RBX_HoverBadgeS">
+						<Item class="UIStroke" referent="RBX_CarBadgeS">
 							<Properties>
-								<Color3 name="Color"><R>0.235</R><G>0.667</G><B>1</B></Color3>
+								<Color3 name="Color"><R>0.9</R><G>0.3</G><B>0.24</B></Color3>
 								<float name="Thickness">2</float>
 							</Properties>
 						</Item>
-						<Item class="TextLabel" referent="RBX_HoverBadgeL">
+						<Item class="TextLabel" referent="RBX_CarBadgeL">
 							<Properties>
 								<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
 								<float name="BackgroundTransparency">1</float>
-								<string name="Text">🛹 Galaxy Hoverboard [E]</string>
+								<string name="Text">🚗 Starter Sedan [E]</string>
 								<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 								<token name="Font">17</token>
 								<float name="TextSize">14</float>
@@ -3716,12 +3716,12 @@
 				<string name="Name">VehicleSeat</string>
 				<bool name="Anchored">true</bool>
 				<bool name="CanCollide">false</bool>
-				<float name="Transparency">0.85</float>
+				<float name="Transparency">0</float>
 				<Vector3 name="size">
-					<X>1.2</X><Y>0.2</Y><Z>1.2</Z>
+					<X>2.0</X><Y>0.6</Y><Z>2.0</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>14</X><Y>2.3</Y><Z>-42</Z>
+					<X>12.6</X><Y>2.6</Y><Z>-42</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
 					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
@@ -3731,160 +3731,320 @@
 				
 			</Properties>
 		</Item>
-		<Item class="Part" referent="RBX_Part_2136">
+		<Item class="Seat" referent="RBX_Part_2136">
 			<Properties>
-				<string name="Name">GalaxyAccent</string>
+				<string name="Name">PassengerSeat</string>
 				<bool name="Anchored">true</bool>
 				<bool name="CanCollide">false</bool>
 				<float name="Transparency">0</float>
 				<Vector3 name="size">
-					<X>0.6</X><Y>0.05</Y><Z>3.8</Z>
+					<X>2.0</X><Y>0.6</Y><Z>2.0</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>14</X><Y>2.16</Y><Z>-42</Z>
+					<X>15.4</X><Y>2.6</Y><Z>-42</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
 					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4290781439</Color3uint8>
-				<token name="Material">256</token>
+				<Color3uint8 name="Color3uint8">4280295454</Color3uint8>
+				<token name="Material">816</token>
 				
 			</Properties>
 		</Item>
 		<Item class="Part" referent="RBX_Part_2137">
 			<Properties>
-				<string name="Name">FootpadFront</string>
+				<string name="Name">CarHood</string>
 				<bool name="Anchored">true</bool>
 				<bool name="CanCollide">false</bool>
 				<float name="Transparency">0</float>
 				<Vector3 name="size">
-					<X>1.3</X><Y>0.08</Y><Z>1.5</Z>
+					<X>6.8</X><Y>1.0</Y><Z>4.2</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>14</X><Y>2.19</Y><Z>-43.4</Z>
+					<X>14</X><Y>2.5</Y><Z>-46.5</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
 					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4279374356</Color3uint8>
-				<token name="Material">816</token>
+				<Color3uint8 name="Color3uint8">4292742930</Color3uint8>
+				<token name="Material">256</token>
 				
 			</Properties>
 		</Item>
 		<Item class="Part" referent="RBX_Part_2138">
 			<Properties>
-				<string name="Name">FootpadBack</string>
+				<string name="Name">CarTrunk</string>
 				<bool name="Anchored">true</bool>
 				<bool name="CanCollide">false</bool>
 				<float name="Transparency">0</float>
 				<Vector3 name="size">
-					<X>1.3</X><Y>0.08</Y><Z>1.5</Z>
+					<X>6.8</X><Y>1.2</Y><Z>3.8</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>14</X><Y>2.19</Y><Z>-40.6</Z>
+					<X>14</X><Y>2.6</Y><Z>-37.4</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
 					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4279374356</Color3uint8>
-				<token name="Material">816</token>
+				<Color3uint8 name="Color3uint8">4292742930</Color3uint8>
+				<token name="Material">256</token>
 				
 			</Properties>
 		</Item>
 		<Item class="Part" referent="RBX_Part_2139">
 			<Properties>
-				<string name="Name">LedStripL</string>
+				<string name="Name">CarRoof</string>
 				<bool name="Anchored">true</bool>
 				<bool name="CanCollide">false</bool>
 				<float name="Transparency">0</float>
 				<Vector3 name="size">
-					<X>0.1</X><Y>0.12</Y><Z>4.2</Z>
+					<X>6.4</X><Y>0.4</Y><Z>5.2</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>13.15</X><Y>2.0</Y><Z>-42</Z>
+					<X>14</X><Y>4.8</Y><Z>-42</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
 					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4282166015</Color3uint8>
-				<token name="Material">288</token>
+				<Color3uint8 name="Color3uint8">4292742930</Color3uint8>
+				<token name="Material">256</token>
 				
 			</Properties>
-				<Item class="PointLight" referent="RBX_Part_2139_Light">
-					<Properties>
-						<Color3 name="Color"><R>0.3</R><G>0.65</G><B>1</B></Color3>
-						<float name="Brightness">2.0</float>
-						<float name="Range">16</float>
-						<bool name="Shadows">true</bool>
-					</Properties>
-				</Item>
 		</Item>
 		<Item class="Part" referent="RBX_Part_2140">
 			<Properties>
-				<string name="Name">LedStripR</string>
+				<string name="Name">WindshieldFront</string>
 				<bool name="Anchored">true</bool>
 				<bool name="CanCollide">false</bool>
-				<float name="Transparency">0</float>
+				<float name="Transparency">0.4</float>
 				<Vector3 name="size">
-					<X>0.1</X><Y>0.12</Y><Z>4.2</Z>
+					<X>6.2</X><Y>2.2</Y><Z>0.2</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>14.85</X><Y>2.0</Y><Z>-42</Z>
+					<X>14</X><Y>3.7</Y><Z>-44.5</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
-					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
-					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
+					<R10>0.0000</R10><R11>0.8660</R11><R12>0.5000</R12>
+					<R20>-0.0000</R20><R21>-0.5000</R21><R22>0.8660</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4282166015</Color3uint8>
-				<token name="Material">288</token>
+				<Color3uint8 name="Color3uint8">4284581240</Color3uint8>
+				<token name="Material">304</token>
 				
 			</Properties>
-				<Item class="PointLight" referent="RBX_Part_2140_Light">
-					<Properties>
-						<Color3 name="Color"><R>0.3</R><G>0.65</G><B>1</B></Color3>
-						<float name="Brightness">2.0</float>
-						<float name="Range">16</float>
-						<bool name="Shadows">true</bool>
-					</Properties>
-				</Item>
 		</Item>
 		<Item class="Part" referent="RBX_Part_2141">
 			<Properties>
-				<string name="Name">WheelFront</string>
+				<string name="Name">WindshieldBack</string>
 				<bool name="Anchored">true</bool>
-				<bool name="CanCollide">true</bool>
-				<float name="Transparency">0</float>
+				<bool name="CanCollide">false</bool>
+				<float name="Transparency">0.4</float>
 				<Vector3 name="size">
-					<X>0.4</X><Y>1.0</Y><Z>1.0</Z>
+					<X>6.2</X><Y>2.2</Y><Z>0.2</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>14</X><Y>1.4</Y><Z>-44.0</Z>
+					<X>14</X><Y>3.7</Y><Z>-39.5</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
-					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
-					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
+					<R10>0.0000</R10><R11>0.8660</R11><R12>-0.5000</R12>
+					<R20>0.0000</R20><R21>0.5000</R21><R22>0.8660</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4278979598</Color3uint8>
-				<token name="Material">256</token>
-				<token name="shape">2</token>
+				<Color3uint8 name="Color3uint8">4284581240</Color3uint8>
+				<token name="Material">304</token>
+				
 			</Properties>
 		</Item>
 		<Item class="Part" referent="RBX_Part_2142">
 			<Properties>
-				<string name="Name">WheelBack</string>
+				<string name="Name">SteeringWheel</string>
 				<bool name="Anchored">true</bool>
-				<bool name="CanCollide">true</bool>
+				<bool name="CanCollide">false</bool>
 				<float name="Transparency">0</float>
 				<Vector3 name="size">
-					<X>0.4</X><Y>1.0</Y><Z>1.0</Z>
+					<X>1.0</X><Y>1.0</Y><Z>0.2</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>14</X><Y>1.4</Y><Z>-40.0</Z>
+					<X>12.6</X><Y>3.2</Y><Z>-43.6</Z>
+					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
+					<R10>0.0000</R10><R11>0.9063</R11><R12>0.4226</R12>
+					<R20>-0.0000</R20><R21>-0.4226</R21><R22>0.9063</R22>
+				</CoordinateFrame>
+				<Color3uint8 name="Color3uint8">4279900698</Color3uint8>
+				<token name="Material">256</token>
+				
+			</Properties>
+		</Item>
+		<Item class="Part" referent="RBX_Part_2143">
+			<Properties>
+				<string name="Name">HeadlightL</string>
+				<bool name="Anchored">true</bool>
+				<bool name="CanCollide">false</bool>
+				<float name="Transparency">0</float>
+				<Vector3 name="size">
+					<X>0.8</X><Y>0.5</Y><Z>0.2</Z>
+				</Vector3>
+				<CoordinateFrame name="CFrame">
+					<X>11.6</X><Y>2.4</Y><Z>-48.7</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
 					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4278979598</Color3uint8>
+				<Color3uint8 name="Color3uint8">4294967295</Color3uint8>
+				<token name="Material">288</token>
+				
+			</Properties>
+				<Item class="SpotLight" referent="RBX_Part_2143_Light">
+					<Properties>
+						<Color3 name="Color"><R>1</R><G>1</G><B>0.9</B></Color3>
+						<float name="Brightness">3.5</float>
+						<float name="Range">45</float>
+						<bool name="Shadows">true</bool>
+					</Properties>
+				</Item>
+		</Item>
+		<Item class="Part" referent="RBX_Part_2144">
+			<Properties>
+				<string name="Name">HeadlightR</string>
+				<bool name="Anchored">true</bool>
+				<bool name="CanCollide">false</bool>
+				<float name="Transparency">0</float>
+				<Vector3 name="size">
+					<X>0.8</X><Y>0.5</Y><Z>0.2</Z>
+				</Vector3>
+				<CoordinateFrame name="CFrame">
+					<X>16.4</X><Y>2.4</Y><Z>-48.7</Z>
+					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
+					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
+					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
+				</CoordinateFrame>
+				<Color3uint8 name="Color3uint8">4294967295</Color3uint8>
+				<token name="Material">288</token>
+				
+			</Properties>
+				<Item class="SpotLight" referent="RBX_Part_2144_Light">
+					<Properties>
+						<Color3 name="Color"><R>1</R><G>1</G><B>0.9</B></Color3>
+						<float name="Brightness">3.5</float>
+						<float name="Range">45</float>
+						<bool name="Shadows">true</bool>
+					</Properties>
+				</Item>
+		</Item>
+		<Item class="Part" referent="RBX_Part_2145">
+			<Properties>
+				<string name="Name">TaillightL</string>
+				<bool name="Anchored">true</bool>
+				<bool name="CanCollide">false</bool>
+				<float name="Transparency">0</float>
+				<Vector3 name="size">
+					<X>0.8</X><Y>0.5</Y><Z>0.2</Z>
+				</Vector3>
+				<CoordinateFrame name="CFrame">
+					<X>11.6</X><Y>2.6</Y><Z>-35.4</Z>
+					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
+					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
+					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
+				</CoordinateFrame>
+				<Color3uint8 name="Color3uint8">4293994546</Color3uint8>
+				<token name="Material">288</token>
+				
+			</Properties>
+		</Item>
+		<Item class="Part" referent="RBX_Part_2146">
+			<Properties>
+				<string name="Name">TaillightR</string>
+				<bool name="Anchored">true</bool>
+				<bool name="CanCollide">false</bool>
+				<float name="Transparency">0</float>
+				<Vector3 name="size">
+					<X>0.8</X><Y>0.5</Y><Z>0.2</Z>
+				</Vector3>
+				<CoordinateFrame name="CFrame">
+					<X>16.4</X><Y>2.6</Y><Z>-35.4</Z>
+					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
+					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
+					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
+				</CoordinateFrame>
+				<Color3uint8 name="Color3uint8">4293994546</Color3uint8>
+				<token name="Material">288</token>
+				
+			</Properties>
+		</Item>
+		<Item class="Part" referent="RBX_Part_2147">
+			<Properties>
+				<string name="Name">WheelFL</string>
+				<bool name="Anchored">true</bool>
+				<bool name="CanCollide">true</bool>
+				<float name="Transparency">0</float>
+				<Vector3 name="size">
+					<X>1.4</X><Y>1.8</Y><Z>1.8</Z>
+				</Vector3>
+				<CoordinateFrame name="CFrame">
+					<X>10.2</X><Y>1.8</Y><Z>-46.0</Z>
+					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
+					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
+					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
+				</CoordinateFrame>
+				<Color3uint8 name="Color3uint8">4279900698</Color3uint8>
 				<token name="Material">256</token>
-				<token name="shape">2</token>
+				
+			</Properties>
+		</Item>
+		<Item class="Part" referent="RBX_Part_2148">
+			<Properties>
+				<string name="Name">WheelFR</string>
+				<bool name="Anchored">true</bool>
+				<bool name="CanCollide">true</bool>
+				<float name="Transparency">0</float>
+				<Vector3 name="size">
+					<X>1.4</X><Y>1.8</Y><Z>1.8</Z>
+				</Vector3>
+				<CoordinateFrame name="CFrame">
+					<X>17.8</X><Y>1.8</Y><Z>-46.0</Z>
+					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
+					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
+					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
+				</CoordinateFrame>
+				<Color3uint8 name="Color3uint8">4279900698</Color3uint8>
+				<token name="Material">256</token>
+				
+			</Properties>
+		</Item>
+		<Item class="Part" referent="RBX_Part_2149">
+			<Properties>
+				<string name="Name">WheelRL</string>
+				<bool name="Anchored">true</bool>
+				<bool name="CanCollide">true</bool>
+				<float name="Transparency">0</float>
+				<Vector3 name="size">
+					<X>1.4</X><Y>1.8</Y><Z>1.8</Z>
+				</Vector3>
+				<CoordinateFrame name="CFrame">
+					<X>10.2</X><Y>1.8</Y><Z>-38.0</Z>
+					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
+					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
+					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
+				</CoordinateFrame>
+				<Color3uint8 name="Color3uint8">4279900698</Color3uint8>
+				<token name="Material">256</token>
+				
+			</Properties>
+		</Item>
+		<Item class="Part" referent="RBX_Part_2150">
+			<Properties>
+				<string name="Name">WheelRR</string>
+				<bool name="Anchored">true</bool>
+				<bool name="CanCollide">true</bool>
+				<float name="Transparency">0</float>
+				<Vector3 name="size">
+					<X>1.4</X><Y>1.8</Y><Z>1.8</Z>
+				</Vector3>
+				<CoordinateFrame name="CFrame">
+					<X>17.8</X><Y>1.8</Y><Z>-38.0</Z>
+					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
+					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
+					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
+				</CoordinateFrame>
+				<Color3uint8 name="Color3uint8">4279900698</Color3uint8>
+				<token name="Material">256</token>
+				
 			</Properties>
 		</Item>
 		</Item>
@@ -3975,16 +4135,6 @@
 					</Item>
 				</Item>
 			</Item>
-		</Item>
-		<Item class="Clouds" referent="RBX_Clouds">
-			<Properties>
-				<string name="Name">Clouds</string>
-				<Color3 name="Color">
-					<R>1</R><G>1</G><B>1</B>
-				</Color3>
-				<float name="Cover">0.38</float>
-				<float name="Density">0.55</float>
-			</Properties>
 		</Item>
 	</Item>
 	<Item class="ReplicatedStorage" referent="RBX_ReplicatedStorage">
@@ -4241,25 +4391,111 @@ local StreamConfig: ConfigType = {
     },
 
     Rebirth = {
-<<<<<<< HEAD
-        BaseRequiredSubs = 500,
-        BaseRequiredMoney = 250,
-=======
-        BaseRequiredSubs = 100,      -- 100 subs for first rebirth (takes ~20s of streaming)
-        BaseRequiredMoney = 50,      -- $50 cash for first rebirth
->>>>>>> 4c3cdf87835eba04af4eca3d08194c65f9198213
         MultiplierPerRebirth = 0.50, -- +50% permanent boost per rebirth
-        StarterCashBonusPerRebirth = 50, -- +$50 extra starting money per rebirth
-        MaxEnergyBonusPerRebirth = 10,   -- +10 max energy capacity per rebirth
+        StarterCashBonusPerRebirth = 100, -- +$100 extra starting money per rebirth
+        MaxEnergyBonusPerRebirth = 15,   -- +15 max energy capacity per rebirth
+    },
+
+    RebirthTiers = {
+        [1] = {
+            Level = 1,
+            RequiredSubs = 100_000,
+            RequiredMoney = 15_000,
+            ButtonName = "YouTube Silver Play Button",
+            ButtonNameUA = "Срібна кнопка YouTube",
+            MilestoneText = "100,000 Subscribers",
+            ButtonIcon = "🥈",
+            TitleTag = "[🥈 Silver Creator]",
+            PlaqueColor = Color3.fromRGB(225, 230, 240),
+            GlowColor = Color3.fromRGB(200, 215, 255),
+            Material = Enum.Material.Metal,
+        },
+        [2] = {
+            Level = 2,
+            RequiredSubs = 500_000,
+            RequiredMoney = 75_000,
+            ButtonName = "YouTube Gold Play Button",
+            ButtonNameUA = "Золота кнопка YouTube",
+            MilestoneText = "500,000 Subscribers",
+            ButtonIcon = "🥇",
+            TitleTag = "[🥇 Gold Creator]",
+            PlaqueColor = Color3.fromRGB(255, 215, 0),
+            GlowColor = Color3.fromRGB(255, 200, 50),
+            Material = Enum.Material.Metal,
+        },
+        [3] = {
+            Level = 3,
+            RequiredSubs = 1_000_000,
+            RequiredMoney = 250_000,
+            ButtonName = "YouTube Diamond Play Button",
+            ButtonNameUA = "Діамантова кнопка YouTube",
+            MilestoneText = "1,000,000 Subscribers",
+            ButtonIcon = "💎",
+            TitleTag = "[💎 Diamond Creator]",
+            PlaqueColor = Color3.fromRGB(150, 235, 255),
+            GlowColor = Color3.fromRGB(80, 220, 255),
+            Material = Enum.Material.Glass,
+        },
+        [4] = {
+            Level = 4,
+            RequiredSubs = 5_000_000,
+            RequiredMoney = 1_000_000,
+            ButtonName = "YouTube Custom Ruby Play Button",
+            ButtonNameUA = "Рубінова кнопка YouTube",
+            MilestoneText = "5,000,000 Subscribers",
+            ButtonIcon = "🔴",
+            TitleTag = "[🔴 Ruby Legend]",
+            PlaqueColor = Color3.fromRGB(255, 40, 80),
+            GlowColor = Color3.fromRGB(255, 60, 90),
+            Material = Enum.Material.Neon,
+        },
+        [5] = {
+            Level = 5,
+            RequiredSubs = 10_000_000,
+            RequiredMoney = 5_000_000,
+            ButtonName = "YouTube Red Diamond Play Button",
+            ButtonNameUA = "Червоний Діамант YouTube",
+            MilestoneText = "10,000,000 Subscribers",
+            ButtonIcon = "👑",
+            TitleTag = "[👑 YouTube Royalty]",
+            PlaqueColor = Color3.fromRGB(220, 20, 60),
+            GlowColor = Color3.fromRGB(255, 30, 70),
+            Material = Enum.Material.Glass,
+        },
     },
 }
 
 function StreamConfig.GetRebirthRequirements(currentRebirths: number): (number, number)
-    local r = currentRebirths or 0
-    local scale = math.pow(1.5, r)
-    local reqSubs = math.floor(StreamConfig.Rebirth.BaseRequiredSubs * scale)
-    local reqMoney = math.floor(StreamConfig.Rebirth.BaseRequiredMoney * scale)
-    return reqSubs, reqMoney
+    local nextLevel = (currentRebirths or 0) + 1
+    local tier = (StreamConfig :: any).RebirthTiers[nextLevel]
+    if tier then
+        return tier.RequiredSubs, tier.RequiredMoney
+    else
+        local overflow = nextLevel - 5
+        local reqSubs = math.floor(10_000_000 * math.pow(2.5, overflow))
+        local reqMoney = math.floor(5_000_000 * math.pow(2.0, overflow))
+        return reqSubs, reqMoney
+    end
+end
+
+function StreamConfig.GetRebirthReward(nextRebirthLevel: number): any
+    local tier = (StreamConfig :: any).RebirthTiers[nextRebirthLevel]
+    if tier then
+        return tier
+    end
+    return {
+        Level = nextRebirthLevel,
+        RequiredSubs = 10_000_000,
+        RequiredMoney = 5_000_000,
+        ButtonName = `YouTube Milestone ${nextRebirthLevel} Award`,
+        ButtonNameUA = `Трофей YouTube ${nextRebirthLevel}-го рівня`,
+        MilestoneText = `Rebirth Level ${nextRebirthLevel}`,
+        ButtonIcon = "👑",
+        TitleTag = `[👑 Creator Lv.{nextRebirthLevel}]`,
+        PlaqueColor = Color3.fromRGB(255, 215, 0),
+        GlowColor = Color3.fromRGB(255, 220, 80),
+        Material = Enum.Material.Neon,
+    }
 end
 
 return StreamConfig
@@ -4677,83 +4913,6 @@ return ShopConfig
 ]]></ProtectedString>
 				</Properties>
 			</Item>
-			<Item class="ModuleScript" referent="RBX_EnvironmentConfig">
-				<Properties>
-					<string name="Name">EnvironmentConfig</string>
-					<ProtectedString name="Source"><![CDATA[--!strict
-
-export type EnvironmentConfigType = {
-    -- Скільки РЕАЛЬНИХ секунд триває день і ніч, і де їхні межі на годиннику
-    DayLengthSeconds: number,   -- 45 хв реального часу на весь день
-    NightLengthSeconds: number, -- 15 хв реального часу на всю ніч
-    NightStartHour: number,     -- 21:00 — початок ночі
-    NightEndHour: number,       -- 06:00 — кінець ночі (світанок)
-    TransitionHours: number,    -- тривалість плавного світанку/заходу (в годинах ігрового часу)
-    GeographicLatitude: number,
-
-    -- Освітлення вдень / вночі (Ambient / Brightness)
-    DayAmbient: Color3,
-    DayOutdoorAmbient: Color3,
-    DayBrightness: number,
-    NightAmbient: Color3,
-    NightOutdoorAmbient: Color3,
-    NightBrightness: number,
-
-    -- Atmosphere вдень / вночі (серпанок, сяйво сонця/місяця)
-    AtmosphereDensity: number,
-    AtmosphereOffset: number,
-    DayAtmosphereColor: Color3,
-    DayAtmosphereDecay: Color3,
-    DayAtmosphereGlare: number,
-    DayAtmosphereHaze: number,
-    NightAtmosphereColor: Color3,
-    NightAtmosphereDecay: Color3,
-    NightAtmosphereGlare: number,
-    NightAtmosphereHaze: number,
-
-    -- Глобальні рухомі хмари (колір міняється між днем і ніччю)
-    CloudsCover: number,
-    CloudsDensity: number,
-    DayCloudsColor: Color3,
-    NightCloudsColor: Color3,
-}
-
-local EnvironmentConfig: EnvironmentConfigType = {
-    DayLengthSeconds = 45 * 60,
-    NightLengthSeconds = 15 * 60,
-    NightStartHour = 21,
-    NightEndHour = 6,
-    TransitionHours = 0.75,
-    GeographicLatitude = 35,
-
-    DayAmbient = Color3.fromRGB(140, 145, 165),
-    DayOutdoorAmbient = Color3.fromRGB(150, 165, 195),
-    DayBrightness = 2.6,
-    NightAmbient = Color3.fromRGB(35, 38, 58),
-    NightOutdoorAmbient = Color3.fromRGB(25, 28, 46),
-    NightBrightness = 0.9,
-
-    AtmosphereDensity = 0.3,
-    AtmosphereOffset = 0.25,
-    DayAtmosphereColor = Color3.fromRGB(199, 199, 199),
-    DayAtmosphereDecay = Color3.fromRGB(112, 125, 153),
-    DayAtmosphereGlare = 0.2,
-    DayAtmosphereHaze = 1.3,
-    NightAtmosphereColor = Color3.fromRGB(40, 45, 70),
-    NightAtmosphereDecay = Color3.fromRGB(18, 20, 35),
-    NightAtmosphereGlare = 0,
-    NightAtmosphereHaze = 1.7,
-
-    CloudsCover = 0.38,
-    CloudsDensity = 0.55,
-    DayCloudsColor = Color3.fromRGB(255, 255, 255),
-    NightCloudsColor = Color3.fromRGB(120, 130, 160),
-}
-
-return EnvironmentConfig
-]]></ProtectedString>
-				</Properties>
-			</Item>
 		</Item>
 		<Item class="Folder" referent="RBX_RemotesFolder">
 			<Properties>
@@ -4797,6 +4956,11 @@ return EnvironmentConfig
 			<Item class="RemoteEvent" referent="RBX_StreamChoiceResult">
 				<Properties>
 					<string name="Name">StreamChoiceResult</string>
+				</Properties>
+			</Item>
+			<Item class="RemoteEvent" referent="RBX_FlipCar">
+				<Properties>
+					<string name="Name">FlipCar</string>
 				</Properties>
 			</Item>
 		</Item>
@@ -4859,6 +5023,17 @@ local function setupLeaderstats(player: Player)
     rebirths.Parent = leaderstats
 
     leaderstats.Parent = player
+
+    -- Окремі лічильники підписників для кожної платформи
+    local yt = (player:GetAttribute("YouTubeSubs") :: number?) or 0
+    local tw = (player:GetAttribute("TwitchSubs") :: number?) or 0
+    local tt = (player:GetAttribute("TikTokSubs") :: number?) or 0
+    if yt == 0 and tw == 0 and tt == 0 and hype.Value > 0 then
+        yt = hype.Value
+    end
+    player:SetAttribute("YouTubeSubs", yt)
+    player:SetAttribute("TwitchSubs", tw)
+    player:SetAttribute("TikTokSubs", tt)
 end
 
 -- Обробка нових гравців
@@ -5056,14 +5231,15 @@ local function updateOverhead(character: Model, player: Player)
 
         local isVIP = player:GetAttribute("IsVIP") == true
         local rebirths = (player:GetAttribute("Rebirths") :: number?) or 0
-        local rebirthTag = if rebirths > 0 then `⭐[Rebirth {rebirths}] ` else ""
+        local tierReward = if rebirths > 0 then (StreamConfig :: any).GetRebirthReward(rebirths) else nil
+        local rebirthTag = if tierReward then `{tierReward.TitleTag} ` elseif rebirths > 0 then `⭐[Rebirth {rebirths}] ` else ""
 
         if cLabel then
             if isVIP then
                 cLabel.Text = `👑 [VIP] {rebirthTag}{channelName}`
                 cLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
             else
-                cLabel.Text = `📺 {rebirthTag}{channelName}`
+                cLabel.Text = `{rebirthTag}{channelName}`
                 cLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
             end
         end
@@ -5185,25 +5361,193 @@ local function equipPhone(player: Player)
 end
 
 --------------------------------------------------------------------------------
--- Керування ПК-монітором та робочим столом (PC Battlestation)
+-- 3D Кнопки YouTube на стіні над сетапом (YouTube Play Buttons Wall of Fame)
 --------------------------------------------------------------------------------
 local DESK_POSITION = Vector3.new(0, 4.5, -70)
+
+local function updateStudioAwards(player: Player)
+    local rebirths = (player:GetAttribute("Rebirths") :: number?) or 0
+    if rebirths <= 0 then return end
+
+    local awardsFolder = workspace:FindFirstChild("YouTubeAwardsWall") :: Folder?
+    if not awardsFolder then
+        awardsFolder = Instance.new("Folder")
+        awardsFolder.Name = "YouTubeAwardsWall"
+        awardsFolder.Parent = workspace
+    end
+
+    local xOffsets = {
+        [1] = -4.0,
+        [2] = -2.0,
+        [3] = 0.0,
+        [4] = 2.0,
+        [5] = 4.0,
+    }
+
+    local channelName = player:GetAttribute("ChannelName") or (player.DisplayName .. " TV")
+
+    for lvl = 1, math.min(rebirths, 5) do
+        local plaqueName = `Award_Tier_{lvl}`
+        local tier = (StreamConfig :: any).RebirthTiers[lvl]
+        if not tier then continue end
+
+        local existingModel = awardsFolder:FindFirstChild(plaqueName) :: Model?
+        if existingModel then
+            -- Update channel name if already exists
+            local face = existingModel:FindFirstChild("FacePlate") :: BasePart?
+            local sg = face and face:FindFirstChild("PlaqueGui") :: SurfaceGui?
+            local bg = sg and sg:FindFirstChildOfClass("Frame")
+            local nameLbl = bg and bg:FindFirstChild("NameLabel") :: TextLabel?
+            if nameLbl then
+                nameLbl.Text = channelName
+            end
+            continue
+        end
+
+        local plaqueModel = Instance.new("Model")
+        plaqueModel.Name = plaqueName
+
+        local posX = xOffsets[lvl] or (lvl * 2.0 - 6.0)
+        local posY = 8.6
+        local posZ = -73.15
+
+        -- 1. Outer Frame (Shadow box brushed metal frame)
+        local frame = Instance.new("Part")
+        frame.Name = "Frame"
+        frame.Size = Vector3.new(1.7, 2.2, 0.12)
+        frame.CFrame = CFrame.new(posX, posY, posZ)
+        frame.Anchored = true
+        frame.CanCollide = false
+        frame.Material = Enum.Material.Metal
+        frame.Color = Color3.fromRGB(18, 20, 26)
+        frame.Parent = plaqueModel
+
+        -- 2. Inner Plaque Face
+        local face = Instance.new("Part")
+        face.Name = "FacePlate"
+        face.Size = Vector3.new(1.5, 2.0, 0.04)
+        face.CFrame = CFrame.new(posX, posY, posZ + 0.05)
+        face.Anchored = true
+        face.CanCollide = false
+        face.Material = tier.Material
+        face.Color = tier.PlaqueColor
+        face.Parent = plaqueModel
+
+        -- 3. Point Light Glow
+        local glow = Instance.new("PointLight")
+        glow.Color = tier.GlowColor
+        glow.Brightness = 1.0
+        glow.Range = 6
+        glow.Parent = face
+
+        -- 4. SurfaceGui for Authentic YouTube Button Inscription
+        local sg = Instance.new("SurfaceGui")
+        sg.Name = "PlaqueGui"
+        sg.Face = Enum.NormalId.Front
+        sg.CanvasSize = Vector2.new(300, 400)
+        sg.LightInfluence = 0
+        sg.SizingMode = Enum.SurfaceGuiSizingMode.FixedSize
+        sg.Parent = face
+
+        local bg = Instance.new("Frame")
+        bg.Size = UDim2.new(1, 0, 1, 0)
+        bg.BackgroundTransparency = 1
+        bg.Parent = sg
+
+        -- Red YouTube Play Button Icon
+        local playBtnBg = Instance.new("Frame")
+        playBtnBg.Size = UDim2.new(0, 120, 0, 84)
+        playBtnBg.Position = UDim2.new(0.5, -60, 0, 36)
+        playBtnBg.BackgroundColor3 = (lvl == 3) and Color3.fromRGB(0, 200, 255) or ((lvl == 5) and Color3.fromRGB(200, 10, 40) or Color3.fromRGB(230, 33, 23))
+        playBtnBg.BorderSizePixel = 0
+        playBtnBg.Parent = bg
+        local pbc = Instance.new("UICorner"); pbc.CornerRadius = UDim.new(0, 24); pbc.Parent = playBtnBg
+
+        local playTriangle = Instance.new("TextLabel")
+        playTriangle.Size = UDim2.new(1, 0, 1, 0)
+        playTriangle.BackgroundTransparency = 1
+        playTriangle.Font = Enum.Font.GothamBold
+        playTriangle.TextSize = 42
+        playTriangle.TextColor3 = Color3.fromRGB(255, 255, 255)
+        playTriangle.Text = "▶"
+        playTriangle.Parent = playBtnBg
+
+        -- Inscription
+        local ytLogo = Instance.new("TextLabel")
+        ytLogo.Size = UDim2.new(1, 0, 0, 30)
+        ytLogo.Position = UDim2.new(0, 0, 0, 136)
+        ytLogo.BackgroundTransparency = 1
+        ytLogo.Font = Enum.Font.GothamBlack
+        ytLogo.TextSize = 22
+        ytLogo.TextColor3 = (lvl == 2) and Color3.fromRGB(120, 90, 10) or Color3.fromRGB(25, 25, 30)
+        ytLogo.Text = "YouTube"
+        ytLogo.Parent = bg
+
+        local presTo = Instance.new("TextLabel")
+        presTo.Size = UDim2.new(1, 0, 0, 18)
+        presTo.Position = UDim2.new(0, 0, 0, 172)
+        presTo.BackgroundTransparency = 1
+        presTo.Font = Enum.Font.GothamMedium
+        presTo.TextSize = 13
+        presTo.TextColor3 = (lvl == 2) and Color3.fromRGB(100, 75, 10) or Color3.fromRGB(60, 60, 70)
+        presTo.Text = "PRESENTED TO"
+        presTo.Parent = bg
+
+        local nameLabel = Instance.new("TextLabel")
+        nameLabel.Name = "NameLabel"
+        nameLabel.Size = UDim2.new(1, -20, 0, 36)
+        nameLabel.Position = UDim2.new(0, 10, 0, 196)
+        nameLabel.BackgroundTransparency = 1
+        nameLabel.Font = Enum.Font.GothamBlack
+        nameLabel.TextSize = 20
+        nameLabel.TextColor3 = (lvl == 2) and Color3.fromRGB(80, 50, 0) or Color3.fromRGB(10, 10, 15)
+        nameLabel.TextScaled = true
+        nameLabel.Text = channelName
+        nameLabel.Parent = bg
+
+        local forPassing = Instance.new("TextLabel")
+        forPassing.Size = UDim2.new(1, 0, 0, 18)
+        forPassing.Position = UDim2.new(0, 0, 0, 240)
+        forPassing.BackgroundTransparency = 1
+        forPassing.Font = Enum.Font.Gotham
+        forPassing.TextSize = 12
+        forPassing.TextColor3 = (lvl == 2) and Color3.fromRGB(100, 75, 10) or Color3.fromRGB(70, 70, 80)
+        forPassing.Text = "FOR PASSING"
+        forPassing.Parent = bg
+
+        local milestoneLabel = Instance.new("TextLabel")
+        milestoneLabel.Size = UDim2.new(1, 0, 0, 32)
+        milestoneLabel.Position = UDim2.new(0, 0, 0, 262)
+        milestoneLabel.BackgroundTransparency = 1
+        milestoneLabel.Font = Enum.Font.GothamBold
+        milestoneLabel.TextSize = 17
+        milestoneLabel.TextColor3 = (lvl == 2) and Color3.fromRGB(80, 50, 0) or Color3.fromRGB(15, 15, 20)
+        milestoneLabel.Text = tier.MilestoneText:upper()
+        milestoneLabel.Parent = bg
+
+        plaqueModel.Parent = awardsFolder
+    end
+end
 
 --------------------------------------------------------------------------------
 -- Керування ПК-монітором, веб-камерою та сетапом (PC Battlestation WebCam)
 --------------------------------------------------------------------------------
-local DESK_POSITION = Vector3.new(0, 4.5, -70)
 local webcamLoopThread: thread? = nil
+local monitorChatLoopThread: thread? = nil
 
 local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platformStr: string?, player: Player?)
     local mainMon = workspace:FindFirstChild("MainMonitorScreen", true) :: BasePart?
     local leftMon = workspace:FindFirstChild("LeftMonitorScreen", true) :: BasePart?
     if not mainMon then return end
 
-    -- Cancel previous webcam animation
+    -- Cancel previous webcam and monitor chat animation loops
     if webcamLoopThread then
         task.cancel(webcamLoopThread)
         webcamLoopThread = nil
+    end
+    if monitorChatLoopThread then
+        task.cancel(monitorChatLoopThread)
+        monitorChatLoopThread = nil
     end
 
     local sg = mainMon:FindFirstChild("MonitorGui") :: SurfaceGui?
@@ -5226,7 +5570,7 @@ local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platf
     bgFrame.BorderSizePixel = 0
     bgFrame.Parent = sg
 
-    -- Setup left secondary monitor (Chat / Dashboard)
+    -- Setup left secondary monitor (Live Scrolling Fast Chat!)
     if leftMon then
         local leftSg = leftMon:FindFirstChild("LeftMonitorGui") :: SurfaceGui?
         if not leftSg then
@@ -5242,39 +5586,200 @@ local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platf
 
         local leftBg = Instance.new("Frame")
         leftBg.Size = UDim2.new(1, 0, 1, 0)
-        leftBg.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
+        leftBg.BackgroundColor3 = Color3.fromRGB(14, 16, 22)
         leftBg.BorderSizePixel = 0
         leftBg.Parent = leftSg
 
-        local leftHeader = Instance.new("TextLabel")
-        leftHeader.Size = UDim2.new(1, 0, 0, 38)
-        leftHeader.BackgroundColor3 = Color3.fromRGB(24, 28, 40)
+        -- Header Bar
+        local leftHeader = Instance.new("Frame")
+        leftHeader.Size = UDim2.new(1, 0, 0, 42)
+        leftHeader.BackgroundColor3 = Color3.fromRGB(22, 26, 38)
         leftHeader.BorderSizePixel = 0
-        leftHeader.Font = Enum.Font.GothamBold
-        leftHeader.TextSize = 16
-        leftHeader.TextColor3 = Color3.fromRGB(255, 215, 0)
-        leftHeader.Text = isLive and `📊 LIVE METRICS ({platformStr or "STREAM"})` or "📊 DASHBOARD STANDBY"
         leftHeader.Parent = leftBg
 
-        local leftStats = Instance.new("TextLabel")
-        leftStats.Size = UDim2.new(1, -20, 0, 95)
-        leftStats.Position = UDim2.new(0, 10, 0, 48)
-        leftStats.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
-        leftStats.Font = Enum.Font.GothamMedium
-        leftStats.TextSize = 14
-        leftStats.TextColor3 = Color3.fromRGB(200, 220, 255)
-        leftStats.TextXAlignment = Enum.TextXAlignment.Left
-        local lsCorner = Instance.new("UICorner"); lsCorner.CornerRadius = UDim.new(0, 8); lsCorner.Parent = leftStats
+        local headerStroke = Instance.new("UIStroke")
+        headerStroke.Color = Color3.fromRGB(45, 55, 75)
+        headerStroke.Thickness = 1
+        headerStroke.Parent = leftHeader
 
-        if isLive and player then
-            local leaderstats = player:FindFirstChild("leaderstats")
-            local cash = leaderstats and leaderstats:FindFirstChild("Money") and (leaderstats.Money :: IntValue).Value or 0
-            local subs = leaderstats and leaderstats:FindFirstChild("Hype") and (leaderstats.Hype :: IntValue).Value or 0
-            leftStats.Text = `  • Total Revenue: ${cash}\n  • Total Subscribers: {subs}\n  • Live Bitrate: 6000 Kbps (Clean)`
+        local titlePlat = platformStr and platformStr:gsub("+", " + ") or "STREAM"
+        local headerLabel = Instance.new("TextLabel")
+        headerLabel.Size = UDim2.new(1, -140, 1, 0)
+        headerLabel.Position = UDim2.new(0, 14, 0, 0)
+        headerLabel.BackgroundTransparency = 1
+        headerLabel.Font = Enum.Font.GothamBold
+        headerLabel.TextSize = 15
+        headerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        headerLabel.TextXAlignment = Enum.TextXAlignment.Left
+        headerLabel.Text = isLive and `💬 {titlePlat} LIVE CHAT` or "💬 STREAM CHAT • STANDBY"
+        headerLabel.Parent = leftHeader
+
+        local liveBadge = Instance.new("TextLabel")
+        liveBadge.Size = UDim2.new(0, 110, 0, 26)
+        liveBadge.Position = UDim2.new(1, -120, 0.5, -13)
+        liveBadge.BackgroundColor3 = isLive and Color3.fromRGB(231, 76, 60) or Color3.fromRGB(45, 55, 70)
+        liveBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
+        liveBadge.Font = Enum.Font.GothamBold
+        liveBadge.TextSize = 12
+        liveBadge.Text = isLive and "🔴 LIVE CHAT" or "⚪ OFFLINE"
+        liveBadge.Parent = leftHeader
+        local lbc = Instance.new("UICorner"); lbc.CornerRadius = UDim.new(0, 6); lbc.Parent = liveBadge
+
+        if not isLive or not player then
+            -- Offline message
+            local offlineBox = Instance.new("Frame")
+            offlineBox.Size = UDim2.new(1, -40, 0, 140)
+            offlineBox.Position = UDim2.new(0, 20, 0.5, -70)
+            offlineBox.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
+            offlineBox.BorderSizePixel = 0
+            offlineBox.Parent = leftBg
+            local obc = Instance.new("UICorner"); obc.CornerRadius = UDim.new(0, 10); obc.Parent = offlineBox
+            local obs = Instance.new("UIStroke"); obs.Color = Color3.fromRGB(45, 55, 75); obs.Thickness = 1; obs.Parent = offlineBox
+
+            local offText = Instance.new("TextLabel")
+            offText.Size = UDim2.new(1, -20, 1, 0)
+            offText.Position = UDim2.new(0, 10, 0, 0)
+            offText.BackgroundTransparency = 1
+            offText.Font = Enum.Font.GothamMedium
+            offText.TextSize = 14
+            offText.TextColor3 = Color3.fromRGB(160, 175, 205)
+            offText.TextWrapped = true
+            offText.Text = "📡 Stream Chat is offline.\n\nSit at the Battlestation and click Start Stream to go live and connect your high-speed audience chat!"
+            offText.Parent = offlineBox
         else
-            leftStats.Text = "  • Status: Idle (Ready to broadcast)\n  • Streamer Chair: Available\n  • Battlestation OS: Ready"
+            -- Live scrolling chat container (Біжить чат!)
+            local chatScroll = Instance.new("ScrollingFrame")
+            chatScroll.Name = "ChatScroll"
+            chatScroll.Size = UDim2.new(1, -20, 1, -52)
+            chatScroll.Position = UDim2.new(0, 10, 0, 47)
+            chatScroll.BackgroundTransparency = 1
+            chatScroll.BorderSizePixel = 0
+            chatScroll.ScrollBarThickness = 5
+            chatScroll.ScrollBarImageColor3 = Color3.fromRGB(65, 80, 115)
+            chatScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+            chatScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+            chatScroll.Parent = leftBg
+
+            local chatLayout = Instance.new("UIListLayout")
+            chatLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            chatLayout.Padding = UDim.new(0, 5)
+            chatLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+            chatLayout.Parent = chatScroll
+
+            local chatMessagesList: { Frame } = {}
+            local msgOrder = 0
+
+            local viewerNames = {
+                "AlexPro_UA", "CyberNinja", "NeonValkyrie", "PixelGamer", "Vortex99",
+                "TurboSlayer", "ShadowWolf", "GamerGirl_Kyiv", "StarWatcher", "RoboFanatic",
+                "GlitchMaster", "EchoStream", "HyperClutch", "OmegaGamer", "LunaPlayz",
+                "ZeroCool", "DarkKnight", "LuckyStrike", "PixelQueen", "BlazeRunner"
+            }
+
+            local badges = {
+                { Text = "[VIP]", Color = "#e67e22" },
+                { Text = "[SUB 6m]", Color = "#9b59b6" },
+                { Text = "[MOD]", Color = "#2ecc71" },
+                { Text = "[PRIME]", Color = "#3498db" },
+                { Text = "[FAN]", Color = "#f1c40f" },
+            }
+
+            local normalTexts = {
+                "POGGGGGGG 😲😲",
+                "W STREAMER!! 🔥🔥",
+                "THAT PLAY WAS SO CLEAN!",
+                "bro is on fire today!!",
+                "Ukranian streamer on top 🇺🇦💪",
+                "LMAOOOO 💀💀",
+                "sheeesh 240 FPS looking crisp",
+                "drop the setup specs in chat please!",
+                "CLIP IT RIGHT NOW 🎬🎬",
+                "Hype train level 3 incoming! 🚂🚂",
+                "chat spam W in the chat boys!",
+                "WWWWWWWWWW",
+                "how much did that chair cost bro??",
+                "Silver Play Button soon!! 🥈",
+                "GOAT streamer fr fr 🐐",
+                "Subbed with Prime! Enjoy! ⭐",
+                "BEST STREAM TODAY!! 🎉",
+                "GG WP 🔥🔥",
+                "can you play Horror Night next??",
+                "take my energyyyy ⚡⚡",
+                "INSANE REACTION TIME ⚡",
+                "Bro doesn't miss! 🎯",
+            }
+
+            local function addMessage(richTextStr: string, isSuperChat: boolean?)
+                msgOrder += 1
+
+                local msgCard = Instance.new("Frame")
+                msgCard.Name = `Msg_{msgOrder}`
+                msgCard.LayoutOrder = msgOrder
+                msgCard.BorderSizePixel = 0
+                msgCard.Parent = chatScroll
+
+                if isSuperChat then
+                    msgCard.Size = UDim2.new(1, -6, 0, 36)
+                    msgCard.BackgroundColor3 = Color3.fromRGB(38, 48, 28)
+                    local mcCorner = Instance.new("UICorner"); mcCorner.CornerRadius = UDim.new(0, 6); mcCorner.Parent = msgCard
+                    local mcStroke = Instance.new("UIStroke"); mcStroke.Color = Color3.fromRGB(255, 215, 0); mcStroke.Thickness = 1.2; mcStroke.Parent = msgCard
+                else
+                    msgCard.Size = UDim2.new(1, -6, 0, 26)
+                    msgCard.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
+                    local mcCorner = Instance.new("UICorner"); mcCorner.CornerRadius = UDim.new(0, 5); mcCorner.Parent = msgCard
+                end
+
+                local msgLabel = Instance.new("TextLabel")
+                msgLabel.Size = UDim2.new(1, -12, 1, 0)
+                msgLabel.Position = UDim2.new(0, 8, 0, 0)
+                msgLabel.BackgroundTransparency = 1
+                msgLabel.Font = Enum.Font.GothamMedium
+                msgLabel.TextSize = 13
+                msgLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                msgLabel.TextXAlignment = Enum.TextXAlignment.Left
+                msgLabel.RichText = true
+                msgLabel.Text = richTextStr
+                msgLabel.Parent = msgCard
+
+                table.insert(chatMessagesList, msgCard)
+                if #chatMessagesList > 22 then
+                    local oldest = table.remove(chatMessagesList, 1)
+                    if oldest then oldest:Destroy() end
+                end
+
+                chatScroll.CanvasPosition = Vector2.new(0, 999999)
+            end
+
+            -- Seed with initial chat messages so it starts lively
+            addMessage(`<font color="#8892b0"><b>[BOT]</b></font> <font color="#2ecc71">Welcome to the stream! Enjoy the broadcast!</font>`)
+            addMessage(`<font color="#9b59b6"><b>[VIP]</b></font> <font color="#3498db"><b>AlexPro_UA</b></font>: First in chat! Let's go! 🔥`)
+            addMessage(`<font color="#f1c40f"><b>[FAN]</b></font> <font color="#e67e22"><b>PixelGamer</b></font>: W streamer! Ready for ranked!`)
+
+            -- Running chat loop (біжить чат!)
+            monitorChatLoopThread = task.spawn(function()
+                while isStreaming[player] do
+                    task.wait(math.random(35, 80) / 100) -- Generates new message every 0.35s - 0.8s!
+                    if not isStreaming[player] or not chatScroll.Parent then break end
+
+                    local roll = math.random(1, 100)
+                    local vName = viewerNames[math.random(1, #viewerNames)]
+
+                    if roll <= 12 then
+                        -- SuperChat / Donation ($10 - $100)
+                        local donAmt = math.random(10, 100)
+                        addMessage(`💰 <font color="#ffd700"><b>{vName}</b> donated <b>${donAmt}</b>: "Awesome stream, keep it up!"</font>`, true)
+                    elseif roll <= 20 then
+                        -- New Subscriber announcement
+                        addMessage(`⭐ <font color="#55efc4"><b>{vName}</b></font> <font color="#a29bfe">just SUBSCRIBED to the channel! 🌟</font>`)
+                    else
+                        -- Standard live chat message
+                        local badge = badges[math.random(1, #badges)]
+                        local txt = normalTexts[math.random(1, #normalTexts)]
+                        addMessage(`<font color="{badge.Color}"><b>{badge.Text}</b></font> <font color="#74b9ff"><b>{vName}</b></font>: {txt}`)
+                    end
+                end
+            end)
         end
-        leftStats.Parent = leftBg
     end
 
     if not isLive or not player then
@@ -5350,15 +5855,20 @@ local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platf
     platBadge.Parent = topBar
     local pbCorner = Instance.new("UICorner"); pbCorner.CornerRadius = UDim.new(0, 6); pbCorner.Parent = platBadge
 
+    local ytSubs = if player then ((player:GetAttribute("YouTubeSubs") :: number?) or 0) else 0
+    local twSubs = if player then ((player:GetAttribute("TwitchSubs") :: number?) or 0) else 0
+    local ttSubs = if player then ((player:GetAttribute("TikTokSubs") :: number?) or 0) else 0
+
     local statsText = Instance.new("TextLabel")
-    statsText.Size = UDim2.new(0, 220, 1, 0)
-    statsText.Position = UDim2.new(1, -230, 0, 0)
+    statsText.Name = "StatsText"
+    statsText.Size = UDim2.new(0, 240, 1, 0)
+    statsText.Position = UDim2.new(1, -250, 0, 0)
     statsText.BackgroundTransparency = 1
-    statsText.Font = Enum.Font.Gotham
-    statsText.TextSize = 12
-    statsText.TextColor3 = Color3.fromRGB(160, 175, 200)
+    statsText.Font = Enum.Font.GothamBold
+    statsText.TextSize = 11
+    statsText.TextColor3 = Color3.fromRGB(190, 210, 235)
     statsText.TextXAlignment = Enum.TextXAlignment.Right
-    statsText.Text = "60 FPS | 6,000 Kbps | 0 Drop"
+    statsText.Text = if player and isLive then `🔴 {ytSubs}  🟣 {twSubs}  🎵 {ttSubs}` else "60 FPS | 6,000 Kbps"
     statsText.Parent = topBar
 
     -- 2. Left Main Gameplay / Talk Viewport (488 x 366)
@@ -5714,10 +6224,12 @@ local function startStream(player: Player, platformKey: string)
                     -- Бонуси від купленого заліза та ігор (CyberByte Tech Store)
                     local equipMoneyBonus = (player:GetAttribute("StreamMoneyBonus") :: number?) or 0
                     local equipHypeBonus = (player:GetAttribute("StreamHypeBonus") :: number?) or 0
-                    local audienceBonus = math.floor(hypeObj.Value * 0.003) -- Дуже плавний приріст від постійної аудиторії (0.3%)
+                    local audienceCashBonus = math.floor(hypeObj.Value * 0.003)
+                    -- Експоненційний ріст аудиторії: чим більше підписників, тим потужніша вірусність!
+                    local audienceHypeBonus = math.floor(hypeObj.Value * 0.004)
 
-                    local totalMoney = baseMoney + equipMoneyBonus + audienceBonus
-                    local totalHype = baseHype + equipHypeBonus
+                    local totalMoney = baseMoney + equipMoneyBonus + audienceCashBonus
+                    local totalHype = baseHype + equipHypeBonus + audienceHypeBonus
 
                     -- Штраф втоми (якщо енергія < 25% — дохід падає на 50%)
                     if currentEnergy < 25 and not hasInfiniteEnergy then
@@ -5767,7 +6279,40 @@ local function startStream(player: Player, platformKey: string)
                     end
 
                     moneyObj.Value += totalMoney
-                    hypeObj.Value += totalHype
+
+                    -- Розподіл підписників по обраних стрім-платформах (YouTube, Twitch, TikTok)
+                    local currentYT = (player:GetAttribute("YouTubeSubs") :: number?) or 0
+                    local currentTW = (player:GetAttribute("TwitchSubs") :: number?) or 0
+                    local currentTT = (player:GetAttribute("TikTokSubs") :: number?) or 0
+
+                    local numPlatforms = #validPlatforms
+                    if numPlatforms > 0 then
+                        local perPlatformHype = math.max(1, math.floor(totalHype / numPlatforms))
+                        for _, pKey in validPlatforms do
+                            if pKey == "YouTube" then
+                                currentYT += perPlatformHype
+                            elseif pKey == "Twitch" then
+                                currentTW += perPlatformHype
+                            elseif pKey == "TikTok" then
+                                currentTT += perPlatformHype
+                            end
+                        end
+                        player:SetAttribute("YouTubeSubs", currentYT)
+                        player:SetAttribute("TwitchSubs", currentTW)
+                        player:SetAttribute("TikTokSubs", currentTT)
+                        hypeObj.Value = currentYT + currentTW + currentTT
+
+                        if isPC then
+                            local mainMon = workspace:FindFirstChild("MainMonitorScreen", true)
+                            local topBar = mainMon and mainMon:FindFirstChild("MonitorGui") and mainMon.MonitorGui:FindFirstChild("MonitorBg") and mainMon.MonitorGui.MonitorBg:FindFirstChild("TopBar")
+                            local sTxt = topBar and topBar:FindFirstChild("StatsText") :: TextLabel?
+                            if sTxt then
+                                sTxt.Text = `🔴 {currentYT}  🟣 {currentTW}  🎵 {currentTT}`
+                            end
+                        end
+                    else
+                        hypeObj.Value += totalHype
+                    end
 
                     -- Оновлення рангу стрімера для HUD
                     local rankTitle = "Potato Setup"
@@ -5950,6 +6495,9 @@ performRebirthRemote.OnServerEvent:Connect(function(player: Player)
 
         -- Скидання параметрів поточної кар'єри
         hypeObj.Value = 0
+        player:SetAttribute("YouTubeSubs", 0)
+        player:SetAttribute("TwitchSubs", 0)
+        player:SetAttribute("TikTokSubs", 0)
         local starterBonus = newRebirths * StreamConfig.Rebirth.StarterCashBonusPerRebirth
         moneyObj.Value = StreamConfig.StarterMoney + starterBonus
 
@@ -5965,9 +6513,19 @@ performRebirthRemote.OnServerEvent:Connect(function(player: Player)
             updateOverhead(player.Character, player)
         end
 
+        -- Оновлюємо 3D кнопки YouTube у студії над сетапом
+        updateStudioAwards(player)
+
+        local rewardInfo = (StreamConfig :: any).GetRebirthReward(newRebirths)
+
         -- Сповіщаємо клієнта та відкриваємо вікно вибору нової платформи
-        rebirthResultRemote:FireClient(player, "RebirthSuccess", newRebirths)
+        rebirthResultRemote:FireClient(player, "RebirthSuccess", newRebirths, rewardInfo)
         promptPlatformSelectRemote:FireClient(player, true)
+
+        local broadcastChat = remotesFolder:FindFirstChild("BroadcastSuperChat") :: RemoteEvent?
+        if broadcastChat then
+            broadcastChat:FireAllClients(player.DisplayName, 0, `🎉 Стрімер {player.DisplayName} розблокував {rewardInfo.ButtonIcon} {rewardInfo.ButtonNameUA} ({rewardInfo.MilestoneText})!`)
+        end
     else
         rebirthResultRemote:FireClient(player, "RebirthFailed", `Requires {reqSubs} Subs and ${reqMoney} Cash!`)
     end
@@ -6000,6 +6558,7 @@ setChannelNameRemote.OnServerEvent:Connect(function(player: Player, requestedNam
             equipPhone(player)
         end
     end
+    updateStudioAwards(player)
 end)
 
 local function onPlayerAdded(player: Player)
@@ -6011,9 +6570,16 @@ local function onPlayerAdded(player: Player)
         task.wait(0.5)
         if char.Parent ~= nil then
             updateOverhead(char, player)
+            updateStudioAwards(player)
             if isStreaming[player] then
                 equipPhone(player)
             end
+        end
+    end)
+
+    task.delay(1.5, function()
+        if player.Parent ~= nil then
+            updateStudioAwards(player)
         end
     end)
 end
@@ -6474,6 +7040,18 @@ local function ensureSurfaceGui(): boolean
     return true
 end
 
+local function formatNumber(n: number): string
+    if n >= 1_000_000 then
+        return string.format("%.1fM", n / 1_000_000):gsub("%.0M", "M")
+    elseif n >= 10_000 then
+        return string.format("%.1fK", n / 1_000):gsub("%.0K", "K")
+    else
+        local str = tostring(math.floor(n))
+        local formatted = str:reverse():gsub("(%d%d%d)", "%1,"):reverse()
+        return formatted:sub(1, 1) == "," and formatted:sub(2) or formatted
+    end
+end
+
 -- Головна функція оновлення табло
 local function updateLeaderboard()
     if not ensureSurfaceGui() or not container then
@@ -6481,16 +7059,22 @@ local function updateLeaderboard()
     end
 
     -- Збираємо всіх гравців
-    local playerList: { { Player: Player, Hype: number, Channel: string } } = {}
+    local playerList: { { Player: Player, Hype: number, YouTubeSubs: number, TwitchSubs: number, TikTokSubs: number, Channel: string } } = {}
     for _, player in Players:GetPlayers() do
         local leaderstats = player:FindFirstChild("leaderstats")
         local hypeVal = leaderstats and leaderstats:FindFirstChild("Hype") :: IntValue?
         local hype = hypeVal and hypeVal.Value or 0
+        local yt = (player:GetAttribute("YouTubeSubs") :: number?) or 0
+        local tw = (player:GetAttribute("TwitchSubs") :: number?) or 0
+        local tt = (player:GetAttribute("TikTokSubs") :: number?) or 0
         local channel = player:GetAttribute("ChannelName") or (player.DisplayName .. " TV")
 
         table.insert(playerList, {
             Player = player,
             Hype = hype,
+            YouTubeSubs = yt,
+            TwitchSubs = tw,
+            TikTokSubs = tt,
             Channel = tostring(channel),
         })
     end
@@ -6559,7 +7143,7 @@ local function updateLeaderboard()
 
         -- НАЗВА КАНАЛУ (Великий золотистий / білий акцент)
         local channelLabel = Instance.new("TextLabel")
-        channelLabel.Size = UDim2.new(1, -290, 0, 28)
+        channelLabel.Size = UDim2.new(1, -345, 0, 28)
         channelLabel.Position = UDim2.new(0, 115, 0, 4)
         channelLabel.BackgroundTransparency = 1
         channelLabel.Font = Enum.Font.GothamBold
@@ -6572,7 +7156,7 @@ local function updateLeaderboard()
 
         -- Streamer username
         local authorLabel = Instance.new("TextLabel")
-        authorLabel.Size = UDim2.new(1, -290, 0, 20)
+        authorLabel.Size = UDim2.new(1, -345, 0, 20)
         authorLabel.Position = UDim2.new(0, 115, 0, 30)
         authorLabel.BackgroundTransparency = 1
         authorLabel.Font = Enum.Font.Gotham
@@ -6582,17 +7166,37 @@ local function updateLeaderboard()
         authorLabel.Text = `Streamer: @{data.Player.DisplayName}`
         authorLabel.Parent = row
 
-        -- Кількість підписників (Hype)
-        local hypeLabel = Instance.new("TextLabel")
-        hypeLabel.Size = UDim2.new(0, 160, 1, 0)
-        hypeLabel.Position = UDim2.new(1, -170, 0, 0)
-        hypeLabel.BackgroundTransparency = 1
-        hypeLabel.Font = Enum.Font.GothamBold
-        hypeLabel.TextSize = 18
-        hypeLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
-        hypeLabel.TextXAlignment = Enum.TextXAlignment.Right
-        hypeLabel.Text = `⭐ {data.Hype} Subs`
-        hypeLabel.Parent = row
+        -- Контейнер розділених підписників (Total + YT / TW / TT)
+        local statsContainer = Instance.new("Frame")
+        statsContainer.Name = "StatsContainer"
+        statsContainer.Size = UDim2.new(0, 225, 1, 0)
+        statsContainer.Position = UDim2.new(1, -230, 0, 0)
+        statsContainer.BackgroundTransparency = 1
+        statsContainer.Parent = row
+
+        -- Кількість загальних підписників (Total Subs)
+        local totalLabel = Instance.new("TextLabel")
+        totalLabel.Size = UDim2.new(1, 0, 0, 26)
+        totalLabel.Position = UDim2.new(0, 0, 0, 4)
+        totalLabel.BackgroundTransparency = 1
+        totalLabel.Font = Enum.Font.GothamBold
+        totalLabel.TextSize = 17
+        totalLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+        totalLabel.TextXAlignment = Enum.TextXAlignment.Right
+        totalLabel.Text = `⭐ {formatNumber(data.Hype)} Subs`
+        totalLabel.Parent = statsContainer
+
+        -- Розділені підписники платформ: YouTube, Twitch, TikTok
+        local platformSubsLabel = Instance.new("TextLabel")
+        platformSubsLabel.Size = UDim2.new(1, 0, 0, 20)
+        platformSubsLabel.Position = UDim2.new(0, 0, 0, 30)
+        platformSubsLabel.BackgroundTransparency = 1
+        platformSubsLabel.Font = Enum.Font.GothamMedium
+        platformSubsLabel.TextSize = 11
+        platformSubsLabel.TextColor3 = Color3.fromRGB(195, 210, 235)
+        platformSubsLabel.TextXAlignment = Enum.TextXAlignment.Right
+        platformSubsLabel.Text = `🔴 {formatNumber(data.YouTubeSubs)}  🟣 {formatNumber(data.TwitchSubs)}  🎵 {formatNumber(data.TikTokSubs)}`
+        platformSubsLabel.Parent = statsContainer
     end
 end
 
@@ -6600,6 +7204,17 @@ end
 local function bindPlayer(player: Player)
     -- Оновлення при зміні атрибуту ChannelName
     player:GetAttributeChangedSignal("ChannelName"):Connect(function()
+        updateLeaderboard()
+    end)
+
+    -- Оновлення при зміні розділених підписників
+    player:GetAttributeChangedSignal("YouTubeSubs"):Connect(function()
+        updateLeaderboard()
+    end)
+    player:GetAttributeChangedSignal("TwitchSubs"):Connect(function()
+        updateLeaderboard()
+    end)
+    player:GetAttributeChangedSignal("TikTokSubs"):Connect(function()
         updateLeaderboard()
     end)
 
@@ -6816,123 +7431,6 @@ task.spawn(setupHoverboard)
 ]]></ProtectedString>
 			</Properties>
 		</Item>
-		<Item class="Script" referent="RBX_EnvironmentManager">
-			<Properties>
-				<string name="Name">EnvironmentManager</string>
-				<ProtectedString name="Source"><![CDATA[--!strict
-local Lighting = game:GetService("Lighting")
-local Workspace = game:GetService("Workspace")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
-local EnvironmentConfig = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("EnvironmentConfig") :: ModuleScript)
-
-Lighting.GeographicLatitude = EnvironmentConfig.GeographicLatitude
-Lighting.ClockTime = 12 -- старт ігрового дня о яскравому полудні
-
---------------------------------------------------------------------------------
--- Sky: небесна сфера з сонцем, місяцем і зірками (вбудований рушій Roblox,
--- сам показує/приховує місяць і зірки залежно від часу доби)
---------------------------------------------------------------------------------
-local sky = Lighting:FindFirstChildOfClass("Sky")
-if not sky then
-    sky = Instance.new("Sky")
-    sky.Parent = Lighting
-end
-
---------------------------------------------------------------------------------
--- Atmosphere: серпанок і сяйво навколо сонця/місяця
---------------------------------------------------------------------------------
-local atmosphere = Lighting:FindFirstChildOfClass("Atmosphere")
-if not atmosphere then
-    atmosphere = Instance.new("Atmosphere")
-    atmosphere.Parent = Lighting
-end
-atmosphere.Density = EnvironmentConfig.AtmosphereDensity
-atmosphere.Offset = EnvironmentConfig.AtmosphereOffset
-
---------------------------------------------------------------------------------
--- Глобальні рухомі хмари (вбудований шар Roblox, анімується сам у небі)
---------------------------------------------------------------------------------
-local clouds = Workspace:FindFirstChildOfClass("Clouds")
-if not clouds then
-    clouds = Instance.new("Clouds")
-    clouds.Parent = Workspace
-end
-clouds.Cover = EnvironmentConfig.CloudsCover
-clouds.Density = EnvironmentConfig.CloudsDensity
-
---------------------------------------------------------------------------------
--- Цикл дня і ночі: 45 хв день + 15 хв ніч, з плавним світанком/заходом.
--- Годинник рухається різною швидкістю вдень і вночі (не лінійно по колу),
--- щоб реальний час дня/ночі точно збігався з таймінгом з конфігу.
---------------------------------------------------------------------------------
-local function hoursBetween(fromHour: number, toHour: number): number
-    -- Кількість годин по колу від fromHour до toHour (з переходом через 24 за потреби)
-    local diff = toHour - fromHour
-    if diff <= 0 then
-        diff += 24
-    end
-    return diff
-end
-
-local nightHours = hoursBetween(EnvironmentConfig.NightStartHour, EnvironmentConfig.NightEndHour)
-local dayHours = 24 - nightHours
-
-local dayRatePerSecond = dayHours / EnvironmentConfig.DayLengthSeconds
-local nightRatePerSecond = nightHours / EnvironmentConfig.NightLengthSeconds
-
-local function isNightClockTime(clockTime: number): boolean
-    if EnvironmentConfig.NightStartHour > EnvironmentConfig.NightEndHour then
-        return clockTime >= EnvironmentConfig.NightStartHour or clockTime < EnvironmentConfig.NightEndHour
-    else
-        return clockTime >= EnvironmentConfig.NightStartHour and clockTime < EnvironmentConfig.NightEndHour
-    end
-end
-
--- 0 = повна ніч, 1 = повний день, плавно на межах світанку/заходу
-local function getDayFactor(clockTime: number): number
-    local sinceDawn = hoursBetween(EnvironmentConfig.NightEndHour, clockTime)
-    local transition = math.max(0.01, EnvironmentConfig.TransitionHours)
-
-    if sinceDawn < transition then
-        return sinceDawn / transition -- світанок: 0 -> 1
-    elseif sinceDawn < dayHours - transition then
-        return 1 -- повний день
-    elseif sinceDawn < dayHours then
-        return (dayHours - sinceDawn) / transition -- захід: 1 -> 0
-    else
-        return 0 -- повна ніч
-    end
-end
-
-task.spawn(function()
-    while true do
-        task.wait(1)
-
-        local night = isNightClockTime(Lighting.ClockTime)
-        local rate = night and nightRatePerSecond or dayRatePerSecond
-        Lighting.ClockTime = (Lighting.ClockTime + rate) % 24
-
-        local dayFactor = getDayFactor(Lighting.ClockTime)
-
-        Lighting.Ambient = EnvironmentConfig.NightAmbient:Lerp(EnvironmentConfig.DayAmbient, dayFactor)
-        Lighting.OutdoorAmbient = EnvironmentConfig.NightOutdoorAmbient:Lerp(EnvironmentConfig.DayOutdoorAmbient, dayFactor)
-        Lighting.Brightness = EnvironmentConfig.NightBrightness
-            + (EnvironmentConfig.DayBrightness - EnvironmentConfig.NightBrightness) * dayFactor
-
-        atmosphere.Color = EnvironmentConfig.NightAtmosphereColor:Lerp(EnvironmentConfig.DayAtmosphereColor, dayFactor)
-        atmosphere.Decay = EnvironmentConfig.NightAtmosphereDecay:Lerp(EnvironmentConfig.DayAtmosphereDecay, dayFactor)
-        atmosphere.Glare = EnvironmentConfig.NightAtmosphereGlare
-            + (EnvironmentConfig.DayAtmosphereGlare - EnvironmentConfig.NightAtmosphereGlare) * dayFactor
-        atmosphere.Haze = EnvironmentConfig.NightAtmosphereHaze
-            + (EnvironmentConfig.DayAtmosphereHaze - EnvironmentConfig.NightAtmosphereHaze) * dayFactor
-
-        clouds.Color = EnvironmentConfig.NightCloudsColor:Lerp(EnvironmentConfig.DayCloudsColor, dayFactor)
-    end
-end)
-]]></ProtectedString>
-			</Properties>
-		</Item>
 	</Item>
 	<Item class="StarterPlayer" referent="RBX_StarterPlayer">
 		<Properties>
@@ -6966,6 +7464,18 @@ screenGui.Name = "StreamGui"
 screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 screenGui.Parent = PlayerGui
+
+local function formatCompact(n: number): string
+    if n >= 1_000_000 then
+        return string.format("%.1fM", n / 1_000_000):gsub("%.0M", "M")
+    elseif n >= 10_000 then
+        return string.format("%.1fK", n / 1_000):gsub("%.0K", "K")
+    else
+        local str = tostring(math.floor(n))
+        local formatted = str:reverse():gsub("(%d%d%d)", "%1,"):reverse()
+        return formatted:sub(1, 1) == "," and formatted:sub(2) or formatted
+    end
+end
 
 --------------------------------------------------------------------------------
 -- 0. Hourly Boost Event Banner (Top-Center HUD)
@@ -7190,8 +7700,8 @@ end)
 --------------------------------------------------------------------------------
 local streamerHub = Instance.new("Frame")
 streamerHub.Name = "StreamerHub"
-streamerHub.Size = UDim2.new(0, 320, 0, 340)
-streamerHub.Position = UDim2.new(0.015, 0, 0.44, 0)
+streamerHub.Size = UDim2.new(0, 320, 0, 395)
+streamerHub.Position = UDim2.new(0.015, 0, 0.38, 0)
 streamerHub.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
 streamerHub.BackgroundTransparency = 0.12
 streamerHub.BorderSizePixel = 0
@@ -7203,7 +7713,7 @@ local hubStroke = Instance.new("UIStroke"); hubStroke.Color = Color3.fromRGB(48,
 -- Row 1: Channel Title + Quick Edit + Rebirth Badge
 local channelBar = Instance.new("Frame")
 channelBar.Name = "ChannelBar"
-channelBar.Size = UDim2.new(1, -16, 0, 32)
+channelBar.Size = UDim2.new(1, -16, 0, 52)
 channelBar.Position = UDim2.new(0, 8, 0, 8)
 channelBar.BackgroundColor3 = Color3.fromRGB(22, 27, 38)
 channelBar.BorderSizePixel = 0
@@ -7214,8 +7724,8 @@ local cbStroke = Instance.new("UIStroke"); cbStroke.Color = Color3.fromRGB(45, 5
 
 local channelTitleLabel = Instance.new("TextLabel")
 channelTitleLabel.Name = "ChannelTitleLabel"
-channelTitleLabel.Size = UDim2.new(1, -125, 1, 0)
-channelTitleLabel.Position = UDim2.new(0, 8, 0, 0)
+channelTitleLabel.Size = UDim2.new(1, -42, 0, 24)
+channelTitleLabel.Position = UDim2.new(0, 8, 0, 4)
 channelTitleLabel.BackgroundTransparency = 1
 channelTitleLabel.Font = Enum.Font.GothamBold
 channelTitleLabel.TextSize = 13
@@ -7227,34 +7737,36 @@ channelTitleLabel.Parent = channelBar
 
 local editChannelButton = Instance.new("TextButton")
 editChannelButton.Name = "EditChannelButton"
-editChannelButton.Size = UDim2.new(0, 24, 0, 24)
-editChannelButton.Position = UDim2.new(1, -120, 0.5, -12)
+editChannelButton.Size = UDim2.new(0, 28, 0, 22)
+editChannelButton.Position = UDim2.new(1, -32, 0, 5)
 editChannelButton.BackgroundColor3 = Color3.fromRGB(35, 45, 65)
 editChannelButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 editChannelButton.Font = Enum.Font.GothamBold
-editChannelButton.TextSize = 12
+editChannelButton.TextSize = 13
 editChannelButton.Text = "✏️"
 editChannelButton.Parent = channelBar
 local ecCorner = Instance.new("UICorner"); ecCorner.CornerRadius = UDim.new(0, 6); ecCorner.Parent = editChannelButton
 
 local rebirthHudBtn = Instance.new("TextButton")
 rebirthHudBtn.Name = "RebirthHudBtn"
-rebirthHudBtn.Size = UDim2.new(0, 90, 0, 24)
-rebirthHudBtn.Position = UDim2.new(1, -92, 0.5, -12)
-rebirthHudBtn.BackgroundColor3 = Color3.fromRGB(95, 40, 150)
+rebirthHudBtn.Size = UDim2.new(1, -16, 0, 22)
+rebirthHudBtn.Position = UDim2.new(0, 8, 0, 26)
+rebirthHudBtn.BackgroundColor3 = Color3.fromRGB(75, 30, 130)
 rebirthHudBtn.TextColor3 = Color3.fromRGB(255, 235, 120)
 rebirthHudBtn.Font = Enum.Font.GothamBold
-rebirthHudBtn.TextSize = 11
-rebirthHudBtn.Text = "🔄 REBIRTH (Lv. 0)"
+rebirthHudBtn.TextSize = 12
+rebirthHudBtn.TextScaled = false
+rebirthHudBtn.ClipsDescendants = false
+rebirthHudBtn.Text = "🔄 REBIRTH Lv.0"
 rebirthHudBtn.Parent = channelBar
 local rhbCorner = Instance.new("UICorner"); rhbCorner.CornerRadius = UDim.new(0, 6); rhbCorner.Parent = rebirthHudBtn
-local rhbStroke = Instance.new("UIStroke"); rhbStroke.Color = Color3.fromRGB(255, 215, 0); rhbStroke.Thickness = 1.2; rhbStroke.Parent = rebirthHudBtn
+local rhbStroke = Instance.new("UIStroke"); rhbStroke.Color = Color3.fromRGB(255, 215, 0); rhbStroke.Thickness = 1.5; rhbStroke.Parent = rebirthHudBtn
 
 -- Row 2: Contract Badge & Live Platform Indicators
 local platformsRowBar = Instance.new("Frame")
 platformsRowBar.Name = "PlatformsRowBar"
 platformsRowBar.Size = UDim2.new(1, -16, 0, 24)
-platformsRowBar.Position = UDim2.new(0, 8, 0, 44)
+platformsRowBar.Position = UDim2.new(0, 8, 0, 64)
 platformsRowBar.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
 platformsRowBar.BorderSizePixel = 0
 platformsRowBar.Parent = streamerHub
@@ -7381,11 +7893,156 @@ LocalPlayer:GetAttributeChangedSignal("IsStreamingTwitch"):Connect(updatePlatfor
 LocalPlayer:GetAttributeChangedSignal("IsStreamingTikTok"):Connect(updatePlatformsRow)
 updatePlatformsRow()
 
--- Row 3: Setup Quality Rank + Compact Energy Meter
+-- Row 3: Separated Platform Subscribers Bar (YouTube, Twitch, TikTok)
+local separatedSubsBar = Instance.new("Frame")
+separatedSubsBar.Name = "SeparatedSubsBar"
+separatedSubsBar.Size = UDim2.new(1, -16, 0, 38)
+separatedSubsBar.Position = UDim2.new(0, 8, 0, 92)
+separatedSubsBar.BackgroundTransparency = 1
+separatedSubsBar.BorderSizePixel = 0
+separatedSubsBar.Parent = streamerHub
+
+local subsLayout = Instance.new("UIListLayout")
+subsLayout.FillDirection = Enum.FillDirection.Horizontal
+subsLayout.Padding = UDim.new(0, 5)
+subsLayout.SortOrder = Enum.SortOrder.LayoutOrder
+subsLayout.Parent = separatedSubsBar
+
+-- Card 1: YouTube
+local ytCard = Instance.new("Frame")
+ytCard.Name = "YtCard"
+ytCard.LayoutOrder = 1
+ytCard.Size = UDim2.new(0.32, -2, 1, 0)
+ytCard.BackgroundColor3 = Color3.fromRGB(30, 16, 20)
+ytCard.BorderSizePixel = 0
+ytCard.Parent = separatedSubsBar
+local ytcCorner = Instance.new("UICorner"); ytcCorner.CornerRadius = UDim.new(0, 6); ytcCorner.Parent = ytCard
+local ytcStroke = Instance.new("UIStroke"); ytcStroke.Color = Color3.fromRGB(180, 45, 55); ytcStroke.Thickness = 1; ytcStroke.Parent = ytCard
+
+local ytHeader = Instance.new("TextLabel")
+ytHeader.Size = UDim2.new(1, 0, 0, 14)
+ytHeader.Position = UDim2.new(0, 0, 0, 3)
+ytHeader.BackgroundTransparency = 1
+ytHeader.Font = Enum.Font.GothamBold
+ytHeader.TextSize = 9
+ytHeader.TextColor3 = Color3.fromRGB(255, 120, 120)
+ytHeader.Text = "🔴 YouTube"
+ytHeader.Parent = ytCard
+
+local ytCountLabel = Instance.new("TextLabel")
+ytCountLabel.Name = "YtCountLabel"
+ytCountLabel.Size = UDim2.new(1, 0, 0, 18)
+ytCountLabel.Position = UDim2.new(0, 0, 0, 17)
+ytCountLabel.BackgroundTransparency = 1
+ytCountLabel.Font = Enum.Font.GothamBold
+ytCountLabel.TextSize = 11
+ytCountLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+ytCountLabel.Text = "0 Subs"
+ytCountLabel.Parent = ytCard
+
+-- Card 2: Twitch
+local twCard = Instance.new("Frame")
+twCard.Name = "TwCard"
+twCard.LayoutOrder = 2
+twCard.Size = UDim2.new(0.32, -2, 1, 0)
+twCard.BackgroundColor3 = Color3.fromRGB(26, 16, 36)
+twCard.BorderSizePixel = 0
+twCard.Parent = separatedSubsBar
+local twcCorner = Instance.new("UICorner"); twcCorner.CornerRadius = UDim.new(0, 6); twcCorner.Parent = twCard
+local twcStroke = Instance.new("UIStroke"); twcStroke.Color = Color3.fromRGB(140, 50, 220); twcStroke.Thickness = 1; twcStroke.Parent = twCard
+
+local twHeader = Instance.new("TextLabel")
+twHeader.Size = UDim2.new(1, 0, 0, 14)
+twHeader.Position = UDim2.new(0, 0, 0, 3)
+twHeader.BackgroundTransparency = 1
+twHeader.Font = Enum.Font.GothamBold
+twHeader.TextSize = 9
+twHeader.TextColor3 = Color3.fromRGB(210, 140, 255)
+twHeader.Text = "🟣 Twitch"
+twHeader.Parent = twCard
+
+local twCountLabel = Instance.new("TextLabel")
+twCountLabel.Name = "TwCountLabel"
+twCountLabel.Size = UDim2.new(1, 0, 0, 18)
+twCountLabel.Position = UDim2.new(0, 0, 0, 17)
+twCountLabel.BackgroundTransparency = 1
+twCountLabel.Font = Enum.Font.GothamBold
+twCountLabel.TextSize = 11
+twCountLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+twCountLabel.Text = "0 Subs"
+twCountLabel.Parent = twCard
+
+-- Card 3: TikTok
+local ttCard = Instance.new("Frame")
+ttCard.Name = "TtCard"
+ttCard.LayoutOrder = 3
+ttCard.Size = UDim2.new(0.32, -2, 1, 0)
+ttCard.BackgroundColor3 = Color3.fromRGB(12, 26, 32)
+ttCard.BorderSizePixel = 0
+ttCard.Parent = separatedSubsBar
+local ttcCorner = Instance.new("UICorner"); ttcCorner.CornerRadius = UDim.new(0, 6); ttcCorner.Parent = ttCard
+local ttcStroke = Instance.new("UIStroke"); ttcStroke.Color = Color3.fromRGB(0, 175, 200); ttcStroke.Thickness = 1; ttcStroke.Parent = ttCard
+
+local ttHeader = Instance.new("TextLabel")
+ttHeader.Size = UDim2.new(1, 0, 0, 14)
+ttHeader.Position = UDim2.new(0, 0, 0, 3)
+ttHeader.BackgroundTransparency = 1
+ttHeader.Font = Enum.Font.GothamBold
+ttHeader.TextSize = 9
+ttHeader.TextColor3 = Color3.fromRGB(80, 225, 245)
+ttHeader.Text = "🎵 TikTok"
+ttHeader.Parent = ttCard
+
+local ttCountLabel = Instance.new("TextLabel")
+ttCountLabel.Name = "TtCountLabel"
+ttCountLabel.Size = UDim2.new(1, 0, 0, 18)
+ttCountLabel.Position = UDim2.new(0, 0, 0, 17)
+ttCountLabel.BackgroundTransparency = 1
+ttCountLabel.Font = Enum.Font.GothamBold
+ttCountLabel.TextSize = 11
+ttCountLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+ttCountLabel.Text = "0 Fans"
+ttCountLabel.Parent = ttCard
+
+local function updatePlatformCounters()
+    local yt = (LocalPlayer:GetAttribute("YouTubeSubs") :: number?) or 0
+    local tw = (LocalPlayer:GetAttribute("TwitchSubs") :: number?) or 0
+    local tt = (LocalPlayer:GetAttribute("TikTokSubs") :: number?) or 0
+
+    ytCountLabel.Text = `{formatCompact(yt)} Subs`
+    twCountLabel.Text = `{formatCompact(tw)} Subs`
+    ttCountLabel.Text = `{formatCompact(tt)} Fans`
+
+    local isYT = LocalPlayer:GetAttribute("IsStreamingYouTube") == true
+    local isTwitch = LocalPlayer:GetAttribute("IsStreamingTwitch") == true
+    local isTikTok = LocalPlayer:GetAttribute("IsStreamingTikTok") == true
+
+    ytcStroke.Color = if isYT then Color3.fromRGB(255, 60, 60) else Color3.fromRGB(180, 45, 55)
+    ytcStroke.Thickness = if isYT then 1.8 else 1
+    ytCard.BackgroundColor3 = if isYT then Color3.fromRGB(48, 16, 22) else Color3.fromRGB(30, 16, 20)
+
+    twcStroke.Color = if isTwitch then Color3.fromRGB(185, 80, 255) else Color3.fromRGB(140, 50, 220)
+    twcStroke.Thickness = if isTwitch then 1.8 else 1
+    twCard.BackgroundColor3 = if isTwitch then Color3.fromRGB(40, 16, 55) else Color3.fromRGB(26, 16, 36)
+
+    ttcStroke.Color = if isTikTok then Color3.fromRGB(0, 235, 255) else Color3.fromRGB(0, 175, 200)
+    ttcStroke.Thickness = if isTikTok then 1.8 else 1
+    ttCard.BackgroundColor3 = if isTikTok then Color3.fromRGB(16, 38, 48) else Color3.fromRGB(12, 26, 32)
+end
+
+LocalPlayer:GetAttributeChangedSignal("YouTubeSubs"):Connect(updatePlatformCounters)
+LocalPlayer:GetAttributeChangedSignal("TwitchSubs"):Connect(updatePlatformCounters)
+LocalPlayer:GetAttributeChangedSignal("TikTokSubs"):Connect(updatePlatformCounters)
+LocalPlayer:GetAttributeChangedSignal("IsStreamingYouTube"):Connect(updatePlatformCounters)
+LocalPlayer:GetAttributeChangedSignal("IsStreamingTwitch"):Connect(updatePlatformCounters)
+LocalPlayer:GetAttributeChangedSignal("IsStreamingTikTok"):Connect(updatePlatformCounters)
+updatePlatformCounters()
+
+-- Row 4: Setup Quality Rank + Compact Energy Meter
 local setupBadge = Instance.new("Frame")
 setupBadge.Name = "SetupBadge"
 setupBadge.Size = UDim2.new(1, -16, 0, 22)
-setupBadge.Position = UDim2.new(0, 8, 0, 72)
+setupBadge.Position = UDim2.new(0, 8, 0, 134)
 setupBadge.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
 setupBadge.BorderSizePixel = 0
 setupBadge.Parent = streamerHub
@@ -7473,11 +8130,11 @@ end
 LocalPlayer:GetAttributeChangedSignal("Energy"):Connect(updateEnergy)
 updateEnergy()
 
--- Row 4: Integrated Live Chat Panel
+-- Row 5: Integrated Live Chat Panel
 local chatContainer = Instance.new("Frame")
 chatContainer.Name = "ChatContainer"
-chatContainer.Size = UDim2.new(1, -16, 1, -104)
-chatContainer.Position = UDim2.new(0, 8, 0, 98)
+chatContainer.Size = UDim2.new(1, -16, 1, -166)
+chatContainer.Position = UDim2.new(0, 8, 0, 160)
 chatContainer.BackgroundColor3 = Color3.fromRGB(16, 19, 27)
 chatContainer.BackgroundTransparency = 0.2
 chatContainer.BorderSizePixel = 0
@@ -7533,6 +8190,7 @@ rebirthBackdrop.Size = UDim2.new(1, 0, 1, 0)
 rebirthBackdrop.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 rebirthBackdrop.BackgroundTransparency = 0.6
 rebirthBackdrop.Visible = false
+rebirthBackdrop.Active = false
 rebirthBackdrop.ZIndex = 60
 rebirthBackdrop.Parent = screenGui
 
@@ -7575,6 +8233,7 @@ rwCloseBtn.Parent = rebirthWindow
 local rwcCorner = Instance.new("UICorner"); rwcCorner.CornerRadius = UDim.new(0, 8); rwcCorner.Parent = rwCloseBtn
 rwCloseBtn.MouseButton1Click:Connect(function()
     rebirthBackdrop.Visible = false
+    rebirthBackdrop.Active = false
 end)
 
 -- 1. Status Bar Card
@@ -7741,6 +8400,16 @@ rebirthActionBtn.ZIndex = 63
 rebirthActionBtn.Parent = rebirthWindow
 local rabCorner = Instance.new("UICorner"); rabCorner.CornerRadius = UDim.new(0, 10); rabCorner.Parent = rebirthActionBtn
 
+local function formatNumber(n: number): string
+    local formatted = tostring(math.floor(n))
+    local k
+    while true do
+        formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", "%1,%2")
+        if k == 0 then break end
+    end
+    return formatted
+end
+
 local function updateRebirthModal()
     local leaderstats = LocalPlayer:FindFirstChild("leaderstats")
     local hypeVal = leaderstats and leaderstats:FindFirstChild("Hype") :: IntValue?
@@ -7751,11 +8420,14 @@ local function updateRebirthModal()
     local currentCash = moneyVal and moneyVal.Value or 0
     local currentRebirths = rebirthsVal and rebirthsVal.Value or ((LocalPlayer:GetAttribute("Rebirths") :: number?) or 0)
 
-    rebirthHudBtn.Text = `🔄 REBIRTH (Lv. {currentRebirths})`
+    local nextLevel = currentRebirths + 1
+    local nextReward = (StreamConfig :: any).GetRebirthReward(nextLevel)
+
+    rebirthHudBtn.Text = `🔄 REBIRTH Lv.{currentRebirths}`
     statusLabel.Text = `⭐ Current: Rebirth Level {currentRebirths}  |  ⚡ Permanent Boost: +{currentRebirths * 50}%`
 
     local reqSubs, reqMoney = StreamConfig.GetRebirthRequirements(currentRebirths)
-    reqDetails.Text = `⭐ Subs: {currentSubs} / {reqSubs}  |  💵 Cash: ${currentCash} / ${reqMoney}`
+    reqDetails.Text = `⭐ Subs: {formatNumber(currentSubs)} / {formatNumber(reqSubs)}  |  💵 Cash: ${formatNumber(currentCash)} / ${formatNumber(reqMoney)}`
 
     local subPct = math.clamp(currentSubs / reqSubs, 0, 1)
     local cashPct = math.clamp(currentCash / reqMoney, 0, 1)
@@ -7765,15 +8437,18 @@ local function updateRebirthModal()
         Size = UDim2.new(overallPct, 0, 1, 0)
     }):Play()
 
+    rewTitle.Text = `🏆 НАГОРОДА ЗА РЕБІРС: {nextReward.ButtonIcon} {nextReward.ButtonNameUA}!`
+    rewList.Text = `• 🏆 ТРОФЕЙ YOUTUBE: 3D-кнопка {nextReward.ButtonNameUA} з'явиться на стіні над сетапом!\n• 👑 Престижний надголовий титул: {nextReward.TitleTag}\n• 🚀 +50% Постійний множник до заробітку (Cash & Subs)\n• 🔓 Розблокування контракту: Обирай нову платформу або Dual-Stream!\n• ⚡ +15 До максимального запасу енергії & +$100 стартових коштів!`
+
     if currentSubs >= reqSubs and currentCash >= reqMoney then
         rebirthActionBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
         rebirthActionBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        rebirthActionBtn.Text = `✨ PERFORM REBIRTH NOW (+50% BOOST!)`
+        rebirthActionBtn.Text = `✨ PERFORM REBIRTH NOW (+50% BOOST & {nextReward.ButtonIcon} BUTTON!)`
         rebirthActionBtn.Active = true
     else
         rebirthActionBtn.BackgroundColor3 = Color3.fromRGB(60, 70, 85)
         rebirthActionBtn.TextColor3 = Color3.fromRGB(160, 175, 195)
-        rebirthActionBtn.Text = `🔒 LOCKED (Need {reqSubs} Subs & ${reqMoney} Cash - {math.floor(overallPct * 100)}%)`
+        rebirthActionBtn.Text = `🔒 LOCKED (Need {formatNumber(reqSubs)} Subs & ${formatNumber(reqMoney)} Cash - {math.floor(overallPct * 100)}%)`
         rebirthActionBtn.Active = false
     end
 end
@@ -7781,11 +8456,13 @@ end
 rebirthHudBtn.MouseButton1Click:Connect(function()
     updateRebirthModal()
     rebirthBackdrop.Visible = true
+    rebirthBackdrop.Active = true
 end)
 
 rebirthActionBtn.MouseButton1Click:Connect(function()
     performRebirthRemote:FireServer()
     rebirthBackdrop.Visible = false
+    rebirthBackdrop.Active = false
 end)
 
 rebirthResultRemote.OnClientEvent:Connect(function(statusType: string, info: any)
@@ -8728,6 +9405,139 @@ local function togglePlatform(platId: string)
     refreshPlatformRows()
 end
 
+-- Render Individual Platform Rows
+for idx, p in platformsList do
+    local card = Instance.new("Frame")
+    card.Name = `Row_{p.Id}`
+    card.LayoutOrder = idx
+    card.Size = UDim2.new(1, 0, 0, 72)
+    card.BackgroundColor3 = Color3.fromRGB(24, 28, 38)
+    card.BorderSizePixel = 0
+    card.ZIndex = 33
+    card.Parent = cardsContainer
+
+    local cCorner = Instance.new("UICorner"); cCorner.CornerRadius = UDim.new(0, 10); cCorner.Parent = card
+    local cStroke = Instance.new("UIStroke"); cStroke.Color = Color3.fromRGB(50, 60, 80); cStroke.Thickness = 1; cStroke.Parent = card
+
+    -- Icon + Name Badge
+    local nameBadge = Instance.new("TextLabel")
+    nameBadge.Size = UDim2.new(0, 135, 0, 26)
+    nameBadge.Position = UDim2.new(0, 12, 0, 10)
+    nameBadge.BackgroundColor3 = Color3.fromHex(p.ColorHex)
+    nameBadge.Text = `{p.Icon} {p.Name}`
+    nameBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
+    nameBadge.Font = Enum.Font.GothamBold
+    nameBadge.TextSize = 12
+    nameBadge.ZIndex = 34
+    nameBadge.Parent = card
+    local nbCorner = Instance.new("UICorner"); nbCorner.CornerRadius = UDim.new(0, 6); nbCorner.Parent = nameBadge
+
+    -- Stats label
+    local stats = Instance.new("TextLabel")
+    stats.Size = UDim2.new(1, -275, 0, 26)
+    stats.Position = UDim2.new(0, 155, 0, 10)
+    stats.BackgroundTransparency = 1
+    stats.Font = Enum.Font.GothamBold
+    stats.TextSize = 12
+    stats.TextColor3 = Color3.fromRGB(255, 215, 0)
+    stats.TextXAlignment = Enum.TextXAlignment.Left
+    stats.Text = `💵 {p.MoneyMult} Cash  |  ⭐ {p.HypeMult} Subs`
+    stats.ZIndex = 34
+    stats.Parent = card
+
+    -- Description
+    local desc = Instance.new("TextLabel")
+    desc.Size = UDim2.new(1, -145, 0, 22)
+    desc.Position = UDim2.new(0, 12, 0, 40)
+    desc.BackgroundTransparency = 1
+    desc.Font = Enum.Font.Gotham
+    desc.TextSize = 11
+    desc.TextColor3 = Color3.fromRGB(165, 175, 195)
+    desc.TextXAlignment = Enum.TextXAlignment.Left
+    desc.Text = p.Desc
+    desc.ZIndex = 34
+    desc.Parent = card
+
+    -- Select Toggle Button
+    local selBtn = Instance.new("TextButton")
+    selBtn.Name = "SelectBtn"
+    selBtn.Size = UDim2.new(0, 115, 0, 38)
+    selBtn.Position = UDim2.new(1, -125, 0.5, -19)
+    selBtn.BackgroundColor3 = Color3.fromRGB(40, 50, 70)
+    selBtn.TextColor3 = Color3.fromRGB(180, 195, 220)
+    selBtn.Font = Enum.Font.GothamBold
+    selBtn.TextSize = 12
+    selBtn.Text = "Select"
+    selBtn.ZIndex = 35
+    selBtn.Parent = card
+    local sbCorner = Instance.new("UICorner"); sbCorner.CornerRadius = UDim.new(0, 8); sbCorner.Parent = selBtn
+
+    selBtn.MouseButton1Click:Connect(function()
+        togglePlatform(p.Id)
+    end)
+
+    -- Also clicking card row toggles
+    local clickArea = Instance.new("TextButton")
+    clickArea.Size = UDim2.new(1, -130, 1, 0)
+    clickArea.BackgroundTransparency = 1
+    clickArea.Text = ""
+    clickArea.ZIndex = 34
+    clickArea.Parent = card
+    clickArea.MouseButton1Click:Connect(function()
+        togglePlatform(p.Id)
+    end)
+
+    platformRowCards[p.Id] = card
+    platformSelectBtns[p.Id] = selBtn
+    platformClickAreas[p.Id] = clickArea
+end
+
+launchBtn.MouseButton1Click:Connect(function()
+    local existingLock = LocalPlayer:GetAttribute("LockedPlatform")
+    if existingLock and existingLock ~= "" then
+        backdrop.Visible = false
+        return
+    end
+
+    local selectedList = {}
+    for _, p in platformsList do
+        if selectedPlatforms[p.Id] then
+            table.insert(selectedList, p.Id)
+        end
+    end
+
+    if #selectedList == 0 then
+        table.insert(selectedList, "YouTube")
+    end
+
+    local platformArg = table.concat(selectedList, "+")
+    lockPlatformRemote:FireServer(platformArg)
+    backdrop.Visible = false
+end)
+
+LocalPlayer:GetAttributeChangedSignal("LockedPlatform"):Connect(function()
+    syncWithLock()
+    updateModeBanner()
+    refreshPlatformRows()
+    updateLockState()
+end)
+
+LocalPlayer:GetAttributeChangedSignal("Owned_MultiStreamLicense"):Connect(function()
+    updateModeBanner()
+    local hasSplit = LocalPlayer:GetAttribute("Owned_MultiStreamLicense") == true
+    if not hasSplit and getSelectedCount() > 1 then
+        for k in selectedPlatforms do
+            selectedPlatforms = { [k] = true }
+            break
+        end
+    end
+    refreshPlatformRows()
+    updateLockState()
+end)
+
+updateModeBanner()
+refreshPlatformRows()
+updateLockState()
 
 --------------------------------------------------------------------------------
 -- Open Menu Listener & Global Function
@@ -8737,6 +9547,14 @@ local function openMenu(isRebirth: boolean?)
     if isRebirth or not locked or locked == "" then
         if not selectedPlatforms or not next(selectedPlatforms) then
             selectedPlatforms = { YouTube = true }
+        end
+        local hasSplit = LocalPlayer:GetAttribute("Owned_MultiStreamLicense") == true
+        if hasSplit and getSelectedCount() < 2 then
+            if selectedPlatforms["YouTube"] then
+                selectedPlatforms["Twitch"] = true
+            else
+                selectedPlatforms["YouTube"] = true
+            end
         end
     else
         syncWithLock()
@@ -9009,6 +9827,7 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "ShopGui"
 screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.DisplayOrder = 5
 screenGui.Parent = PlayerGui
 
 -- Floating Quick Shop Button on screen
@@ -9021,6 +9840,9 @@ openShopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 openShopBtn.Font = Enum.Font.GothamBold
 openShopBtn.TextSize = 15
 openShopBtn.Text = "🛒 Shop"
+openShopBtn.ZIndex = 10
+openShopBtn.AutoButtonColor = true
+openShopBtn.Active = true
 openShopBtn.Parent = screenGui
 
 local btnCorner = Instance.new("UICorner")
@@ -10049,34 +10871,13 @@ end)
 		<Properties>
 			<string name="Name">Lighting</string>
 			<Color3 name="Ambient">
-				<R>0.549</R><G>0.569</G><B>0.647</B>
+				<R>0.35</R><G>0.35</G><B>0.4</B>
 			</Color3>
 			<Color3 name="OutdoorAmbient">
-				<R>0.588</R><G>0.647</G><B>0.765</B>
+				<R>0.3</R><G>0.3</G><B>0.35</B>
 			</Color3>
-			<float name="Brightness">2.6</float>
-			<float name="ClockTime">12.0</float>
-			<float name="GeographicLatitude">35</float>
+			<float name="Brightness">1.8</float>
+			<float name="ClockTime">19.0</float>
 		</Properties>
-		<Item class="Sky" referent="RBX_Sky">
-			<Properties>
-				<string name="Name">Sky</string>
-			</Properties>
-		</Item>
-		<Item class="Atmosphere" referent="RBX_Atmosphere">
-			<Properties>
-				<string name="Name">Atmosphere</string>
-				<float name="Density">0.3</float>
-				<float name="Offset">0.25</float>
-				<Color3 name="Color">
-					<R>0.780</R><G>0.780</G><B>0.780</B>
-				</Color3>
-				<Color3 name="Decay">
-					<R>0.439</R><G>0.490</G><B>0.6</B>
-				</Color3>
-				<float name="Glare">0.2</float>
-				<float name="Haze">1.3</float>
-			</Properties>
-		</Item>
 	</Item>
 </roblox>
