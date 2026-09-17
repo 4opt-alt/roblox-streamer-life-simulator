@@ -189,11 +189,25 @@ streamButton.MouseButton1Click:Connect(function()
         -- Stop stream directly
         toggleStreamRemote:FireServer()
     else
-        -- Open Platform Selection modal!
-        if _G.OpenPlatformSelect then
-            _G.OpenPlatformSelect()
+        local lockedPlat = LocalPlayer:GetAttribute("LockedPlatform")
+        if not lockedPlat or lockedPlat == "" then
+            -- Platform not selected yet: open contract selection window
+            if _G.OpenPlatformSelect then
+                _G.OpenPlatformSelect(false)
+            end
         else
-            toggleStreamRemote:FireServer("YouTube")
+            -- Platform already locked: stream directly!
+            toggleStreamRemote:FireServer(lockedPlat)
+        end
+    end
+end)
+
+-- Prompt platform contract choice on join if not locked yet
+task.delay(2.5, function()
+    local locked = LocalPlayer:GetAttribute("LockedPlatform")
+    if not locked or locked == "" then
+        if _G.OpenPlatformSelect then
+            _G.OpenPlatformSelect(false)
         end
     end
 end)
