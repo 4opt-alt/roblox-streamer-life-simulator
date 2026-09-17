@@ -171,12 +171,15 @@ local function updateOverhead(character: Model, player: Player)
         local sLabel = container:FindFirstChild("StatsLabel") :: TextLabel?
 
         local isVIP = player:GetAttribute("IsVIP") == true
+        local rebirths = (player:GetAttribute("Rebirths") :: number?) or 0
+        local rebirthTag = if rebirths > 0 then `⭐[Rebirth {rebirths}] ` else ""
+
         if cLabel then
             if isVIP then
-                cLabel.Text = `👑 [VIP] {channelName}`
+                cLabel.Text = `👑 [VIP] {rebirthTag}{channelName}`
                 cLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
             else
-                cLabel.Text = `📺 {channelName}`
+                cLabel.Text = `📺 {rebirthTag}{channelName}`
                 cLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
             end
         end
