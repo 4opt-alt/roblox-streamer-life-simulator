@@ -4273,6 +4273,70 @@ local StreamConfig: ConfigType = {
         },
     },
 
+    -- Categories (IRL = Phone anywhere, Gaming & Just Chatting = PC Battlestation)
+    Categories = {
+        IRL = {
+            Id = "IRL",
+            Name = "📱 IRL",
+            Device = "Phone",
+            Description = "Mobile stream on phone! Roam anywhere in the city.",
+            Icon = "📱",
+            ColorHex = "#00F2FE",
+            MoneyMultiplier = 1.0,
+            HypeMultiplier = 1.35,
+            RequiresPC = false,
+        },
+        Gaming = {
+            Id = "Gaming",
+            Name = "🎮 Gaming",
+            Device = "PC",
+            Description = "Stream PC games at your Battlestation desk! +Bonus from Steam games.",
+            Icon = "🎮",
+            ColorHex = "#9B51E0",
+            MoneyMultiplier = 1.35,
+            HypeMultiplier = 1.15,
+            RequiresPC = true,
+        },
+        JustChatting = {
+            Id = "JustChatting",
+            Name = "🎙️ Just Chatting",
+            Device = "PC",
+            Description = "Talk show at your computer desk! High community donations and superchats.",
+            Icon = "🎙️",
+            ColorHex = "#FF9900",
+            MoneyMultiplier = 1.45,
+            HypeMultiplier = 1.10,
+            RequiresPC = true,
+        },
+    },
+
+    IRLComments = {
+        "Where are you heading today?",
+        "Show us the car!!",
+        "Burger Mart mukbang stream??",
+        "Nice weather out there!",
+        "Watch the street lol",
+        "IRL streams are so entertaining!",
+    },
+
+    GamingComments = {
+        "POG play!!",
+        "Insane clutch bro!",
+        "What rank are you in this game?",
+        "240 FPS looks buttery clean!",
+        "Nice gameplay!",
+        "Streamer cracked at games!",
+    },
+
+    JustChattingComments = {
+        "Deep thoughts today!",
+        "Facts, speak on it!",
+        "LMAO so true!",
+        "Read my superchat please!!",
+        "Best podcast / talk show!",
+        "Sending $5 for the great advice!",
+    },
+
     -- Dynamic Comments based on Streamer Status
     ViewerComments = {
         "hello streamer!",
