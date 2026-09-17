@@ -7758,8 +7758,8 @@ end)
 --------------------------------------------------------------------------------
 local streamerHub = Instance.new("Frame")
 streamerHub.Name = "StreamerHub"
-streamerHub.Size = UDim2.new(0, 320, 0, 340)
-streamerHub.Position = UDim2.new(0.015, 0, 0.44, 0)
+streamerHub.Size = UDim2.new(0, 320, 0, 395)
+streamerHub.Position = UDim2.new(0.015, 0, 0.38, 0)
 streamerHub.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
 streamerHub.BackgroundTransparency = 0.12
 streamerHub.BorderSizePixel = 0
