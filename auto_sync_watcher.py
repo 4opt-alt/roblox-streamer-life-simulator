@@ -3,6 +3,7 @@ import sys
 import time
 import subprocess
 import shutil
+import importlib
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -72,8 +73,15 @@ def check_and_pull_remote():
                 print(f"[{time.strftime('%H:%M:%S')}] [SUCCESS] Successfully pulled friend's updates!")
                 
                 # Rebuild place file and update Desktop
+                # (importlib.reload is required here: this watcher is a long-running
+                # process, so a plain "import build_rbxlx" only re-executes the module
+                # ONCE per process lifetime. Without reload(), every rebuild after the
+                # very first one silently uses the OLD in-memory code even though the
+                # .py file on disk was just updated by this same pull — which is how
+                # the hoverboard got reverted back into a car earlier.)
                 try:
                     import build_rbxlx
+                    importlib.reload(build_rbxlx)
                     build_rbxlx.create_rbxlx(auto_push=False)
                     print(f"[{time.strftime('%H:%M:%S')}] [BUILD] Rebuilt StreamerGame.rbxlx on Desktop with friend's new changes!")
                 except Exception as b_err:
@@ -99,6 +107,7 @@ def sync_to_github():
             else:
                 try:
                     import build_rbxlx
+                    importlib.reload(build_rbxlx)  # see comment above — avoids stale rebuilds
                     build_rbxlx.create_rbxlx(auto_push=False)
                 except Exception as b_err:
                     pass

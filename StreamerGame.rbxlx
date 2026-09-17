@@ -2955,7 +2955,7 @@
 				</Item>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2151">
+		<Item class="Part" referent="RBX_Part_2142">
 			<Properties>
 				<string name="Name">TechStoreFloor</string>
 				<bool name="Anchored">true</bool>
@@ -2976,7 +2976,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2152">
+		<Item class="Part" referent="RBX_Part_2143">
 			<Properties>
 				<string name="Name">TechStoreRoof</string>
 				<bool name="Anchored">true</bool>
@@ -2997,7 +2997,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2153">
+		<Item class="Part" referent="RBX_Part_2144">
 			<Properties>
 				<string name="Name">TechStoreBackWall</string>
 				<bool name="Anchored">true</bool>
@@ -3018,7 +3018,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2154">
+		<Item class="Part" referent="RBX_Part_2145">
 			<Properties>
 				<string name="Name">TechStoreSideWall1</string>
 				<bool name="Anchored">true</bool>
@@ -3039,7 +3039,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2155">
+		<Item class="Part" referent="RBX_Part_2146">
 			<Properties>
 				<string name="Name">TechStoreSideWall2</string>
 				<bool name="Anchored">true</bool>
@@ -3060,7 +3060,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2156">
+		<Item class="Part" referent="RBX_Part_2147">
 			<Properties>
 				<string name="Name">TechStoreGlassFront</string>
 				<bool name="Anchored">true</bool>
@@ -3081,7 +3081,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2157">
+		<Item class="Part" referent="RBX_Part_2148">
 			<Properties>
 				<string name="Name">TechStoreSignBoard</string>
 				<bool name="Anchored">true</bool>
@@ -3102,7 +3102,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2158">
+		<Item class="Part" referent="RBX_Part_2149">
 			<Properties>
 				<string name="Name">TechStoreSignNeon</string>
 				<bool name="Anchored">true</bool>
@@ -3121,7 +3121,7 @@
 				<token name="Material">288</token>
 				
 			</Properties>
-				<Item class="PointLight" referent="RBX_Part_2158_Light">
+				<Item class="PointLight" referent="RBX_Part_2149_Light">
 					<Properties>
 						<Color3 name="Color"><R>0.2</R><G>0.8</G><B>1.0</B></Color3>
 						<float name="Brightness">2.5</float>
@@ -3131,7 +3131,7 @@
 				</Item>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2159">
+		<Item class="Part" referent="RBX_Part_2150">
 			<Properties>
 				<string name="Name">TechCounter</string>
 				<bool name="Anchored">true</bool>
@@ -3199,7 +3199,7 @@
 				</Item>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2160">
+		<Item class="Part" referent="RBX_Part_2151">
 			<Properties>
 				<string name="Name">TechShowcaseGlass</string>
 				<bool name="Anchored">true</bool>
@@ -3220,7 +3220,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2161">
+		<Item class="Part" referent="RBX_Part_2152">
 			<Properties>
 				<string name="Name">TechShowcasePC1</string>
 				<bool name="Anchored">true</bool>
@@ -3241,7 +3241,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2162">
+		<Item class="Part" referent="RBX_Part_2153">
 			<Properties>
 				<string name="Name">TechShowcasePC2</string>
 				<bool name="Anchored">true</bool>
@@ -3256,13 +3256,13 @@
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
 					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4292742930</Color3uint8>
+				<Color3uint8 name="Color3uint8">4293994546</Color3uint8>
 				<token name="Material">256</token>
 				
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2163">
+		<Item class="Part" referent="RBX_Part_2154">
 			<Properties>
 				<string name="Name">GroceryFloor</string>
 				<bool name="Anchored">true</bool>
@@ -3283,7 +3283,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2164">
+		<Item class="Part" referent="RBX_Part_2155">
 			<Properties>
 				<string name="Name">GroceryRoof</string>
 				<bool name="Anchored">true</bool>
@@ -3304,7 +3304,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2165">
+		<Item class="Part" referent="RBX_Part_2156">
 			<Properties>
 				<string name="Name">GroceryBackWall</string>
 				<bool name="Anchored">true</bool>
@@ -3325,7 +3325,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2166">
+		<Item class="Part" referent="RBX_Part_2157">
 			<Properties>
 				<string name="Name">GrocerySideWall1</string>
 				<bool name="Anchored">true</bool>
@@ -3346,7 +3346,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2167">
+		<Item class="Part" referent="RBX_Part_2158">
 			<Properties>
 				<string name="Name">GrocerySideWall2</string>
 				<bool name="Anchored">true</bool>
@@ -3367,7 +3367,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2168">
+		<Item class="Part" referent="RBX_Part_2159">
 			<Properties>
 				<string name="Name">GroceryGlassFront</string>
 				<bool name="Anchored">true</bool>
@@ -3388,7 +3388,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2169">
+		<Item class="Part" referent="RBX_Part_2160">
 			<Properties>
 				<string name="Name">GrocerySignBoard</string>
 				<bool name="Anchored">true</bool>
@@ -3409,7 +3409,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2170">
+		<Item class="Part" referent="RBX_Part_2161">
 			<Properties>
 				<string name="Name">GrocerySignNeon</string>
 				<bool name="Anchored">true</bool>
@@ -3428,7 +3428,7 @@
 				<token name="Material">288</token>
 				
 			</Properties>
-				<Item class="PointLight" referent="RBX_Part_2170_Light">
+				<Item class="PointLight" referent="RBX_Part_2161_Light">
 					<Properties>
 						<Color3 name="Color"><R>1.0</R><G>0.8</G><B>0.2</B></Color3>
 						<float name="Brightness">2.5</float>
@@ -3438,7 +3438,7 @@
 				</Item>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2171">
+		<Item class="Part" referent="RBX_Part_2162">
 			<Properties>
 				<string name="Name">GroceryCounter</string>
 				<bool name="Anchored">true</bool>
@@ -3506,7 +3506,7 @@
 				</Item>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2172">
+		<Item class="Part" referent="RBX_Part_2163">
 			<Properties>
 				<string name="Name">TownSquarePlaza</string>
 				<bool name="Anchored">true</bool>
@@ -3527,7 +3527,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2173">
+		<Item class="Part" referent="RBX_Part_2164">
 			<Properties>
 				<string name="Name">LB_StandL</string>
 				<bool name="Anchored">true</bool>
@@ -3548,7 +3548,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2174">
+		<Item class="Part" referent="RBX_Part_2165">
 			<Properties>
 				<string name="Name">LB_StandR</string>
 				<bool name="Anchored">true</bool>
@@ -3569,7 +3569,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2175">
+		<Item class="Part" referent="RBX_Part_2166">
 			<Properties>
 				<string name="Name">LB_BackPanel</string>
 				<bool name="Anchored">true</bool>
@@ -3590,7 +3590,7 @@
 			</Properties>
 		</Item>
 
-		<Item class="Part" referent="RBX_Part_2176">
+		<Item class="Part" referent="RBX_Part_2167">
 			<Properties>
 				<string name="Name">LB_NeonGlow</string>
 				<bool name="Anchored">true</bool>
@@ -3609,7 +3609,7 @@
 				<token name="Material">288</token>
 				
 			</Properties>
-				<Item class="PointLight" referent="RBX_Part_2176_Light">
+				<Item class="PointLight" referent="RBX_Part_2167_Light">
 					<Properties>
 						<Color3 name="Color"><R>1.0</R><G>0.85</G><B>0.0</B></Color3>
 						<float name="Brightness">2.0</float>
@@ -3639,70 +3639,70 @@
 			</Properties>
 		</Item>
 			
-		<Item class="Model" referent="RBX_StarterCar">
+		<Item class="Model" referent="RBX_Hoverboard">
 			<Properties>
-				<string name="Name">StarterCar</string>
+				<string name="Name">Hoverboard</string>
 			</Properties>
 			
 		<Item class="Part" referent="RBX_Part_2134">
 			<Properties>
-				<string name="Name">CarChassis</string>
+				<string name="Name">HoverboardBody</string>
 				<bool name="Anchored">true</bool>
 				<bool name="CanCollide">true</bool>
 				<float name="Transparency">0</float>
 				<Vector3 name="size">
-					<X>7.0</X><Y>0.8</Y><Z>13.0</Z>
+					<X>1.6</X><Y>0.3</Y><Z>4.4</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>14</X><Y>1.8</Y><Z>-42</Z>
+					<X>14</X><Y>2.0</Y><Z>-42</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
 					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4292742930</Color3uint8>
-				<token name="Material">800</token>
+				<Color3uint8 name="Color3uint8">4279376444</Color3uint8>
+				<token name="Material">256</token>
 				
 			</Properties>
-				<Item class="ProximityPrompt" referent="RBX_CarDrivePrompt">
+				<Item class="ProximityPrompt" referent="RBX_HoverRidePrompt">
 					<Properties>
-						<string name="Name">DrivePrompt</string>
-						<string name="ObjectText">Starter Sedan</string>
-						<string name="ActionText">Drive Car (E)</string>
-						<float name="MaxActivationDistance">14</float>
+						<string name="Name">RidePrompt</string>
+						<string name="ObjectText">Galaxy Hoverboard</string>
+						<string name="ActionText">Ride (E)</string>
+						<float name="MaxActivationDistance">10</float>
 						<float name="HoldDuration">0</float>
 						<token name="KeyboardKeyCode">101</token>
 						<bool name="RequiresLineOfSight">false</bool>
 					</Properties>
 				</Item>
-				<Item class="BillboardGui" referent="RBX_CarBadge">
+				<Item class="BillboardGui" referent="RBX_HoverBadge">
 					<Properties>
-						<string name="Name">CarBadge</string>
-						<Vector3 name="StudsOffset"><X>0</X><Y>4.8</Y><Z>0</Z></Vector3>
-						<UDim2 name="Size"><XS>0</XS><XO>160</XO><YS>0</YS><YO>42</YO></UDim2>
+						<string name="Name">HoverBadge</string>
+						<Vector3 name="StudsOffset"><X>0</X><Y>2.6</Y><Z>0</Z></Vector3>
+						<UDim2 name="Size"><XS>0</XS><XO>190</XO><YS>0</YS><YO>42</YO></UDim2>
 						<bool name="AlwaysOnTop">true</bool>
 						<float name="MaxDistance">90</float>
 						<float name="LightInfluence">0</float>
 					</Properties>
-					<Item class="Frame" referent="RBX_CarBadgeF">
+					<Item class="Frame" referent="RBX_HoverBadgeF">
 						<Properties>
 							<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
 							<Color3 name="BackgroundColor3"><R>0.08</R><G>0.1</G><B>0.14</B></Color3>
 							<float name="BackgroundTransparency">0.2</float>
 						</Properties>
-						<Item class="UICorner" referent="RBX_CarBadgeC">
+						<Item class="UICorner" referent="RBX_HoverBadgeC">
 							<Properties><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
 						</Item>
-						<Item class="UIStroke" referent="RBX_CarBadgeS">
+						<Item class="UIStroke" referent="RBX_HoverBadgeS">
 							<Properties>
-								<Color3 name="Color"><R>0.9</R><G>0.3</G><B>0.24</B></Color3>
+								<Color3 name="Color"><R>0.235</R><G>0.667</G><B>1</B></Color3>
 								<float name="Thickness">2</float>
 							</Properties>
 						</Item>
-						<Item class="TextLabel" referent="RBX_CarBadgeL">
+						<Item class="TextLabel" referent="RBX_HoverBadgeL">
 							<Properties>
 								<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
 								<float name="BackgroundTransparency">1</float>
-								<string name="Text">🚗 Starter Sedan [E]</string>
+								<string name="Text">🛹 Galaxy Hoverboard [E]</string>
 								<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 								<token name="Font">17</token>
 								<float name="TextSize">14</float>
@@ -3711,340 +3711,160 @@
 					</Item>
 				</Item>
 		</Item>
-		<Item class="VehicleSeat" referent="RBX_Part_2135">
+		<Item class="Part" referent="RBX_Part_2135">
 			<Properties>
-				<string name="Name">VehicleSeat</string>
+				<string name="Name">GalaxyAccent</string>
 				<bool name="Anchored">true</bool>
 				<bool name="CanCollide">false</bool>
 				<float name="Transparency">0</float>
 				<Vector3 name="size">
-					<X>2.0</X><Y>0.6</Y><Z>2.0</Z>
+					<X>0.6</X><Y>0.05</Y><Z>3.8</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>12.6</X><Y>2.6</Y><Z>-42</Z>
+					<X>14</X><Y>2.16</Y><Z>-42</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
 					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4280295454</Color3uint8>
-				<token name="Material">816</token>
+				<Color3uint8 name="Color3uint8">4290781439</Color3uint8>
+				<token name="Material">256</token>
 				
 			</Properties>
 		</Item>
-		<Item class="Seat" referent="RBX_Part_2136">
+		<Item class="Part" referent="RBX_Part_2136">
 			<Properties>
-				<string name="Name">PassengerSeat</string>
+				<string name="Name">FootpadFront</string>
 				<bool name="Anchored">true</bool>
 				<bool name="CanCollide">false</bool>
 				<float name="Transparency">0</float>
 				<Vector3 name="size">
-					<X>2.0</X><Y>0.6</Y><Z>2.0</Z>
+					<X>1.3</X><Y>0.08</Y><Z>1.5</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>15.4</X><Y>2.6</Y><Z>-42</Z>
+					<X>14</X><Y>2.19</Y><Z>-43.4</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
 					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4280295454</Color3uint8>
+				<Color3uint8 name="Color3uint8">4279374356</Color3uint8>
 				<token name="Material">816</token>
 				
 			</Properties>
 		</Item>
 		<Item class="Part" referent="RBX_Part_2137">
 			<Properties>
-				<string name="Name">CarHood</string>
+				<string name="Name">FootpadBack</string>
 				<bool name="Anchored">true</bool>
 				<bool name="CanCollide">false</bool>
 				<float name="Transparency">0</float>
 				<Vector3 name="size">
-					<X>6.8</X><Y>1.0</Y><Z>4.2</Z>
+					<X>1.3</X><Y>0.08</Y><Z>1.5</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>14</X><Y>2.5</Y><Z>-46.5</Z>
+					<X>14</X><Y>2.19</Y><Z>-40.6</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
 					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4292742930</Color3uint8>
-				<token name="Material">256</token>
+				<Color3uint8 name="Color3uint8">4279374356</Color3uint8>
+				<token name="Material">816</token>
 				
 			</Properties>
 		</Item>
 		<Item class="Part" referent="RBX_Part_2138">
 			<Properties>
-				<string name="Name">CarTrunk</string>
+				<string name="Name">LedStripL</string>
 				<bool name="Anchored">true</bool>
 				<bool name="CanCollide">false</bool>
 				<float name="Transparency">0</float>
 				<Vector3 name="size">
-					<X>6.8</X><Y>1.2</Y><Z>3.8</Z>
+					<X>0.1</X><Y>0.12</Y><Z>4.2</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>14</X><Y>2.6</Y><Z>-37.4</Z>
+					<X>13.15</X><Y>2.0</Y><Z>-42</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
 					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4292742930</Color3uint8>
-				<token name="Material">256</token>
+				<Color3uint8 name="Color3uint8">4282166015</Color3uint8>
+				<token name="Material">288</token>
 				
 			</Properties>
+				<Item class="PointLight" referent="RBX_Part_2138_Light">
+					<Properties>
+						<Color3 name="Color"><R>0.3</R><G>0.65</G><B>1</B></Color3>
+						<float name="Brightness">2.0</float>
+						<float name="Range">16</float>
+						<bool name="Shadows">true</bool>
+					</Properties>
+				</Item>
 		</Item>
 		<Item class="Part" referent="RBX_Part_2139">
 			<Properties>
-				<string name="Name">CarRoof</string>
+				<string name="Name">LedStripR</string>
 				<bool name="Anchored">true</bool>
 				<bool name="CanCollide">false</bool>
 				<float name="Transparency">0</float>
 				<Vector3 name="size">
-					<X>6.4</X><Y>0.4</Y><Z>5.2</Z>
+					<X>0.1</X><Y>0.12</Y><Z>4.2</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>14</X><Y>4.8</Y><Z>-42</Z>
+					<X>14.85</X><Y>2.0</Y><Z>-42</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
 					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4292742930</Color3uint8>
-				<token name="Material">256</token>
+				<Color3uint8 name="Color3uint8">4282166015</Color3uint8>
+				<token name="Material">288</token>
 				
 			</Properties>
+				<Item class="PointLight" referent="RBX_Part_2139_Light">
+					<Properties>
+						<Color3 name="Color"><R>0.3</R><G>0.65</G><B>1</B></Color3>
+						<float name="Brightness">2.0</float>
+						<float name="Range">16</float>
+						<bool name="Shadows">true</bool>
+					</Properties>
+				</Item>
 		</Item>
 		<Item class="Part" referent="RBX_Part_2140">
 			<Properties>
-				<string name="Name">WindshieldFront</string>
+				<string name="Name">WheelFront</string>
 				<bool name="Anchored">true</bool>
-				<bool name="CanCollide">false</bool>
-				<float name="Transparency">0.4</float>
+				<bool name="CanCollide">true</bool>
+				<float name="Transparency">0</float>
 				<Vector3 name="size">
-					<X>6.2</X><Y>2.2</Y><Z>0.2</Z>
+					<X>0.4</X><Y>1.0</Y><Z>1.0</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>14</X><Y>3.7</Y><Z>-44.5</Z>
+					<X>14</X><Y>1.4</Y><Z>-44.0</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
-					<R10>0.0000</R10><R11>0.8660</R11><R12>0.5000</R12>
-					<R20>-0.0000</R20><R21>-0.5000</R21><R22>0.8660</R22>
+					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
+					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4284581240</Color3uint8>
-				<token name="Material">304</token>
-				
+				<Color3uint8 name="Color3uint8">4278979598</Color3uint8>
+				<token name="Material">256</token>
+				<token name="shape">2</token>
 			</Properties>
 		</Item>
 		<Item class="Part" referent="RBX_Part_2141">
 			<Properties>
-				<string name="Name">WindshieldBack</string>
-				<bool name="Anchored">true</bool>
-				<bool name="CanCollide">false</bool>
-				<float name="Transparency">0.4</float>
-				<Vector3 name="size">
-					<X>6.2</X><Y>2.2</Y><Z>0.2</Z>
-				</Vector3>
-				<CoordinateFrame name="CFrame">
-					<X>14</X><Y>3.7</Y><Z>-39.5</Z>
-					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
-					<R10>0.0000</R10><R11>0.8660</R11><R12>-0.5000</R12>
-					<R20>0.0000</R20><R21>0.5000</R21><R22>0.8660</R22>
-				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4284581240</Color3uint8>
-				<token name="Material">304</token>
-				
-			</Properties>
-		</Item>
-		<Item class="Part" referent="RBX_Part_2142">
-			<Properties>
-				<string name="Name">SteeringWheel</string>
-				<bool name="Anchored">true</bool>
-				<bool name="CanCollide">false</bool>
-				<float name="Transparency">0</float>
-				<Vector3 name="size">
-					<X>1.0</X><Y>1.0</Y><Z>0.2</Z>
-				</Vector3>
-				<CoordinateFrame name="CFrame">
-					<X>12.6</X><Y>3.2</Y><Z>-43.6</Z>
-					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
-					<R10>0.0000</R10><R11>0.9063</R11><R12>0.4226</R12>
-					<R20>-0.0000</R20><R21>-0.4226</R21><R22>0.9063</R22>
-				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4279900698</Color3uint8>
-				<token name="Material">256</token>
-				
-			</Properties>
-		</Item>
-		<Item class="Part" referent="RBX_Part_2143">
-			<Properties>
-				<string name="Name">HeadlightL</string>
-				<bool name="Anchored">true</bool>
-				<bool name="CanCollide">false</bool>
-				<float name="Transparency">0</float>
-				<Vector3 name="size">
-					<X>0.8</X><Y>0.5</Y><Z>0.2</Z>
-				</Vector3>
-				<CoordinateFrame name="CFrame">
-					<X>11.6</X><Y>2.4</Y><Z>-48.7</Z>
-					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
-					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
-					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
-				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4294967295</Color3uint8>
-				<token name="Material">288</token>
-				
-			</Properties>
-				<Item class="SpotLight" referent="RBX_Part_2143_Light">
-					<Properties>
-						<Color3 name="Color"><R>1</R><G>1</G><B>0.9</B></Color3>
-						<float name="Brightness">3.5</float>
-						<float name="Range">45</float>
-						<bool name="Shadows">true</bool>
-					</Properties>
-				</Item>
-		</Item>
-		<Item class="Part" referent="RBX_Part_2144">
-			<Properties>
-				<string name="Name">HeadlightR</string>
-				<bool name="Anchored">true</bool>
-				<bool name="CanCollide">false</bool>
-				<float name="Transparency">0</float>
-				<Vector3 name="size">
-					<X>0.8</X><Y>0.5</Y><Z>0.2</Z>
-				</Vector3>
-				<CoordinateFrame name="CFrame">
-					<X>16.4</X><Y>2.4</Y><Z>-48.7</Z>
-					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
-					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
-					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
-				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4294967295</Color3uint8>
-				<token name="Material">288</token>
-				
-			</Properties>
-				<Item class="SpotLight" referent="RBX_Part_2144_Light">
-					<Properties>
-						<Color3 name="Color"><R>1</R><G>1</G><B>0.9</B></Color3>
-						<float name="Brightness">3.5</float>
-						<float name="Range">45</float>
-						<bool name="Shadows">true</bool>
-					</Properties>
-				</Item>
-		</Item>
-		<Item class="Part" referent="RBX_Part_2145">
-			<Properties>
-				<string name="Name">TaillightL</string>
-				<bool name="Anchored">true</bool>
-				<bool name="CanCollide">false</bool>
-				<float name="Transparency">0</float>
-				<Vector3 name="size">
-					<X>0.8</X><Y>0.5</Y><Z>0.2</Z>
-				</Vector3>
-				<CoordinateFrame name="CFrame">
-					<X>11.6</X><Y>2.6</Y><Z>-35.4</Z>
-					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
-					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
-					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
-				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4293994546</Color3uint8>
-				<token name="Material">288</token>
-				
-			</Properties>
-		</Item>
-		<Item class="Part" referent="RBX_Part_2146">
-			<Properties>
-				<string name="Name">TaillightR</string>
-				<bool name="Anchored">true</bool>
-				<bool name="CanCollide">false</bool>
-				<float name="Transparency">0</float>
-				<Vector3 name="size">
-					<X>0.8</X><Y>0.5</Y><Z>0.2</Z>
-				</Vector3>
-				<CoordinateFrame name="CFrame">
-					<X>16.4</X><Y>2.6</Y><Z>-35.4</Z>
-					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
-					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
-					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
-				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4293994546</Color3uint8>
-				<token name="Material">288</token>
-				
-			</Properties>
-		</Item>
-		<Item class="Part" referent="RBX_Part_2147">
-			<Properties>
-				<string name="Name">WheelFL</string>
+				<string name="Name">WheelBack</string>
 				<bool name="Anchored">true</bool>
 				<bool name="CanCollide">true</bool>
 				<float name="Transparency">0</float>
 				<Vector3 name="size">
-					<X>1.4</X><Y>1.8</Y><Z>1.8</Z>
+					<X>0.4</X><Y>1.0</Y><Z>1.0</Z>
 				</Vector3>
 				<CoordinateFrame name="CFrame">
-					<X>10.2</X><Y>1.8</Y><Z>-46.0</Z>
+					<X>14</X><Y>1.4</Y><Z>-40.0</Z>
 					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
 					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
 				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4279900698</Color3uint8>
+				<Color3uint8 name="Color3uint8">4278979598</Color3uint8>
 				<token name="Material">256</token>
-				
-			</Properties>
-		</Item>
-		<Item class="Part" referent="RBX_Part_2148">
-			<Properties>
-				<string name="Name">WheelFR</string>
-				<bool name="Anchored">true</bool>
-				<bool name="CanCollide">true</bool>
-				<float name="Transparency">0</float>
-				<Vector3 name="size">
-					<X>1.4</X><Y>1.8</Y><Z>1.8</Z>
-				</Vector3>
-				<CoordinateFrame name="CFrame">
-					<X>17.8</X><Y>1.8</Y><Z>-46.0</Z>
-					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
-					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
-					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
-				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4279900698</Color3uint8>
-				<token name="Material">256</token>
-				
-			</Properties>
-		</Item>
-		<Item class="Part" referent="RBX_Part_2149">
-			<Properties>
-				<string name="Name">WheelRL</string>
-				<bool name="Anchored">true</bool>
-				<bool name="CanCollide">true</bool>
-				<float name="Transparency">0</float>
-				<Vector3 name="size">
-					<X>1.4</X><Y>1.8</Y><Z>1.8</Z>
-				</Vector3>
-				<CoordinateFrame name="CFrame">
-					<X>10.2</X><Y>1.8</Y><Z>-38.0</Z>
-					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
-					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
-					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
-				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4279900698</Color3uint8>
-				<token name="Material">256</token>
-				
-			</Properties>
-		</Item>
-		<Item class="Part" referent="RBX_Part_2150">
-			<Properties>
-				<string name="Name">WheelRR</string>
-				<bool name="Anchored">true</bool>
-				<bool name="CanCollide">true</bool>
-				<float name="Transparency">0</float>
-				<Vector3 name="size">
-					<X>1.4</X><Y>1.8</Y><Z>1.8</Z>
-				</Vector3>
-				<CoordinateFrame name="CFrame">
-					<X>17.8</X><Y>1.8</Y><Z>-38.0</Z>
-					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
-					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
-					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
-				</CoordinateFrame>
-				<Color3uint8 name="Color3uint8">4279900698</Color3uint8>
-				<token name="Material">256</token>
-				
+				<token name="shape">2</token>
 			</Properties>
 		</Item>
 		</Item>
@@ -4135,6 +3955,16 @@
 					</Item>
 				</Item>
 			</Item>
+		</Item>
+		<Item class="Clouds" referent="RBX_Clouds">
+			<Properties>
+				<string name="Name">Clouds</string>
+				<Color3 name="Color">
+					<R>1</R><G>1</G><B>1</B>
+				</Color3>
+				<float name="Cover">0.38</float>
+				<float name="Density">0.55</float>
+			</Properties>
 		</Item>
 	</Item>
 	<Item class="ReplicatedStorage" referent="RBX_ReplicatedStorage">
@@ -4913,6 +4743,83 @@ return ShopConfig
 ]]></ProtectedString>
 				</Properties>
 			</Item>
+			<Item class="ModuleScript" referent="RBX_EnvironmentConfig">
+				<Properties>
+					<string name="Name">EnvironmentConfig</string>
+					<ProtectedString name="Source"><![CDATA[--!strict
+
+export type EnvironmentConfigType = {
+    -- Скільки РЕАЛЬНИХ секунд триває день і ніч, і де їхні межі на годиннику
+    DayLengthSeconds: number,   -- 45 хв реального часу на весь день
+    NightLengthSeconds: number, -- 15 хв реального часу на всю ніч
+    NightStartHour: number,     -- 21:00 — початок ночі
+    NightEndHour: number,       -- 06:00 — кінець ночі (світанок)
+    TransitionHours: number,    -- тривалість плавного світанку/заходу (в годинах ігрового часу)
+    GeographicLatitude: number,
+
+    -- Освітлення вдень / вночі (Ambient / Brightness)
+    DayAmbient: Color3,
+    DayOutdoorAmbient: Color3,
+    DayBrightness: number,
+    NightAmbient: Color3,
+    NightOutdoorAmbient: Color3,
+    NightBrightness: number,
+
+    -- Atmosphere вдень / вночі (серпанок, сяйво сонця/місяця)
+    AtmosphereDensity: number,
+    AtmosphereOffset: number,
+    DayAtmosphereColor: Color3,
+    DayAtmosphereDecay: Color3,
+    DayAtmosphereGlare: number,
+    DayAtmosphereHaze: number,
+    NightAtmosphereColor: Color3,
+    NightAtmosphereDecay: Color3,
+    NightAtmosphereGlare: number,
+    NightAtmosphereHaze: number,
+
+    -- Глобальні рухомі хмари (колір міняється між днем і ніччю)
+    CloudsCover: number,
+    CloudsDensity: number,
+    DayCloudsColor: Color3,
+    NightCloudsColor: Color3,
+}
+
+local EnvironmentConfig: EnvironmentConfigType = {
+    DayLengthSeconds = 45 * 60,
+    NightLengthSeconds = 15 * 60,
+    NightStartHour = 21,
+    NightEndHour = 6,
+    TransitionHours = 0.75,
+    GeographicLatitude = 35,
+
+    DayAmbient = Color3.fromRGB(140, 145, 165),
+    DayOutdoorAmbient = Color3.fromRGB(150, 165, 195),
+    DayBrightness = 2.6,
+    NightAmbient = Color3.fromRGB(35, 38, 58),
+    NightOutdoorAmbient = Color3.fromRGB(25, 28, 46),
+    NightBrightness = 0.9,
+
+    AtmosphereDensity = 0.3,
+    AtmosphereOffset = 0.25,
+    DayAtmosphereColor = Color3.fromRGB(199, 199, 199),
+    DayAtmosphereDecay = Color3.fromRGB(112, 125, 153),
+    DayAtmosphereGlare = 0.2,
+    DayAtmosphereHaze = 1.3,
+    NightAtmosphereColor = Color3.fromRGB(40, 45, 70),
+    NightAtmosphereDecay = Color3.fromRGB(18, 20, 35),
+    NightAtmosphereGlare = 0,
+    NightAtmosphereHaze = 1.7,
+
+    CloudsCover = 0.38,
+    CloudsDensity = 0.55,
+    DayCloudsColor = Color3.fromRGB(255, 255, 255),
+    NightCloudsColor = Color3.fromRGB(120, 130, 160),
+}
+
+return EnvironmentConfig
+]]></ProtectedString>
+				</Properties>
+			</Item>
 		</Item>
 		<Item class="Folder" referent="RBX_RemotesFolder">
 			<Properties>
@@ -4956,11 +4863,6 @@ return ShopConfig
 			<Item class="RemoteEvent" referent="RBX_StreamChoiceResult">
 				<Properties>
 					<string name="Name">StreamChoiceResult</string>
-				</Properties>
-			</Item>
-			<Item class="RemoteEvent" referent="RBX_FlipCar">
-				<Properties>
-					<string name="Name">FlipCar</string>
 				</Properties>
 			</Item>
 		</Item>
@@ -7277,7 +7179,46 @@ if not shopResultRemote then
     shopResultRemote.Parent = remotesFolder
 end
 
+-- Клієнт шле throttle/steer, поки стоїть на гіроскутері (замість VehicleSeat)
+local hoverInputRemote = remotesFolder:FindFirstChild("HoverboardInput") :: RemoteEvent?
+if not hoverInputRemote then
+    hoverInputRemote = Instance.new("RemoteEvent")
+    hoverInputRemote.Name = "HoverboardInput"
+    hoverInputRemote.Parent = remotesFolder
+end
+
+-- Клієнт шле цю подію на Space, щоб зійти з гіроскутера
+local hoverDismountRemote = remotesFolder:FindFirstChild("HoverboardDismount") :: RemoteEvent?
+if not hoverDismountRemote then
+    hoverDismountRemote = Instance.new("RemoteEvent")
+    hoverDismountRemote.Name = "HoverboardDismount"
+    hoverDismountRemote.Parent = remotesFolder
+end
+
+-- Сервер повідомляє клієнта: true = зайшов на гіроскутер, false = зійшов
+local hoverMountRemote = remotesFolder:FindFirstChild("HoverboardMountChanged") :: RemoteEvent?
+if not hoverMountRemote then
+    hoverMountRemote = Instance.new("RemoteEvent")
+    hoverMountRemote.Name = "HoverboardMountChanged"
+    hoverMountRemote.Parent = remotesFolder
+end
+
 local HOVERBOARD_ITEM_ID = "Hoverboard"
+local HOVER_SPEED = 34    -- відрегульована швидкість (повільніше і безпечніше за машину)
+local TURN_SPEED = 3.2    -- швидкість повороту
+
+-- Стандартні ідентифікатори базових анімацій "стояти" від Roblox (публічні,
+-- вбудовані в кожен стандартний Animate-скрипт) — використовуємо їх, щоб
+-- персонаж виглядав так, ніби просто стоїть, а не сидить чи завис у T-позі.
+local STAND_ANIM_R15 = "rbxassetid://507766388"
+local STAND_ANIM_R6 = "rbxassetid://180435571"
+
+type RiderData = {
+    weld: WeldConstraint,
+    animTrack: AnimationTrack?,
+    throttle: number,
+    steer: number,
+}
 
 local function setupHoverboard()
     local board = workspace:WaitForChild("CityWorld", 10) and workspace.CityWorld:WaitForChild("Hoverboard", 10) :: Model?
@@ -7287,8 +7228,7 @@ local function setupHoverboard()
     if not board then return end
 
     local deck = board:WaitForChild("HoverboardBody", 5) :: BasePart?
-    local seat = board:WaitForChild("VehicleSeat", 5) :: VehicleSeat?
-    if not deck or not seat then return end
+    if not deck then return end
 
     board.PrimaryPart = deck
 
@@ -7312,10 +7252,8 @@ local function setupHoverboard()
     end
 
     deck.Anchored = false
-    deck.CanCollide = false
     deck.CustomPhysicalProperties = PhysicalProperties.new(1.2, 0.6, 0.5, 60, 100)
 
-    -- 3D Floating Badge над гіроскутером
     local existingBadge = deck:FindFirstChild("HoverBadge") :: BillboardGui?
 
     -- Надійний ProximityPrompt для посадки (E)
@@ -7332,32 +7270,129 @@ local function setupHoverboard()
         ridePrompt.Parent = deck
     end
 
+    local riders: { [Player]: RiderData } = {}
+
+    local function setPromptAvailable(available: boolean)
+        ridePrompt.Enabled = available
+        if existingBadge then
+            existingBadge.Enabled = available
+        end
+    end
+
+    local function dismountPlayer(player: Player)
+        local data = riders[player]
+        if not data then return end
+        riders[player] = nil
+
+        if data.weld then
+            data.weld:Destroy()
+        end
+        if data.animTrack then
+            data.animTrack:Stop()
+        end
+
+        local character = player.Character
+        if character then
+            local humanoid = character:FindFirstChildOfClass("Humanoid") :: Humanoid?
+            local hrp = character:FindFirstChild("HumanoidRootPart") :: BasePart?
+            if humanoid then
+                humanoid.PlatformStand = false
+                humanoid.AutoRotate = true
+            end
+            -- Відштовхуємо гравця вбік, щоб він одразу не активував підказку знову
+            if hrp then
+                hrp.CFrame = hrp.CFrame * CFrame.new(2.5, 0.5, 0)
+            end
+        end
+
+        setPromptAvailable(true)
+        hoverMountRemote:FireClient(player, false)
+    end
+
+    local function mountPlayer(player: Player)
+        if riders[player] then return end
+
+        local character = player.Character
+        if not character then return end
+        local humanoid = character:FindFirstChildOfClass("Humanoid") :: Humanoid?
+        local hrp = character:FindFirstChild("HumanoidRootPart") :: BasePart?
+        if not humanoid or not hrp then return end
+
+        -- Ставимо персонажа рівно на дошку, обличчям туди, куди дивиться гіроскутер
+        hrp.CFrame = deck.CFrame * CFrame.new(0, deck.Size.Y / 2 + 3.0, 0)
+
+        humanoid.PlatformStand = true
+        humanoid.AutoRotate = false
+
+        local weld = Instance.new("WeldConstraint")
+        weld.Name = "HoverboardRiderWeld"
+        weld.Part0 = deck
+        weld.Part1 = hrp
+        weld.Parent = hrp
+
+        -- Програємо анімацію "стояти", інакше персонаж завис би нерухомо в останній позі
+        local animTrack: AnimationTrack? = nil
+        local animator = humanoid:FindFirstChildOfClass("Animator")
+        if animator then
+            local anim = Instance.new("Animation")
+            anim.AnimationId = (humanoid.RigType == Enum.HumanoidRigType.R15) and STAND_ANIM_R15 or STAND_ANIM_R6
+            local ok, track = pcall(function()
+                return animator:LoadAnimation(anim)
+            end)
+            if ok and track then
+                track.Priority = Enum.AnimationPriority.Action
+                track.Looped = true
+                track:Play()
+                animTrack = track
+            end
+        end
+
+        riders[player] = { weld = weld, animTrack = animTrack, throttle = 0, steer = 0 }
+
+        setPromptAvailable(false)
+        hoverMountRemote:FireClient(player, true)
+    end
+
     ridePrompt.Triggered:Connect(function(player: Player)
         -- Гейт власності: гіроскутер потрібно спочатку купити в магазині
         if not (player:GetAttribute("Owned_" .. HOVERBOARD_ITEM_ID) == true) then
             shopResultRemote:FireClient(player, HOVERBOARD_ITEM_ID, false, "🛹 Купи Galaxy Hoverboard в магазині, щоб покататись!")
             return
         end
+        mountPlayer(player)
+    end)
 
-        local character = player.Character
-        if character then
-            local humanoid = character:FindFirstChildOfClass("Humanoid")
-            if humanoid and seat.Occupant == nil then
-                seat:Sit(humanoid)
+    hoverDismountRemote.OnServerEvent:Connect(function(player: Player)
+        dismountPlayer(player)
+    end)
+
+    hoverInputRemote.OnServerEvent:Connect(function(player: Player, throttle: any, steer: any)
+        local data = riders[player]
+        if not data then return end
+        if typeof(throttle) ~= "number" or typeof(steer) ~= "number" then return end
+        data.throttle = math.clamp(throttle, -1, 1)
+        data.steer = math.clamp(steer, -1, 1)
+    end)
+
+    Players.PlayerRemoving:Connect(function(player)
+        if riders[player] then
+            riders[player] = nil
+            setPromptAvailable(true)
+        end
+    end)
+
+    -- Якщо персонаж помер/зреспавнився під час катання — знімаємо його з гіроскутера
+    Players.PlayerAdded:Connect(function(player)
+        player.CharacterRemoving:Connect(function()
+            if riders[player] then
+                if riders[player].weld then riders[player].weld:Destroy() end
+                riders[player] = nil
+                setPromptAvailable(true)
             end
-        end
+        end)
     end)
 
-    seat:GetPropertyChangedSignal("Occupant"):Connect(function()
-        if ridePrompt then
-            ridePrompt.Enabled = (seat.Occupant == nil)
-        end
-        if existingBadge then
-            existingBadge.Enabled = (seat.Occupant == nil)
-        end
-    end)
-
-    -- Аркадний привід (BodyVelocity + BodyAngularVelocity), відрегульована швидкість гіроскутера
+    -- Аркадний привід (BodyVelocity + BodyAngularVelocity)
     local bv = deck:FindFirstChild("HoverVelocity") :: BodyVelocity?
     if not bv then
         bv = Instance.new("BodyVelocity")
@@ -7386,32 +7421,27 @@ local function setupHoverboard()
         bg.Parent = deck
     end
 
-    local HOVER_SPEED = 34    -- відрегульована швидкість (повільніше і безпечніше за машину)
-    local TURN_SPEED = 3.2    -- швидкість повороту
     local spawnPosition = Vector3.new(14, 2.6, -42)
 
     -- Цикл керування рухом гіроскутера
     RunService.Heartbeat:Connect(function()
-        if not seat or not deck or not bv or not bav or not bg then return end
+        if not deck or not bv or not bav or not bg then return end
 
-        local rider = seat.Occupant
-        if rider then
-            -- Гравець на гіроскутері: передаємо команди W/S та A/D
-            local throttle = seat.ThrottleFloat
-            local steer = seat.SteerFloat
+        local throttle, steer = 0, 0
+        for _, data in riders do
+            throttle, steer = data.throttle, data.steer
+            break -- гіроскутер одномісний
+        end
 
-            -- Рух вперед/назад
+        if throttle ~= 0 or steer ~= 0 or next(riders) ~= nil then
             bv.MaxForce = Vector3.new(2.2e5, 0, 2.2e5)
             bv.Velocity = deck.CFrame.LookVector * (throttle * HOVER_SPEED)
 
-            -- Поворот вліво/вправо
             bav.MaxTorque = Vector3.new(0, 2.2e5, 0)
             bav.AngularVelocity = Vector3.new(0, -steer * TURN_SPEED, 0)
 
-            -- Стабілізація орієнтації (рівний гіроскутер)
             bg.CFrame = CFrame.new(deck.Position, deck.Position + deck.CFrame.LookVector)
         else
-            -- Гіроскутер пустий: стоїть на місці
             bv.MaxForce = Vector3.new(2.2e5, 0, 2.2e5)
             bv.Velocity = Vector3.zero
             bav.MaxTorque = Vector3.new(0, 2.2e5, 0)
@@ -7423,11 +7453,131 @@ local function setupHoverboard()
             deck.CFrame = CFrame.new(spawnPosition)
             deck.AssemblyLinearVelocity = Vector3.zero
             deck.AssemblyAngularVelocity = Vector3.zero
+            for player in riders do
+                dismountPlayer(player)
+            end
         end
     end)
 end
 
 task.spawn(setupHoverboard)
+]]></ProtectedString>
+			</Properties>
+		</Item>
+		<Item class="Script" referent="RBX_EnvironmentManager">
+			<Properties>
+				<string name="Name">EnvironmentManager</string>
+				<ProtectedString name="Source"><![CDATA[--!strict
+local Lighting = game:GetService("Lighting")
+local Workspace = game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local EnvironmentConfig = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("EnvironmentConfig") :: ModuleScript)
+
+Lighting.GeographicLatitude = EnvironmentConfig.GeographicLatitude
+Lighting.ClockTime = 12 -- старт ігрового дня о яскравому полудні
+
+--------------------------------------------------------------------------------
+-- Sky: небесна сфера з сонцем, місяцем і зірками (вбудований рушій Roblox,
+-- сам показує/приховує місяць і зірки залежно від часу доби)
+--------------------------------------------------------------------------------
+local sky = Lighting:FindFirstChildOfClass("Sky")
+if not sky then
+    sky = Instance.new("Sky")
+    sky.Parent = Lighting
+end
+
+--------------------------------------------------------------------------------
+-- Atmosphere: серпанок і сяйво навколо сонця/місяця
+--------------------------------------------------------------------------------
+local atmosphere = Lighting:FindFirstChildOfClass("Atmosphere")
+if not atmosphere then
+    atmosphere = Instance.new("Atmosphere")
+    atmosphere.Parent = Lighting
+end
+atmosphere.Density = EnvironmentConfig.AtmosphereDensity
+atmosphere.Offset = EnvironmentConfig.AtmosphereOffset
+
+--------------------------------------------------------------------------------
+-- Глобальні рухомі хмари (вбудований шар Roblox, анімується сам у небі)
+--------------------------------------------------------------------------------
+local clouds = Workspace:FindFirstChildOfClass("Clouds")
+if not clouds then
+    clouds = Instance.new("Clouds")
+    clouds.Parent = Workspace
+end
+clouds.Cover = EnvironmentConfig.CloudsCover
+clouds.Density = EnvironmentConfig.CloudsDensity
+
+--------------------------------------------------------------------------------
+-- Цикл дня і ночі: 45 хв день + 15 хв ніч, з плавним світанком/заходом.
+-- Годинник рухається різною швидкістю вдень і вночі (не лінійно по колу),
+-- щоб реальний час дня/ночі точно збігався з таймінгом з конфігу.
+--------------------------------------------------------------------------------
+local function hoursBetween(fromHour: number, toHour: number): number
+    -- Кількість годин по колу від fromHour до toHour (з переходом через 24 за потреби)
+    local diff = toHour - fromHour
+    if diff <= 0 then
+        diff += 24
+    end
+    return diff
+end
+
+local nightHours = hoursBetween(EnvironmentConfig.NightStartHour, EnvironmentConfig.NightEndHour)
+local dayHours = 24 - nightHours
+
+local dayRatePerSecond = dayHours / EnvironmentConfig.DayLengthSeconds
+local nightRatePerSecond = nightHours / EnvironmentConfig.NightLengthSeconds
+
+local function isNightClockTime(clockTime: number): boolean
+    if EnvironmentConfig.NightStartHour > EnvironmentConfig.NightEndHour then
+        return clockTime >= EnvironmentConfig.NightStartHour or clockTime < EnvironmentConfig.NightEndHour
+    else
+        return clockTime >= EnvironmentConfig.NightStartHour and clockTime < EnvironmentConfig.NightEndHour
+    end
+end
+
+-- 0 = повна ніч, 1 = повний день, плавно на межах світанку/заходу
+local function getDayFactor(clockTime: number): number
+    local sinceDawn = hoursBetween(EnvironmentConfig.NightEndHour, clockTime)
+    local transition = math.max(0.01, EnvironmentConfig.TransitionHours)
+
+    if sinceDawn < transition then
+        return sinceDawn / transition -- світанок: 0 -> 1
+    elseif sinceDawn < dayHours - transition then
+        return 1 -- повний день
+    elseif sinceDawn < dayHours then
+        return (dayHours - sinceDawn) / transition -- захід: 1 -> 0
+    else
+        return 0 -- повна ніч
+    end
+end
+
+task.spawn(function()
+    while true do
+        task.wait(1)
+
+        local night = isNightClockTime(Lighting.ClockTime)
+        local rate = night and nightRatePerSecond or dayRatePerSecond
+        Lighting.ClockTime = (Lighting.ClockTime + rate) % 24
+
+        local dayFactor = getDayFactor(Lighting.ClockTime)
+
+        Lighting.Ambient = EnvironmentConfig.NightAmbient:Lerp(EnvironmentConfig.DayAmbient, dayFactor)
+        Lighting.OutdoorAmbient = EnvironmentConfig.NightOutdoorAmbient:Lerp(EnvironmentConfig.DayOutdoorAmbient, dayFactor)
+        Lighting.Brightness = EnvironmentConfig.NightBrightness
+            + (EnvironmentConfig.DayBrightness - EnvironmentConfig.NightBrightness) * dayFactor
+
+        atmosphere.Color = EnvironmentConfig.NightAtmosphereColor:Lerp(EnvironmentConfig.DayAtmosphereColor, dayFactor)
+        atmosphere.Decay = EnvironmentConfig.NightAtmosphereDecay:Lerp(EnvironmentConfig.DayAtmosphereDecay, dayFactor)
+        atmosphere.Glare = EnvironmentConfig.NightAtmosphereGlare
+            + (EnvironmentConfig.DayAtmosphereGlare - EnvironmentConfig.NightAtmosphereGlare) * dayFactor
+        atmosphere.Haze = EnvironmentConfig.NightAtmosphereHaze
+            + (EnvironmentConfig.DayAtmosphereHaze - EnvironmentConfig.NightAtmosphereHaze) * dayFactor
+
+        clouds.Color = EnvironmentConfig.NightCloudsColor:Lerp(EnvironmentConfig.DayCloudsColor, dayFactor)
+    end
+end)
 ]]></ProtectedString>
 			</Properties>
 		</Item>
@@ -10090,133 +10240,71 @@ end)
 				<Properties>
 					<string name="Name">VehicleGui</string>
 					<ProtectedString name="Source"><![CDATA[--!strict
+-- Гіроскутером керуємо без VehicleSeat (щоб персонаж СТОЯВ, а не сидів),
+-- тому клієнт сам зчитує W/A/S/D, поки стоїть на дошці, і шле це на сервер.
+-- Ніякої окремої приладової панелі на екрані немає — посадка/зсадка й так
+-- підказуються нативним ProximityPrompt ("Ride (E)") та клавішею Space.
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local LocalPlayer = Players.LocalPlayer
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui") :: PlayerGui
 
--- ScreenGui for Driving HUD
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "VehicleGui"
-screenGui.ResetOnSpawn = false
-screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-screenGui.Parent = PlayerGui
+local remotesFolder = ReplicatedStorage:WaitForChild("Remotes") :: Folder
+local hoverInputRemote = remotesFolder:WaitForChild("HoverboardInput") :: RemoteEvent
+local hoverDismountRemote = remotesFolder:WaitForChild("HoverboardDismount") :: RemoteEvent
+local hoverMountRemote = remotesFolder:WaitForChild("HoverboardMountChanged") :: RemoteEvent
 
--- Main Dashboard Container (Bottom Center)
-local dashFrame = Instance.new("Frame")
-dashFrame.Name = "DashboardFrame"
-dashFrame.Size = UDim2.new(0, 360, 0, 75)
-dashFrame.Position = UDim2.new(0.5, -180, 1, 100) -- Hidden initially
-dashFrame.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
-dashFrame.BackgroundTransparency = 0.2
-dashFrame.BorderSizePixel = 0
-dashFrame.Parent = screenGui
+local isMounted = false
+local keysDown = { W = false, S = false, A = false, D = false }
+local lastThrottle, lastSteer = 0, 0
 
-local dashCorner = Instance.new("UICorner")
-dashCorner.CornerRadius = UDim.new(0, 14)
-dashCorner.Parent = dashFrame
-
-local dashStroke = Instance.new("UIStroke")
-dashStroke.Color = Color3.fromRGB(60, 170, 255)
-dashStroke.Thickness = 2
-dashStroke.Parent = dashFrame
-
--- Speedometer Label
-local speedLabel = Instance.new("TextLabel")
-speedLabel.Name = "SpeedLabel"
-speedLabel.Size = UDim2.new(0, 130, 0, 42)
-speedLabel.Position = UDim2.new(0, 15, 0, 8)
-speedLabel.BackgroundTransparency = 1
-speedLabel.Font = Enum.Font.GothamBold
-speedLabel.TextSize = 28
-speedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-speedLabel.TextXAlignment = Enum.TextXAlignment.Left
-speedLabel.Text = "0 <font size=\"14\" color=\"#aaaaaa\">KM/H</font>"
-speedLabel.RichText = true
-speedLabel.Parent = dashFrame
-
--- Vehicle Name / Status
-local statusLabel = Instance.new("TextLabel")
-statusLabel.Name = "StatusLabel"
-statusLabel.Size = UDim2.new(0, 130, 0, 18)
-statusLabel.Position = UDim2.new(0, 15, 0, 48)
-statusLabel.BackgroundTransparency = 1
-statusLabel.Font = Enum.Font.GothamMedium
-statusLabel.TextSize = 12
-statusLabel.TextColor3 = Color3.fromRGB(60, 170, 255)
-statusLabel.TextXAlignment = Enum.TextXAlignment.Left
-statusLabel.Text = "🛹 GALAXY HOVERBOARD"
-statusLabel.Parent = dashFrame
-
--- Controls Reminder Text
-local controlsLabel = Instance.new("TextLabel")
-controlsLabel.Name = "ControlsLabel"
-controlsLabel.Size = UDim2.new(0, 195, 0, 58)
-controlsLabel.Position = UDim2.new(1, -205, 0, 8)
-controlsLabel.BackgroundTransparency = 1
-controlsLabel.Font = Enum.Font.Gotham
-controlsLabel.TextSize = 11
-controlsLabel.TextColor3 = Color3.fromRGB(210, 215, 230)
-controlsLabel.TextXAlignment = Enum.TextXAlignment.Right
-controlsLabel.TextYAlignment = Enum.TextYAlignment.Center
-controlsLabel.TextWrapped = true
-controlsLabel.Text = "<b>[W/S]</b> Move / Reverse\n<b>[A/D]</b> Turn Left / Right\n<b>[Space]</b> Get Off Hoverboard"
-controlsLabel.RichText = true
-controlsLabel.Parent = dashFrame
-
-local currentSeat: VehicleSeat? = nil
-local speedConn: RBXScriptConnection? = nil
-
-local function showDashboard()
-    TweenService:Create(dashFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Position = UDim2.new(0.5, -180, 1, -95),
-    }):Play()
-end
-
-local function hideDashboard()
-    TweenService:Create(dashFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-        Position = UDim2.new(0.5, -180, 1, 100),
-    }):Play()
-end
-
-local function onSeated(active: boolean, seatPart: Instance?)
-    if active and seatPart and seatPart:IsA("VehicleSeat") then
-        currentSeat = seatPart
-        showDashboard()
-
-        if speedConn then speedConn:Disconnect() end
-        speedConn = RunService.RenderStepped:Connect(function()
-            if not currentSeat or not currentSeat.Parent then return end
-            local chassis = currentSeat.Parent:FindFirstChild("HoverboardBody") :: BasePart?
-            if chassis then
-                local speedStudsPerSec = chassis.AssemblyLinearVelocity.Magnitude
-                -- 1 stud ≈ 0.28 meters -> speed * 0.28 * 3.6 ≈ speed * 1.0 km/h
-                local kmh = math.floor(speedStudsPerSec * 1.05)
-                local colorHex = if kmh > 50 then "#FF5555" elseif kmh > 25 then "#FFAA00" else "#FFFFFF"
-                speedLabel.Text = `<font color="{colorHex}">{kmh}</font> <font size="14" color="#aaaaaa">KM/H</font>`
-            end
-        end)
-    else
-        currentSeat = nil
-        if speedConn then
-            speedConn:Disconnect()
-            speedConn = nil
-        end
-        hideDashboard()
+local function sendInputIfChanged()
+    local throttle = (keysDown.W and 1 or 0) - (keysDown.S and 1 or 0)
+    local steer = (keysDown.D and 1 or 0) - (keysDown.A and 1 or 0)
+    if throttle ~= lastThrottle or steer ~= lastSteer then
+        lastThrottle, lastSteer = throttle, steer
+        hoverInputRemote:FireServer(throttle, steer)
     end
 end
 
-local function bindCharacter(char: Model)
-    local humanoid = char:WaitForChild("Humanoid") :: Humanoid
-    humanoid.Seated:Connect(onSeated)
-end
+local KEY_MAP: { [Enum.KeyCode]: string } = {
+    [Enum.KeyCode.W] = "W",
+    [Enum.KeyCode.S] = "S",
+    [Enum.KeyCode.A] = "A",
+    [Enum.KeyCode.D] = "D",
+}
 
-if LocalPlayer.Character then
-    bindCharacter(LocalPlayer.Character)
-end
-LocalPlayer.CharacterAdded:Connect(bindCharacter)
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed or not isMounted then return end
+
+    if input.KeyCode == Enum.KeyCode.Space then
+        hoverDismountRemote:FireServer()
+        return
+    end
+
+    local key = KEY_MAP[input.KeyCode]
+    if key then
+        keysDown[key] = true
+        sendInputIfChanged()
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+    local key = KEY_MAP[input.KeyCode]
+    if key then
+        keysDown[key] = false
+        sendInputIfChanged()
+    end
+end)
+
+hoverMountRemote.OnClientEvent:Connect(function(mounted: boolean)
+    isMounted = mounted
+    if not mounted then
+        keysDown.W, keysDown.S, keysDown.A, keysDown.D = false, false, false, false
+        lastThrottle, lastSteer = 0, 0
+    end
+end)
 ]]></ProtectedString>
 				</Properties>
 			</Item>
@@ -10871,13 +10959,34 @@ end)
 		<Properties>
 			<string name="Name">Lighting</string>
 			<Color3 name="Ambient">
-				<R>0.35</R><G>0.35</G><B>0.4</B>
+				<R>0.549</R><G>0.569</G><B>0.647</B>
 			</Color3>
 			<Color3 name="OutdoorAmbient">
-				<R>0.3</R><G>0.3</G><B>0.35</B>
+				<R>0.588</R><G>0.647</G><B>0.765</B>
 			</Color3>
-			<float name="Brightness">1.8</float>
-			<float name="ClockTime">19.0</float>
+			<float name="Brightness">2.6</float>
+			<float name="ClockTime">12.0</float>
+			<float name="GeographicLatitude">35</float>
 		</Properties>
+		<Item class="Sky" referent="RBX_Sky">
+			<Properties>
+				<string name="Name">Sky</string>
+			</Properties>
+		</Item>
+		<Item class="Atmosphere" referent="RBX_Atmosphere">
+			<Properties>
+				<string name="Name">Atmosphere</string>
+				<float name="Density">0.3</float>
+				<float name="Offset">0.25</float>
+				<Color3 name="Color">
+					<R>0.780</R><G>0.780</G><B>0.780</B>
+				</Color3>
+				<Color3 name="Decay">
+					<R>0.439</R><G>0.490</G><B>0.6</B>
+				</Color3>
+				<float name="Glare">0.2</float>
+				<float name="Haze">1.3</float>
+			</Properties>
+		</Item>
 	</Item>
 </roblox>

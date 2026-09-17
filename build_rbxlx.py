@@ -335,8 +335,10 @@ def create_rbxlx(auto_push=True):
 					</Item>
 				</Item>'''
 
-    hoverboard_parts.append(make_part("HoverboardBody", (1.6, 0.3, 4.4), (14, 2.0, -42), color=HOVER_NAVY_DARK, material=256, anchored=True, can_collide=False, children_xml=hoverboard_children))
-    hoverboard_parts.append(make_part("VehicleSeat", (1.2, 0.2, 1.2), (14, 2.3, -42), color=CHAIR_BLACK, material=816, anchored=True, can_collide=False, transparency=0.85, is_seat="vehicle"))
+    # Немає VehicleSeat/Seat навмисно: ці класи в Roblox автоматично саджають
+    # гравця, щойно він торкнеться деталі, а нам потрібно, щоб персонаж СТОЯВ
+    # на дошці (керування реалізоване вручну через ProximityPrompt + сервер).
+    hoverboard_parts.append(make_part("HoverboardBody", (1.6, 0.3, 4.4), (14, 2.0, -42), color=HOVER_NAVY_DARK, material=256, anchored=True, can_collide=True, children_xml=hoverboard_children))
 
     # Deco "galaxy" stripe + grip footpads (can_collide=False, welded to the deck)
     hoverboard_parts.append(make_part("GalaxyAccent", (0.6, 0.05, 3.8), (14, 2.16, -42), color=RGB_PURPLE, material=256, anchored=True, can_collide=False))
