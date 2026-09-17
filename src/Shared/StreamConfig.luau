@@ -41,9 +41,10 @@ local StreamConfig: ConfigType = {
     StarterMoney = 15,          -- Starting pocket change: $15
     StarterHype = 0,            -- 0 Subscribers at start
     BaseDonationChance = 0.35,  -- 35% chance to earn $1 on starter stream (no gear)
-    BaseSubChance = 0.25,       -- 25% chance to gain +1 Sub on starter stream
     MaxEnergy = 100,
-    EnergyDrainSeconds = 3,     -- -1% Energy every 3 seconds of streaming
+    EnergyDrainSeconds = 1,     -- Перевірка витрати енергії щосекунди
+    EnergyDrainPerSecond = 2,    -- -2% Енергії за секунду стріму (~50 секунд стріму до виснаження)
+    EnergyRestRecoverySeconds = 2, -- Відпочинок: +1% кожні 2 секунди поза стрімом
 
     -- Hourly Boost Event Settings
     EventCycleDurationSeconds = 3600,
