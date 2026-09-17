@@ -5842,15 +5842,20 @@ local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platf
     platBadge.Parent = topBar
     local pbCorner = Instance.new("UICorner"); pbCorner.CornerRadius = UDim.new(0, 6); pbCorner.Parent = platBadge
 
+    local ytSubs = if player then ((player:GetAttribute("YouTubeSubs") :: number?) or 0) else 0
+    local twSubs = if player then ((player:GetAttribute("TwitchSubs") :: number?) or 0) else 0
+    local ttSubs = if player then ((player:GetAttribute("TikTokSubs") :: number?) or 0) else 0
+
     local statsText = Instance.new("TextLabel")
-    statsText.Size = UDim2.new(0, 220, 1, 0)
-    statsText.Position = UDim2.new(1, -230, 0, 0)
+    statsText.Name = "StatsText"
+    statsText.Size = UDim2.new(0, 240, 1, 0)
+    statsText.Position = UDim2.new(1, -250, 0, 0)
     statsText.BackgroundTransparency = 1
-    statsText.Font = Enum.Font.Gotham
-    statsText.TextSize = 12
-    statsText.TextColor3 = Color3.fromRGB(160, 175, 200)
+    statsText.Font = Enum.Font.GothamBold
+    statsText.TextSize = 11
+    statsText.TextColor3 = Color3.fromRGB(190, 210, 235)
     statsText.TextXAlignment = Enum.TextXAlignment.Right
-    statsText.Text = "60 FPS | 6,000 Kbps | 0 Drop"
+    statsText.Text = if player and isLive then `🔴 {ytSubs}  🟣 {twSubs}  🎵 {ttSubs}` else "60 FPS | 6,000 Kbps"
     statsText.Parent = topBar
 
     -- 2. Left Main Gameplay / Talk Viewport (488 x 366)
@@ -6283,6 +6288,15 @@ local function startStream(player: Player, platformKey: string)
                         player:SetAttribute("TwitchSubs", currentTW)
                         player:SetAttribute("TikTokSubs", currentTT)
                         hypeObj.Value = currentYT + currentTW + currentTT
+
+                        if isPC then
+                            local mainMon = workspace:FindFirstChild("MainMonitorScreen", true)
+                            local topBar = mainMon and mainMon:FindFirstChild("MonitorGui") and mainMon.MonitorGui:FindFirstChild("MonitorBg") and mainMon.MonitorGui.MonitorBg:FindFirstChild("TopBar")
+                            local sTxt = topBar and topBar:FindFirstChild("StatsText") :: TextLabel?
+                            if sTxt then
+                                sTxt.Text = `🔴 {currentYT}  🟣 {currentTW}  🎵 {currentTT}`
+                            end
+                        end
                     else
                         hypeObj.Value += totalHype
                     end
@@ -8186,11 +8200,11 @@ end
 LocalPlayer:GetAttributeChangedSignal("Energy"):Connect(updateEnergy)
 updateEnergy()
 
--- Row 4: Integrated Live Chat Panel
+-- Row 5: Integrated Live Chat Panel
 local chatContainer = Instance.new("Frame")
 chatContainer.Name = "ChatContainer"
-chatContainer.Size = UDim2.new(1, -16, 1, -104)
-chatContainer.Position = UDim2.new(0, 8, 0, 98)
+chatContainer.Size = UDim2.new(1, -16, 1, -146)
+chatContainer.Position = UDim2.new(0, 8, 0, 140)
 chatContainer.BackgroundColor3 = Color3.fromRGB(16, 19, 27)
 chatContainer.BackgroundTransparency = 0.2
 chatContainer.BorderSizePixel = 0
