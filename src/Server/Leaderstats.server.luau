@@ -32,6 +32,17 @@ local function setupLeaderstats(player: Player)
     rebirths.Parent = leaderstats
 
     leaderstats.Parent = player
+
+    -- Окремі лічильники підписників для кожної платформи
+    local yt = (player:GetAttribute("YouTubeSubs") :: number?) or 0
+    local tw = (player:GetAttribute("TwitchSubs") :: number?) or 0
+    local tt = (player:GetAttribute("TikTokSubs") :: number?) or 0
+    if yt == 0 and tw == 0 and tt == 0 and hype.Value > 0 then
+        yt = hype.Value
+    end
+    player:SetAttribute("YouTubeSubs", yt)
+    player:SetAttribute("TwitchSubs", tw)
+    player:SetAttribute("TikTokSubs", tt)
 end
 
 -- Обробка нових гравців

@@ -180,14 +180,15 @@ local function updateOverhead(character: Model, player: Player)
 
         local isVIP = player:GetAttribute("IsVIP") == true
         local rebirths = (player:GetAttribute("Rebirths") :: number?) or 0
-        local rebirthTag = if rebirths > 0 then `⭐[Rebirth {rebirths}] ` else ""
+        local tierReward = if rebirths > 0 then (StreamConfig :: any).GetRebirthReward(rebirths) else nil
+        local rebirthTag = if tierReward then `{tierReward.TitleTag} ` elseif rebirths > 0 then `⭐[Rebirth {rebirths}] ` else ""
 
         if cLabel then
             if isVIP then
                 cLabel.Text = `👑 [VIP] {rebirthTag}{channelName}`
                 cLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
             else
-                cLabel.Text = `📺 {rebirthTag}{channelName}`
+                cLabel.Text = `{rebirthTag}{channelName}`
                 cLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
             end
         end
@@ -309,25 +310,193 @@ local function equipPhone(player: Player)
 end
 
 --------------------------------------------------------------------------------
--- Керування ПК-монітором та робочим столом (PC Battlestation)
+-- 3D Кнопки YouTube на стіні над сетапом (YouTube Play Buttons Wall of Fame)
 --------------------------------------------------------------------------------
 local DESK_POSITION = Vector3.new(0, 4.5, -70)
+
+local function updateStudioAwards(player: Player)
+    local rebirths = (player:GetAttribute("Rebirths") :: number?) or 0
+    if rebirths <= 0 then return end
+
+    local awardsFolder = workspace:FindFirstChild("YouTubeAwardsWall") :: Folder?
+    if not awardsFolder then
+        awardsFolder = Instance.new("Folder")
+        awardsFolder.Name = "YouTubeAwardsWall"
+        awardsFolder.Parent = workspace
+    end
+
+    local xOffsets = {
+        [1] = -4.0,
+        [2] = -2.0,
+        [3] = 0.0,
+        [4] = 2.0,
+        [5] = 4.0,
+    }
+
+    local channelName = player:GetAttribute("ChannelName") or (player.DisplayName .. " TV")
+
+    for lvl = 1, math.min(rebirths, 5) do
+        local plaqueName = `Award_Tier_{lvl}`
+        local tier = (StreamConfig :: any).RebirthTiers[lvl]
+        if not tier then continue end
+
+        local existingModel = awardsFolder:FindFirstChild(plaqueName) :: Model?
+        if existingModel then
+            -- Update channel name if already exists
+            local face = existingModel:FindFirstChild("FacePlate") :: BasePart?
+            local sg = face and face:FindFirstChild("PlaqueGui") :: SurfaceGui?
+            local bg = sg and sg:FindFirstChildOfClass("Frame")
+            local nameLbl = bg and bg:FindFirstChild("NameLabel") :: TextLabel?
+            if nameLbl then
+                nameLbl.Text = channelName
+            end
+            continue
+        end
+
+        local plaqueModel = Instance.new("Model")
+        plaqueModel.Name = plaqueName
+
+        local posX = xOffsets[lvl] or (lvl * 2.0 - 6.0)
+        local posY = 8.6
+        local posZ = -73.15
+
+        -- 1. Outer Frame (Shadow box brushed metal frame)
+        local frame = Instance.new("Part")
+        frame.Name = "Frame"
+        frame.Size = Vector3.new(1.7, 2.2, 0.12)
+        frame.CFrame = CFrame.new(posX, posY, posZ)
+        frame.Anchored = true
+        frame.CanCollide = false
+        frame.Material = Enum.Material.Metal
+        frame.Color = Color3.fromRGB(18, 20, 26)
+        frame.Parent = plaqueModel
+
+        -- 2. Inner Plaque Face
+        local face = Instance.new("Part")
+        face.Name = "FacePlate"
+        face.Size = Vector3.new(1.5, 2.0, 0.04)
+        face.CFrame = CFrame.new(posX, posY, posZ + 0.05)
+        face.Anchored = true
+        face.CanCollide = false
+        face.Material = tier.Material
+        face.Color = tier.PlaqueColor
+        face.Parent = plaqueModel
+
+        -- 3. Point Light Glow
+        local glow = Instance.new("PointLight")
+        glow.Color = tier.GlowColor
+        glow.Brightness = 1.0
+        glow.Range = 6
+        glow.Parent = face
+
+        -- 4. SurfaceGui for Authentic YouTube Button Inscription
+        local sg = Instance.new("SurfaceGui")
+        sg.Name = "PlaqueGui"
+        sg.Face = Enum.NormalId.Front
+        sg.CanvasSize = Vector2.new(300, 400)
+        sg.LightInfluence = 0
+        sg.SizingMode = Enum.SurfaceGuiSizingMode.FixedSize
+        sg.Parent = face
+
+        local bg = Instance.new("Frame")
+        bg.Size = UDim2.new(1, 0, 1, 0)
+        bg.BackgroundTransparency = 1
+        bg.Parent = sg
+
+        -- Red YouTube Play Button Icon
+        local playBtnBg = Instance.new("Frame")
+        playBtnBg.Size = UDim2.new(0, 120, 0, 84)
+        playBtnBg.Position = UDim2.new(0.5, -60, 0, 36)
+        playBtnBg.BackgroundColor3 = (lvl == 3) and Color3.fromRGB(0, 200, 255) or ((lvl == 5) and Color3.fromRGB(200, 10, 40) or Color3.fromRGB(230, 33, 23))
+        playBtnBg.BorderSizePixel = 0
+        playBtnBg.Parent = bg
+        local pbc = Instance.new("UICorner"); pbc.CornerRadius = UDim.new(0, 24); pbc.Parent = playBtnBg
+
+        local playTriangle = Instance.new("TextLabel")
+        playTriangle.Size = UDim2.new(1, 0, 1, 0)
+        playTriangle.BackgroundTransparency = 1
+        playTriangle.Font = Enum.Font.GothamBold
+        playTriangle.TextSize = 42
+        playTriangle.TextColor3 = Color3.fromRGB(255, 255, 255)
+        playTriangle.Text = "▶"
+        playTriangle.Parent = playBtnBg
+
+        -- Inscription
+        local ytLogo = Instance.new("TextLabel")
+        ytLogo.Size = UDim2.new(1, 0, 0, 30)
+        ytLogo.Position = UDim2.new(0, 0, 0, 136)
+        ytLogo.BackgroundTransparency = 1
+        ytLogo.Font = Enum.Font.GothamBlack
+        ytLogo.TextSize = 22
+        ytLogo.TextColor3 = (lvl == 2) and Color3.fromRGB(120, 90, 10) or Color3.fromRGB(25, 25, 30)
+        ytLogo.Text = "YouTube"
+        ytLogo.Parent = bg
+
+        local presTo = Instance.new("TextLabel")
+        presTo.Size = UDim2.new(1, 0, 0, 18)
+        presTo.Position = UDim2.new(0, 0, 0, 172)
+        presTo.BackgroundTransparency = 1
+        presTo.Font = Enum.Font.GothamMedium
+        presTo.TextSize = 13
+        presTo.TextColor3 = (lvl == 2) and Color3.fromRGB(100, 75, 10) or Color3.fromRGB(60, 60, 70)
+        presTo.Text = "PRESENTED TO"
+        presTo.Parent = bg
+
+        local nameLabel = Instance.new("TextLabel")
+        nameLabel.Name = "NameLabel"
+        nameLabel.Size = UDim2.new(1, -20, 0, 36)
+        nameLabel.Position = UDim2.new(0, 10, 0, 196)
+        nameLabel.BackgroundTransparency = 1
+        nameLabel.Font = Enum.Font.GothamBlack
+        nameLabel.TextSize = 20
+        nameLabel.TextColor3 = (lvl == 2) and Color3.fromRGB(80, 50, 0) or Color3.fromRGB(10, 10, 15)
+        nameLabel.TextScaled = true
+        nameLabel.Text = channelName
+        nameLabel.Parent = bg
+
+        local forPassing = Instance.new("TextLabel")
+        forPassing.Size = UDim2.new(1, 0, 0, 18)
+        forPassing.Position = UDim2.new(0, 0, 0, 240)
+        forPassing.BackgroundTransparency = 1
+        forPassing.Font = Enum.Font.Gotham
+        forPassing.TextSize = 12
+        forPassing.TextColor3 = (lvl == 2) and Color3.fromRGB(100, 75, 10) or Color3.fromRGB(70, 70, 80)
+        forPassing.Text = "FOR PASSING"
+        forPassing.Parent = bg
+
+        local milestoneLabel = Instance.new("TextLabel")
+        milestoneLabel.Size = UDim2.new(1, 0, 0, 32)
+        milestoneLabel.Position = UDim2.new(0, 0, 0, 262)
+        milestoneLabel.BackgroundTransparency = 1
+        milestoneLabel.Font = Enum.Font.GothamBold
+        milestoneLabel.TextSize = 17
+        milestoneLabel.TextColor3 = (lvl == 2) and Color3.fromRGB(80, 50, 0) or Color3.fromRGB(15, 15, 20)
+        milestoneLabel.Text = tier.MilestoneText:upper()
+        milestoneLabel.Parent = bg
+
+        plaqueModel.Parent = awardsFolder
+    end
+end
 
 --------------------------------------------------------------------------------
 -- Керування ПК-монітором, веб-камерою та сетапом (PC Battlestation WebCam)
 --------------------------------------------------------------------------------
-local DESK_POSITION = Vector3.new(0, 4.5, -70)
 local webcamLoopThread: thread? = nil
+local monitorChatLoopThread: thread? = nil
 
 local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platformStr: string?, player: Player?)
     local mainMon = workspace:FindFirstChild("MainMonitorScreen", true) :: BasePart?
     local leftMon = workspace:FindFirstChild("LeftMonitorScreen", true) :: BasePart?
     if not mainMon then return end
 
-    -- Cancel previous webcam animation
+    -- Cancel previous webcam and monitor chat animation loops
     if webcamLoopThread then
         task.cancel(webcamLoopThread)
         webcamLoopThread = nil
+    end
+    if monitorChatLoopThread then
+        task.cancel(monitorChatLoopThread)
+        monitorChatLoopThread = nil
     end
 
     local sg = mainMon:FindFirstChild("MonitorGui") :: SurfaceGui?
@@ -350,7 +519,7 @@ local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platf
     bgFrame.BorderSizePixel = 0
     bgFrame.Parent = sg
 
-    -- Setup left secondary monitor (Chat / Dashboard)
+    -- Setup left secondary monitor (Live Scrolling Fast Chat!)
     if leftMon then
         local leftSg = leftMon:FindFirstChild("LeftMonitorGui") :: SurfaceGui?
         if not leftSg then
@@ -366,39 +535,200 @@ local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platf
 
         local leftBg = Instance.new("Frame")
         leftBg.Size = UDim2.new(1, 0, 1, 0)
-        leftBg.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
+        leftBg.BackgroundColor3 = Color3.fromRGB(14, 16, 22)
         leftBg.BorderSizePixel = 0
         leftBg.Parent = leftSg
 
-        local leftHeader = Instance.new("TextLabel")
-        leftHeader.Size = UDim2.new(1, 0, 0, 38)
-        leftHeader.BackgroundColor3 = Color3.fromRGB(24, 28, 40)
+        -- Header Bar
+        local leftHeader = Instance.new("Frame")
+        leftHeader.Size = UDim2.new(1, 0, 0, 42)
+        leftHeader.BackgroundColor3 = Color3.fromRGB(22, 26, 38)
         leftHeader.BorderSizePixel = 0
-        leftHeader.Font = Enum.Font.GothamBold
-        leftHeader.TextSize = 16
-        leftHeader.TextColor3 = Color3.fromRGB(255, 215, 0)
-        leftHeader.Text = isLive and `📊 LIVE METRICS ({platformStr or "STREAM"})` or "📊 DASHBOARD STANDBY"
         leftHeader.Parent = leftBg
 
-        local leftStats = Instance.new("TextLabel")
-        leftStats.Size = UDim2.new(1, -20, 0, 95)
-        leftStats.Position = UDim2.new(0, 10, 0, 48)
-        leftStats.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
-        leftStats.Font = Enum.Font.GothamMedium
-        leftStats.TextSize = 14
-        leftStats.TextColor3 = Color3.fromRGB(200, 220, 255)
-        leftStats.TextXAlignment = Enum.TextXAlignment.Left
-        local lsCorner = Instance.new("UICorner"); lsCorner.CornerRadius = UDim.new(0, 8); lsCorner.Parent = leftStats
+        local headerStroke = Instance.new("UIStroke")
+        headerStroke.Color = Color3.fromRGB(45, 55, 75)
+        headerStroke.Thickness = 1
+        headerStroke.Parent = leftHeader
 
-        if isLive and player then
-            local leaderstats = player:FindFirstChild("leaderstats")
-            local cash = leaderstats and leaderstats:FindFirstChild("Money") and (leaderstats.Money :: IntValue).Value or 0
-            local subs = leaderstats and leaderstats:FindFirstChild("Hype") and (leaderstats.Hype :: IntValue).Value or 0
-            leftStats.Text = `  • Total Revenue: ${cash}\n  • Total Subscribers: {subs}\n  • Live Bitrate: 6000 Kbps (Clean)`
+        local titlePlat = platformStr and platformStr:gsub("+", " + ") or "STREAM"
+        local headerLabel = Instance.new("TextLabel")
+        headerLabel.Size = UDim2.new(1, -140, 1, 0)
+        headerLabel.Position = UDim2.new(0, 14, 0, 0)
+        headerLabel.BackgroundTransparency = 1
+        headerLabel.Font = Enum.Font.GothamBold
+        headerLabel.TextSize = 15
+        headerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        headerLabel.TextXAlignment = Enum.TextXAlignment.Left
+        headerLabel.Text = isLive and `💬 {titlePlat} LIVE CHAT` or "💬 STREAM CHAT • STANDBY"
+        headerLabel.Parent = leftHeader
+
+        local liveBadge = Instance.new("TextLabel")
+        liveBadge.Size = UDim2.new(0, 110, 0, 26)
+        liveBadge.Position = UDim2.new(1, -120, 0.5, -13)
+        liveBadge.BackgroundColor3 = isLive and Color3.fromRGB(231, 76, 60) or Color3.fromRGB(45, 55, 70)
+        liveBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
+        liveBadge.Font = Enum.Font.GothamBold
+        liveBadge.TextSize = 12
+        liveBadge.Text = isLive and "🔴 LIVE CHAT" or "⚪ OFFLINE"
+        liveBadge.Parent = leftHeader
+        local lbc = Instance.new("UICorner"); lbc.CornerRadius = UDim.new(0, 6); lbc.Parent = liveBadge
+
+        if not isLive or not player then
+            -- Offline message
+            local offlineBox = Instance.new("Frame")
+            offlineBox.Size = UDim2.new(1, -40, 0, 140)
+            offlineBox.Position = UDim2.new(0, 20, 0.5, -70)
+            offlineBox.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
+            offlineBox.BorderSizePixel = 0
+            offlineBox.Parent = leftBg
+            local obc = Instance.new("UICorner"); obc.CornerRadius = UDim.new(0, 10); obc.Parent = offlineBox
+            local obs = Instance.new("UIStroke"); obs.Color = Color3.fromRGB(45, 55, 75); obs.Thickness = 1; obs.Parent = offlineBox
+
+            local offText = Instance.new("TextLabel")
+            offText.Size = UDim2.new(1, -20, 1, 0)
+            offText.Position = UDim2.new(0, 10, 0, 0)
+            offText.BackgroundTransparency = 1
+            offText.Font = Enum.Font.GothamMedium
+            offText.TextSize = 14
+            offText.TextColor3 = Color3.fromRGB(160, 175, 205)
+            offText.TextWrapped = true
+            offText.Text = "📡 Stream Chat is offline.\n\nSit at the Battlestation and click Start Stream to go live and connect your high-speed audience chat!"
+            offText.Parent = offlineBox
         else
-            leftStats.Text = "  • Status: Idle (Ready to broadcast)\n  • Streamer Chair: Available\n  • Battlestation OS: Ready"
+            -- Live scrolling chat container (Біжить чат!)
+            local chatScroll = Instance.new("ScrollingFrame")
+            chatScroll.Name = "ChatScroll"
+            chatScroll.Size = UDim2.new(1, -20, 1, -52)
+            chatScroll.Position = UDim2.new(0, 10, 0, 47)
+            chatScroll.BackgroundTransparency = 1
+            chatScroll.BorderSizePixel = 0
+            chatScroll.ScrollBarThickness = 5
+            chatScroll.ScrollBarImageColor3 = Color3.fromRGB(65, 80, 115)
+            chatScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+            chatScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+            chatScroll.Parent = leftBg
+
+            local chatLayout = Instance.new("UIListLayout")
+            chatLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            chatLayout.Padding = UDim.new(0, 5)
+            chatLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+            chatLayout.Parent = chatScroll
+
+            local chatMessagesList: { Frame } = {}
+            local msgOrder = 0
+
+            local viewerNames = {
+                "AlexPro_UA", "CyberNinja", "NeonValkyrie", "PixelGamer", "Vortex99",
+                "TurboSlayer", "ShadowWolf", "GamerGirl_Kyiv", "StarWatcher", "RoboFanatic",
+                "GlitchMaster", "EchoStream", "HyperClutch", "OmegaGamer", "LunaPlayz",
+                "ZeroCool", "DarkKnight", "LuckyStrike", "PixelQueen", "BlazeRunner"
+            }
+
+            local badges = {
+                { Text = "[VIP]", Color = "#e67e22" },
+                { Text = "[SUB 6m]", Color = "#9b59b6" },
+                { Text = "[MOD]", Color = "#2ecc71" },
+                { Text = "[PRIME]", Color = "#3498db" },
+                { Text = "[FAN]", Color = "#f1c40f" },
+            }
+
+            local normalTexts = {
+                "POGGGGGGG 😲😲",
+                "W STREAMER!! 🔥🔥",
+                "THAT PLAY WAS SO CLEAN!",
+                "bro is on fire today!!",
+                "Ukranian streamer on top 🇺🇦💪",
+                "LMAOOOO 💀💀",
+                "sheeesh 240 FPS looking crisp",
+                "drop the setup specs in chat please!",
+                "CLIP IT RIGHT NOW 🎬🎬",
+                "Hype train level 3 incoming! 🚂🚂",
+                "chat spam W in the chat boys!",
+                "WWWWWWWWWW",
+                "how much did that chair cost bro??",
+                "Silver Play Button soon!! 🥈",
+                "GOAT streamer fr fr 🐐",
+                "Subbed with Prime! Enjoy! ⭐",
+                "BEST STREAM TODAY!! 🎉",
+                "GG WP 🔥🔥",
+                "can you play Horror Night next??",
+                "take my energyyyy ⚡⚡",
+                "INSANE REACTION TIME ⚡",
+                "Bro doesn't miss! 🎯",
+            }
+
+            local function addMessage(richTextStr: string, isSuperChat: boolean?)
+                msgOrder += 1
+
+                local msgCard = Instance.new("Frame")
+                msgCard.Name = `Msg_{msgOrder}`
+                msgCard.LayoutOrder = msgOrder
+                msgCard.BorderSizePixel = 0
+                msgCard.Parent = chatScroll
+
+                if isSuperChat then
+                    msgCard.Size = UDim2.new(1, -6, 0, 36)
+                    msgCard.BackgroundColor3 = Color3.fromRGB(38, 48, 28)
+                    local mcCorner = Instance.new("UICorner"); mcCorner.CornerRadius = UDim.new(0, 6); mcCorner.Parent = msgCard
+                    local mcStroke = Instance.new("UIStroke"); mcStroke.Color = Color3.fromRGB(255, 215, 0); mcStroke.Thickness = 1.2; mcStroke.Parent = msgCard
+                else
+                    msgCard.Size = UDim2.new(1, -6, 0, 26)
+                    msgCard.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
+                    local mcCorner = Instance.new("UICorner"); mcCorner.CornerRadius = UDim.new(0, 5); mcCorner.Parent = msgCard
+                end
+
+                local msgLabel = Instance.new("TextLabel")
+                msgLabel.Size = UDim2.new(1, -12, 1, 0)
+                msgLabel.Position = UDim2.new(0, 8, 0, 0)
+                msgLabel.BackgroundTransparency = 1
+                msgLabel.Font = Enum.Font.GothamMedium
+                msgLabel.TextSize = 13
+                msgLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                msgLabel.TextXAlignment = Enum.TextXAlignment.Left
+                msgLabel.RichText = true
+                msgLabel.Text = richTextStr
+                msgLabel.Parent = msgCard
+
+                table.insert(chatMessagesList, msgCard)
+                if #chatMessagesList > 22 then
+                    local oldest = table.remove(chatMessagesList, 1)
+                    if oldest then oldest:Destroy() end
+                end
+
+                chatScroll.CanvasPosition = Vector2.new(0, 999999)
+            end
+
+            -- Seed with initial chat messages so it starts lively
+            addMessage(`<font color="#8892b0"><b>[BOT]</b></font> <font color="#2ecc71">Welcome to the stream! Enjoy the broadcast!</font>`)
+            addMessage(`<font color="#9b59b6"><b>[VIP]</b></font> <font color="#3498db"><b>AlexPro_UA</b></font>: First in chat! Let's go! 🔥`)
+            addMessage(`<font color="#f1c40f"><b>[FAN]</b></font> <font color="#e67e22"><b>PixelGamer</b></font>: W streamer! Ready for ranked!`)
+
+            -- Running chat loop (біжить чат!)
+            monitorChatLoopThread = task.spawn(function()
+                while isStreaming[player] do
+                    task.wait(math.random(35, 80) / 100) -- Generates new message every 0.35s - 0.8s!
+                    if not isStreaming[player] or not chatScroll.Parent then break end
+
+                    local roll = math.random(1, 100)
+                    local vName = viewerNames[math.random(1, #viewerNames)]
+
+                    if roll <= 12 then
+                        -- SuperChat / Donation ($10 - $100)
+                        local donAmt = math.random(10, 100)
+                        addMessage(`💰 <font color="#ffd700"><b>{vName}</b> donated <b>${donAmt}</b>: "Awesome stream, keep it up!"</font>`, true)
+                    elseif roll <= 20 then
+                        -- New Subscriber announcement
+                        addMessage(`⭐ <font color="#55efc4"><b>{vName}</b></font> <font color="#a29bfe">just SUBSCRIBED to the channel! 🌟</font>`)
+                    else
+                        -- Standard live chat message
+                        local badge = badges[math.random(1, #badges)]
+                        local txt = normalTexts[math.random(1, #normalTexts)]
+                        addMessage(`<font color="{badge.Color}"><b>{badge.Text}</b></font> <font color="#74b9ff"><b>{vName}</b></font>: {txt}`)
+                    end
+                end
+            end)
         end
-        leftStats.Parent = leftBg
     end
 
     if not isLive or not player then
@@ -474,15 +804,20 @@ local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platf
     platBadge.Parent = topBar
     local pbCorner = Instance.new("UICorner"); pbCorner.CornerRadius = UDim.new(0, 6); pbCorner.Parent = platBadge
 
+    local ytSubs = if player then ((player:GetAttribute("YouTubeSubs") :: number?) or 0) else 0
+    local twSubs = if player then ((player:GetAttribute("TwitchSubs") :: number?) or 0) else 0
+    local ttSubs = if player then ((player:GetAttribute("TikTokSubs") :: number?) or 0) else 0
+
     local statsText = Instance.new("TextLabel")
-    statsText.Size = UDim2.new(0, 220, 1, 0)
-    statsText.Position = UDim2.new(1, -230, 0, 0)
+    statsText.Name = "StatsText"
+    statsText.Size = UDim2.new(0, 240, 1, 0)
+    statsText.Position = UDim2.new(1, -250, 0, 0)
     statsText.BackgroundTransparency = 1
-    statsText.Font = Enum.Font.Gotham
-    statsText.TextSize = 12
-    statsText.TextColor3 = Color3.fromRGB(160, 175, 200)
+    statsText.Font = Enum.Font.GothamBold
+    statsText.TextSize = 11
+    statsText.TextColor3 = Color3.fromRGB(190, 210, 235)
     statsText.TextXAlignment = Enum.TextXAlignment.Right
-    statsText.Text = "60 FPS | 6,000 Kbps | 0 Drop"
+    statsText.Text = if player and isLive then `🔴 {ytSubs}  🟣 {twSubs}  🎵 {ttSubs}` else "60 FPS | 6,000 Kbps"
     statsText.Parent = topBar
 
     -- 2. Left Main Gameplay / Talk Viewport (488 x 366)
@@ -838,10 +1173,12 @@ local function startStream(player: Player, platformKey: string)
                     -- Бонуси від купленого заліза та ігор (CyberByte Tech Store)
                     local equipMoneyBonus = (player:GetAttribute("StreamMoneyBonus") :: number?) or 0
                     local equipHypeBonus = (player:GetAttribute("StreamHypeBonus") :: number?) or 0
-                    local audienceBonus = math.floor(hypeObj.Value * 0.003) -- Дуже плавний приріст від постійної аудиторії (0.3%)
+                    local audienceCashBonus = math.floor(hypeObj.Value * 0.003)
+                    -- Експоненційний ріст аудиторії: чим більше підписників, тим потужніша вірусність!
+                    local audienceHypeBonus = math.floor(hypeObj.Value * 0.004)
 
-                    local totalMoney = baseMoney + equipMoneyBonus + audienceBonus
-                    local totalHype = baseHype + equipHypeBonus
+                    local totalMoney = baseMoney + equipMoneyBonus + audienceCashBonus
+                    local totalHype = baseHype + equipHypeBonus + audienceHypeBonus
 
                     -- Штраф втоми (якщо енергія < 25% — дохід падає на 50%)
                     if currentEnergy < 25 and not hasInfiniteEnergy then
@@ -891,7 +1228,40 @@ local function startStream(player: Player, platformKey: string)
                     end
 
                     moneyObj.Value += totalMoney
-                    hypeObj.Value += totalHype
+
+                    -- Розподіл підписників по обраних стрім-платформах (YouTube, Twitch, TikTok)
+                    local currentYT = (player:GetAttribute("YouTubeSubs") :: number?) or 0
+                    local currentTW = (player:GetAttribute("TwitchSubs") :: number?) or 0
+                    local currentTT = (player:GetAttribute("TikTokSubs") :: number?) or 0
+
+                    local numPlatforms = #validPlatforms
+                    if numPlatforms > 0 then
+                        local perPlatformHype = math.max(1, math.floor(totalHype / numPlatforms))
+                        for _, pKey in validPlatforms do
+                            if pKey == "YouTube" then
+                                currentYT += perPlatformHype
+                            elseif pKey == "Twitch" then
+                                currentTW += perPlatformHype
+                            elseif pKey == "TikTok" then
+                                currentTT += perPlatformHype
+                            end
+                        end
+                        player:SetAttribute("YouTubeSubs", currentYT)
+                        player:SetAttribute("TwitchSubs", currentTW)
+                        player:SetAttribute("TikTokSubs", currentTT)
+                        hypeObj.Value = currentYT + currentTW + currentTT
+
+                        if isPC then
+                            local mainMon = workspace:FindFirstChild("MainMonitorScreen", true)
+                            local topBar = mainMon and mainMon:FindFirstChild("MonitorGui") and mainMon.MonitorGui:FindFirstChild("MonitorBg") and mainMon.MonitorGui.MonitorBg:FindFirstChild("TopBar")
+                            local sTxt = topBar and topBar:FindFirstChild("StatsText") :: TextLabel?
+                            if sTxt then
+                                sTxt.Text = `🔴 {currentYT}  🟣 {currentTW}  🎵 {currentTT}`
+                            end
+                        end
+                    else
+                        hypeObj.Value += totalHype
+                    end
 
                     -- Оновлення рангу стрімера для HUD
                     local rankTitle = "Potato Setup"
@@ -1074,6 +1444,9 @@ performRebirthRemote.OnServerEvent:Connect(function(player: Player)
 
         -- Скидання параметрів поточної кар'єри
         hypeObj.Value = 0
+        player:SetAttribute("YouTubeSubs", 0)
+        player:SetAttribute("TwitchSubs", 0)
+        player:SetAttribute("TikTokSubs", 0)
         local starterBonus = newRebirths * StreamConfig.Rebirth.StarterCashBonusPerRebirth
         moneyObj.Value = StreamConfig.StarterMoney + starterBonus
 
@@ -1089,9 +1462,19 @@ performRebirthRemote.OnServerEvent:Connect(function(player: Player)
             updateOverhead(player.Character, player)
         end
 
+        -- Оновлюємо 3D кнопки YouTube у студії над сетапом
+        updateStudioAwards(player)
+
+        local rewardInfo = (StreamConfig :: any).GetRebirthReward(newRebirths)
+
         -- Сповіщаємо клієнта та відкриваємо вікно вибору нової платформи
-        rebirthResultRemote:FireClient(player, "RebirthSuccess", newRebirths)
+        rebirthResultRemote:FireClient(player, "RebirthSuccess", newRebirths, rewardInfo)
         promptPlatformSelectRemote:FireClient(player, true)
+
+        local broadcastChat = remotesFolder:FindFirstChild("BroadcastSuperChat") :: RemoteEvent?
+        if broadcastChat then
+            broadcastChat:FireAllClients(player.DisplayName, 0, `🎉 Стрімер {player.DisplayName} розблокував {rewardInfo.ButtonIcon} {rewardInfo.ButtonNameUA} ({rewardInfo.MilestoneText})!`)
+        end
     else
         rebirthResultRemote:FireClient(player, "RebirthFailed", `Requires {reqSubs} Subs and ${reqMoney} Cash!`)
     end
@@ -1124,6 +1507,7 @@ setChannelNameRemote.OnServerEvent:Connect(function(player: Player, requestedNam
             equipPhone(player)
         end
     end
+    updateStudioAwards(player)
 end)
 
 local function onPlayerAdded(player: Player)
@@ -1135,9 +1519,16 @@ local function onPlayerAdded(player: Player)
         task.wait(0.5)
         if char.Parent ~= nil then
             updateOverhead(char, player)
+            updateStudioAwards(player)
             if isStreaming[player] then
                 equipPhone(player)
             end
+        end
+    end)
+
+    task.delay(1.5, function()
+        if player.Parent ~= nil then
+            updateStudioAwards(player)
         end
     end)
 end

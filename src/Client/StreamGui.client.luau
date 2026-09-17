@@ -20,6 +20,18 @@ screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 screenGui.Parent = PlayerGui
 
+local function formatCompact(n: number): string
+    if n >= 1_000_000 then
+        return string.format("%.1fM", n / 1_000_000):gsub("%.0M", "M")
+    elseif n >= 10_000 then
+        return string.format("%.1fK", n / 1_000):gsub("%.0K", "K")
+    else
+        local str = tostring(math.floor(n))
+        local formatted = str:reverse():gsub("(%d%d%d)", "%1,"):reverse()
+        return formatted:sub(1, 1) == "," and formatted:sub(2) or formatted
+    end
+end
+
 --------------------------------------------------------------------------------
 -- 0. Hourly Boost Event Banner (Top-Center HUD)
 --------------------------------------------------------------------------------
@@ -243,8 +255,8 @@ end)
 --------------------------------------------------------------------------------
 local streamerHub = Instance.new("Frame")
 streamerHub.Name = "StreamerHub"
-streamerHub.Size = UDim2.new(0, 320, 0, 340)
-streamerHub.Position = UDim2.new(0.015, 0, 0.44, 0)
+streamerHub.Size = UDim2.new(0, 320, 0, 395)
+streamerHub.Position = UDim2.new(0.015, 0, 0.38, 0)
 streamerHub.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
 streamerHub.BackgroundTransparency = 0.12
 streamerHub.BorderSizePixel = 0
@@ -280,8 +292,8 @@ channelTitleLabel.Parent = channelBar
 
 local editChannelButton = Instance.new("TextButton")
 editChannelButton.Name = "EditChannelButton"
-editChannelButton.Size = UDim2.new(0, 24, 0, 24)
-editChannelButton.Position = UDim2.new(1, -120, 0.5, -12)
+editChannelButton.Size = UDim2.new(0, 26, 0, 22)
+editChannelButton.Position = UDim2.new(1, -135, 0.5, -11)
 editChannelButton.BackgroundColor3 = Color3.fromRGB(35, 45, 65)
 editChannelButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 editChannelButton.Font = Enum.Font.GothamBold
@@ -292,16 +304,18 @@ local ecCorner = Instance.new("UICorner"); ecCorner.CornerRadius = UDim.new(0, 6
 
 local rebirthHudBtn = Instance.new("TextButton")
 rebirthHudBtn.Name = "RebirthHudBtn"
-rebirthHudBtn.Size = UDim2.new(0, 90, 0, 24)
-rebirthHudBtn.Position = UDim2.new(1, -92, 0.5, -12)
+rebirthHudBtn.Size = UDim2.new(0, 125, 0, 22)
+rebirthHudBtn.Position = UDim2.new(1, -127, 0.5, -11)
 rebirthHudBtn.BackgroundColor3 = Color3.fromRGB(95, 40, 150)
 rebirthHudBtn.TextColor3 = Color3.fromRGB(255, 235, 120)
 rebirthHudBtn.Font = Enum.Font.GothamBold
 rebirthHudBtn.TextSize = 11
-rebirthHudBtn.Text = "🔄 REBIRTH (Lv. 0)"
+rebirthHudBtn.TextScaled = false
+rebirthHudBtn.ClipsDescendants = false
+rebirthHudBtn.Text = "🔄 REBIRTH Lv.0"
 rebirthHudBtn.Parent = channelBar
 local rhbCorner = Instance.new("UICorner"); rhbCorner.CornerRadius = UDim.new(0, 6); rhbCorner.Parent = rebirthHudBtn
-local rhbStroke = Instance.new("UIStroke"); rhbStroke.Color = Color3.fromRGB(255, 215, 0); rhbStroke.Thickness = 1.2; rhbStroke.Parent = rebirthHudBtn
+local rhbStroke = Instance.new("UIStroke"); rhbStroke.Color = Color3.fromRGB(255, 215, 0); rhbStroke.Thickness = 1.5; rhbStroke.Parent = rebirthHudBtn
 
 -- Row 2: Contract Badge & Live Platform Indicators
 local platformsRowBar = Instance.new("Frame")
@@ -434,11 +448,156 @@ LocalPlayer:GetAttributeChangedSignal("IsStreamingTwitch"):Connect(updatePlatfor
 LocalPlayer:GetAttributeChangedSignal("IsStreamingTikTok"):Connect(updatePlatformsRow)
 updatePlatformsRow()
 
--- Row 3: Setup Quality Rank + Compact Energy Meter
+-- Row 3: Separated Platform Subscribers Bar (YouTube, Twitch, TikTok)
+local separatedSubsBar = Instance.new("Frame")
+separatedSubsBar.Name = "SeparatedSubsBar"
+separatedSubsBar.Size = UDim2.new(1, -16, 0, 38)
+separatedSubsBar.Position = UDim2.new(0, 8, 0, 72)
+separatedSubsBar.BackgroundTransparency = 1
+separatedSubsBar.BorderSizePixel = 0
+separatedSubsBar.Parent = streamerHub
+
+local subsLayout = Instance.new("UIListLayout")
+subsLayout.FillDirection = Enum.FillDirection.Horizontal
+subsLayout.Padding = UDim.new(0, 5)
+subsLayout.SortOrder = Enum.SortOrder.LayoutOrder
+subsLayout.Parent = separatedSubsBar
+
+-- Card 1: YouTube
+local ytCard = Instance.new("Frame")
+ytCard.Name = "YtCard"
+ytCard.LayoutOrder = 1
+ytCard.Size = UDim2.new(0.32, -2, 1, 0)
+ytCard.BackgroundColor3 = Color3.fromRGB(30, 16, 20)
+ytCard.BorderSizePixel = 0
+ytCard.Parent = separatedSubsBar
+local ytcCorner = Instance.new("UICorner"); ytcCorner.CornerRadius = UDim.new(0, 6); ytcCorner.Parent = ytCard
+local ytcStroke = Instance.new("UIStroke"); ytcStroke.Color = Color3.fromRGB(180, 45, 55); ytcStroke.Thickness = 1; ytcStroke.Parent = ytCard
+
+local ytHeader = Instance.new("TextLabel")
+ytHeader.Size = UDim2.new(1, 0, 0, 14)
+ytHeader.Position = UDim2.new(0, 0, 0, 3)
+ytHeader.BackgroundTransparency = 1
+ytHeader.Font = Enum.Font.GothamBold
+ytHeader.TextSize = 9
+ytHeader.TextColor3 = Color3.fromRGB(255, 120, 120)
+ytHeader.Text = "🔴 YouTube"
+ytHeader.Parent = ytCard
+
+local ytCountLabel = Instance.new("TextLabel")
+ytCountLabel.Name = "YtCountLabel"
+ytCountLabel.Size = UDim2.new(1, 0, 0, 18)
+ytCountLabel.Position = UDim2.new(0, 0, 0, 17)
+ytCountLabel.BackgroundTransparency = 1
+ytCountLabel.Font = Enum.Font.GothamBold
+ytCountLabel.TextSize = 11
+ytCountLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+ytCountLabel.Text = "0 Subs"
+ytCountLabel.Parent = ytCard
+
+-- Card 2: Twitch
+local twCard = Instance.new("Frame")
+twCard.Name = "TwCard"
+twCard.LayoutOrder = 2
+twCard.Size = UDim2.new(0.32, -2, 1, 0)
+twCard.BackgroundColor3 = Color3.fromRGB(26, 16, 36)
+twCard.BorderSizePixel = 0
+twCard.Parent = separatedSubsBar
+local twcCorner = Instance.new("UICorner"); twcCorner.CornerRadius = UDim.new(0, 6); twcCorner.Parent = twCard
+local twcStroke = Instance.new("UIStroke"); twcStroke.Color = Color3.fromRGB(140, 50, 220); twcStroke.Thickness = 1; twcStroke.Parent = twCard
+
+local twHeader = Instance.new("TextLabel")
+twHeader.Size = UDim2.new(1, 0, 0, 14)
+twHeader.Position = UDim2.new(0, 0, 0, 3)
+twHeader.BackgroundTransparency = 1
+twHeader.Font = Enum.Font.GothamBold
+twHeader.TextSize = 9
+twHeader.TextColor3 = Color3.fromRGB(210, 140, 255)
+twHeader.Text = "🟣 Twitch"
+twHeader.Parent = twCard
+
+local twCountLabel = Instance.new("TextLabel")
+twCountLabel.Name = "TwCountLabel"
+twCountLabel.Size = UDim2.new(1, 0, 0, 18)
+twCountLabel.Position = UDim2.new(0, 0, 0, 17)
+twCountLabel.BackgroundTransparency = 1
+twCountLabel.Font = Enum.Font.GothamBold
+twCountLabel.TextSize = 11
+twCountLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+twCountLabel.Text = "0 Subs"
+twCountLabel.Parent = twCard
+
+-- Card 3: TikTok
+local ttCard = Instance.new("Frame")
+ttCard.Name = "TtCard"
+ttCard.LayoutOrder = 3
+ttCard.Size = UDim2.new(0.32, -2, 1, 0)
+ttCard.BackgroundColor3 = Color3.fromRGB(12, 26, 32)
+ttCard.BorderSizePixel = 0
+ttCard.Parent = separatedSubsBar
+local ttcCorner = Instance.new("UICorner"); ttcCorner.CornerRadius = UDim.new(0, 6); ttcCorner.Parent = ttCard
+local ttcStroke = Instance.new("UIStroke"); ttcStroke.Color = Color3.fromRGB(0, 175, 200); ttcStroke.Thickness = 1; ttcStroke.Parent = ttCard
+
+local ttHeader = Instance.new("TextLabel")
+ttHeader.Size = UDim2.new(1, 0, 0, 14)
+ttHeader.Position = UDim2.new(0, 0, 0, 3)
+ttHeader.BackgroundTransparency = 1
+ttHeader.Font = Enum.Font.GothamBold
+ttHeader.TextSize = 9
+ttHeader.TextColor3 = Color3.fromRGB(80, 225, 245)
+ttHeader.Text = "🎵 TikTok"
+ttHeader.Parent = ttCard
+
+local ttCountLabel = Instance.new("TextLabel")
+ttCountLabel.Name = "TtCountLabel"
+ttCountLabel.Size = UDim2.new(1, 0, 0, 18)
+ttCountLabel.Position = UDim2.new(0, 0, 0, 17)
+ttCountLabel.BackgroundTransparency = 1
+ttCountLabel.Font = Enum.Font.GothamBold
+ttCountLabel.TextSize = 11
+ttCountLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+ttCountLabel.Text = "0 Fans"
+ttCountLabel.Parent = ttCard
+
+local function updatePlatformCounters()
+    local yt = (LocalPlayer:GetAttribute("YouTubeSubs") :: number?) or 0
+    local tw = (LocalPlayer:GetAttribute("TwitchSubs") :: number?) or 0
+    local tt = (LocalPlayer:GetAttribute("TikTokSubs") :: number?) or 0
+
+    ytCountLabel.Text = `{formatCompact(yt)} Subs`
+    twCountLabel.Text = `{formatCompact(tw)} Subs`
+    ttCountLabel.Text = `{formatCompact(tt)} Fans`
+
+    local isYT = LocalPlayer:GetAttribute("IsStreamingYouTube") == true
+    local isTwitch = LocalPlayer:GetAttribute("IsStreamingTwitch") == true
+    local isTikTok = LocalPlayer:GetAttribute("IsStreamingTikTok") == true
+
+    ytcStroke.Color = if isYT then Color3.fromRGB(255, 60, 60) else Color3.fromRGB(180, 45, 55)
+    ytcStroke.Thickness = if isYT then 1.8 else 1
+    ytCard.BackgroundColor3 = if isYT then Color3.fromRGB(48, 16, 22) else Color3.fromRGB(30, 16, 20)
+
+    twcStroke.Color = if isTwitch then Color3.fromRGB(185, 80, 255) else Color3.fromRGB(140, 50, 220)
+    twcStroke.Thickness = if isTwitch then 1.8 else 1
+    twCard.BackgroundColor3 = if isTwitch then Color3.fromRGB(40, 16, 55) else Color3.fromRGB(26, 16, 36)
+
+    ttcStroke.Color = if isTikTok then Color3.fromRGB(0, 235, 255) else Color3.fromRGB(0, 175, 200)
+    ttcStroke.Thickness = if isTikTok then 1.8 else 1
+    ttCard.BackgroundColor3 = if isTikTok then Color3.fromRGB(16, 38, 48) else Color3.fromRGB(12, 26, 32)
+end
+
+LocalPlayer:GetAttributeChangedSignal("YouTubeSubs"):Connect(updatePlatformCounters)
+LocalPlayer:GetAttributeChangedSignal("TwitchSubs"):Connect(updatePlatformCounters)
+LocalPlayer:GetAttributeChangedSignal("TikTokSubs"):Connect(updatePlatformCounters)
+LocalPlayer:GetAttributeChangedSignal("IsStreamingYouTube"):Connect(updatePlatformCounters)
+LocalPlayer:GetAttributeChangedSignal("IsStreamingTwitch"):Connect(updatePlatformCounters)
+LocalPlayer:GetAttributeChangedSignal("IsStreamingTikTok"):Connect(updatePlatformCounters)
+updatePlatformCounters()
+
+-- Row 4: Setup Quality Rank + Compact Energy Meter
 local setupBadge = Instance.new("Frame")
 setupBadge.Name = "SetupBadge"
 setupBadge.Size = UDim2.new(1, -16, 0, 22)
-setupBadge.Position = UDim2.new(0, 8, 0, 72)
+setupBadge.Position = UDim2.new(0, 8, 0, 114)
 setupBadge.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
 setupBadge.BorderSizePixel = 0
 setupBadge.Parent = streamerHub
@@ -526,11 +685,11 @@ end
 LocalPlayer:GetAttributeChangedSignal("Energy"):Connect(updateEnergy)
 updateEnergy()
 
--- Row 4: Integrated Live Chat Panel
+-- Row 5: Integrated Live Chat Panel
 local chatContainer = Instance.new("Frame")
 chatContainer.Name = "ChatContainer"
-chatContainer.Size = UDim2.new(1, -16, 1, -104)
-chatContainer.Position = UDim2.new(0, 8, 0, 98)
+chatContainer.Size = UDim2.new(1, -16, 1, -146)
+chatContainer.Position = UDim2.new(0, 8, 0, 140)
 chatContainer.BackgroundColor3 = Color3.fromRGB(16, 19, 27)
 chatContainer.BackgroundTransparency = 0.2
 chatContainer.BorderSizePixel = 0
@@ -794,6 +953,16 @@ rebirthActionBtn.ZIndex = 63
 rebirthActionBtn.Parent = rebirthWindow
 local rabCorner = Instance.new("UICorner"); rabCorner.CornerRadius = UDim.new(0, 10); rabCorner.Parent = rebirthActionBtn
 
+local function formatNumber(n: number): string
+    local formatted = tostring(math.floor(n))
+    local k
+    while true do
+        formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", "%1,%2")
+        if k == 0 then break end
+    end
+    return formatted
+end
+
 local function updateRebirthModal()
     local leaderstats = LocalPlayer:FindFirstChild("leaderstats")
     local hypeVal = leaderstats and leaderstats:FindFirstChild("Hype") :: IntValue?
@@ -804,11 +973,14 @@ local function updateRebirthModal()
     local currentCash = moneyVal and moneyVal.Value or 0
     local currentRebirths = rebirthsVal and rebirthsVal.Value or ((LocalPlayer:GetAttribute("Rebirths") :: number?) or 0)
 
+    local nextLevel = currentRebirths + 1
+    local nextReward = (StreamConfig :: any).GetRebirthReward(nextLevel)
+
     rebirthHudBtn.Text = `🔄 REBIRTH (Lv. {currentRebirths})`
     statusLabel.Text = `⭐ Current: Rebirth Level {currentRebirths}  |  ⚡ Permanent Boost: +{currentRebirths * 50}%`
 
     local reqSubs, reqMoney = StreamConfig.GetRebirthRequirements(currentRebirths)
-    reqDetails.Text = `⭐ Subs: {currentSubs} / {reqSubs}  |  💵 Cash: ${currentCash} / ${reqMoney}`
+    reqDetails.Text = `⭐ Subs: {formatNumber(currentSubs)} / {formatNumber(reqSubs)}  |  💵 Cash: ${formatNumber(currentCash)} / ${formatNumber(reqMoney)}`
 
     local subPct = math.clamp(currentSubs / reqSubs, 0, 1)
     local cashPct = math.clamp(currentCash / reqMoney, 0, 1)
@@ -818,15 +990,18 @@ local function updateRebirthModal()
         Size = UDim2.new(overallPct, 0, 1, 0)
     }):Play()
 
+    rewTitle.Text = `🏆 НАГОРОДА ЗА РЕБІРС: {nextReward.ButtonIcon} {nextReward.ButtonNameUA}!`
+    rewList.Text = `• 🏆 ТРОФЕЙ YOUTUBE: 3D-кнопка {nextReward.ButtonNameUA} з'явиться на стіні над сетапом!\n• 👑 Престижний надголовий титул: {nextReward.TitleTag}\n• 🚀 +50% Постійний множник до заробітку (Cash & Subs)\n• 🔓 Розблокування контракту: Обирай нову платформу або Dual-Stream!\n• ⚡ +15 До максимального запасу енергії & +$100 стартових коштів!`
+
     if currentSubs >= reqSubs and currentCash >= reqMoney then
         rebirthActionBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
         rebirthActionBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        rebirthActionBtn.Text = `✨ PERFORM REBIRTH NOW (+50% BOOST!)`
+        rebirthActionBtn.Text = `✨ PERFORM REBIRTH NOW (+50% BOOST & {nextReward.ButtonIcon} BUTTON!)`
         rebirthActionBtn.Active = true
     else
         rebirthActionBtn.BackgroundColor3 = Color3.fromRGB(60, 70, 85)
         rebirthActionBtn.TextColor3 = Color3.fromRGB(160, 175, 195)
-        rebirthActionBtn.Text = `🔒 LOCKED (Need {reqSubs} Subs & ${reqMoney} Cash - {math.floor(overallPct * 100)}%)`
+        rebirthActionBtn.Text = `🔒 LOCKED (Need {formatNumber(reqSubs)} Subs & ${formatNumber(reqMoney)} Cash - {math.floor(overallPct * 100)}%)`
         rebirthActionBtn.Active = false
     end
 end
