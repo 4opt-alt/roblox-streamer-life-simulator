@@ -652,7 +652,7 @@ local function stopStream(player: Player)
     pendingEventByPlayer[player] = nil
 
     unequipPhone(player)
-    updateMonitorDisplay(false)
+    updateMonitorDisplay(false, nil, nil, player)
 
     player:SetAttribute("ActiveStreamPlatforms", "")
     player:SetAttribute("IsStreamingYouTube", false)
