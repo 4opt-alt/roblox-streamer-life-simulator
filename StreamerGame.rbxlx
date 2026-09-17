@@ -5265,12 +5265,15 @@ local function startStream(player: Player, platformKey: string)
             local infiniteExp = (player:GetAttribute("InfiniteEnergyExpiry") :: number?) or 0
             local hasInfiniteEnergy = infiniteExp > os.time()
 
-            local currentEnergy = (player:GetAttribute("Energy") :: number?) or 100
+            local maxEnergy = (player:GetAttribute("MaxEnergy") :: number?) or StreamConfig.MaxEnergy
+            local currentEnergy = (player:GetAttribute("Energy") :: number?) or maxEnergy
+
             if hasInfiniteEnergy then
-                currentEnergy = 100
-                player:SetAttribute("Energy", 100)
+                currentEnergy = maxEnergy
+                player:SetAttribute("Energy", maxEnergy)
             elseif elapsedSeconds % StreamConfig.EnergyDrainSeconds == 0 then
-                currentEnergy = math.max(0, currentEnergy - 1)
+                local drain = StreamConfig.EnergyDrainPerSecond or 2
+                currentEnergy = math.max(0, currentEnergy - drain)
                 player:SetAttribute("Energy", currentEnergy)
 
                 -- Якщо енергія впала до 0 — стрімер втрачає свідомість від втоми
