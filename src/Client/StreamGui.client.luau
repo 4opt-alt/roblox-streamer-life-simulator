@@ -126,7 +126,342 @@ streamButton.MouseButton1Up:Connect(function()
 end)
 
 --------------------------------------------------------------------------------
--- 2. Channel Info Bar & Survival Stats
+-- 2. Rebirth HUD Bar & Rebirth Modal Window
+--------------------------------------------------------------------------------
+local rebirthRow = Instance.new("Frame")
+rebirthRow.Name = "RebirthRow"
+rebirthRow.Size = UDim2.new(0, 320, 0, 26)
+rebirthRow.Position = UDim2.new(0.02, 0, 0.505, 0)
+rebirthRow.BackgroundTransparency = 1
+rebirthRow.BorderSizePixel = 0
+rebirthRow.Parent = screenGui
+
+-- Left: Rebirth Button
+local rebirthHudBtn = Instance.new("TextButton")
+rebirthHudBtn.Name = "RebirthHudBtn"
+rebirthHudBtn.Size = UDim2.new(0, 160, 1, 0)
+rebirthHudBtn.Position = UDim2.new(0, 0, 0, 0)
+rebirthHudBtn.BackgroundColor3 = Color3.fromRGB(110, 45, 175)
+rebirthHudBtn.TextColor3 = Color3.fromRGB(255, 235, 120)
+rebirthHudBtn.Font = Enum.Font.GothamBold
+rebirthHudBtn.TextSize = 12
+rebirthHudBtn.Text = "🔄 REBIRTH (Lv. 0)"
+rebirthHudBtn.Parent = rebirthRow
+
+local rhbCorner = Instance.new("UICorner"); rhbCorner.CornerRadius = UDim.new(0, 6); rhbCorner.Parent = rebirthHudBtn
+local rhbStroke = Instance.new("UIStroke"); rhbStroke.Color = Color3.fromRGB(255, 215, 0); rhbStroke.Thickness = 1.2; rhbStroke.Parent = rebirthHudBtn
+
+-- Right: Platform Contract Badge
+local contractHudBtn = Instance.new("TextButton")
+contractHudBtn.Name = "ContractHudBtn"
+contractHudBtn.Size = UDim2.new(0, 155, 1, 0)
+contractHudBtn.Position = UDim2.new(0, 165, 0, 0)
+contractHudBtn.BackgroundColor3 = Color3.fromRGB(24, 28, 38)
+contractHudBtn.TextColor3 = Color3.fromRGB(180, 210, 255)
+contractHudBtn.Font = Enum.Font.GothamBold
+contractHudBtn.TextSize = 11
+contractHudBtn.Text = "📡 Contract: None ⚠️"
+contractHudBtn.Parent = rebirthRow
+
+local chbCorner = Instance.new("UICorner"); chbCorner.CornerRadius = UDim.new(0, 6); chbCorner.Parent = contractHudBtn
+local chbStroke = Instance.new("UIStroke"); chbStroke.Color = Color3.fromRGB(60, 75, 110); chbStroke.Thickness = 1; chbStroke.Parent = contractHudBtn
+
+local function updateContractBadge()
+    local locked = LocalPlayer:GetAttribute("LockedPlatform")
+    if locked and locked ~= "" then
+        contractHudBtn.Text = `📡 {locked:gsub("+", "+")} 🔒`
+        contractHudBtn.TextColor3 = Color3.fromRGB(120, 240, 160)
+        chbStroke.Color = Color3.fromRGB(46, 204, 113)
+    else
+        contractHudBtn.Text = "📡 Pick Platform ⚠️"
+        contractHudBtn.TextColor3 = Color3.fromRGB(255, 200, 80)
+        chbStroke.Color = Color3.fromRGB(255, 170, 0)
+    end
+end
+
+LocalPlayer:GetAttributeChangedSignal("LockedPlatform"):Connect(updateContractBadge)
+updateContractBadge()
+
+contractHudBtn.MouseButton1Click:Connect(function()
+    if _G.OpenPlatformSelect then
+        _G.OpenPlatformSelect(false)
+    end
+end)
+
+--------------------------------------------------------------------------------
+-- REBIRTH MODAL WINDOW (Детальний інтерфейс ребірсу)
+--------------------------------------------------------------------------------
+local rebirthBackdrop = Instance.new("Frame")
+rebirthBackdrop.Name = "RebirthBackdrop"
+rebirthBackdrop.Size = UDim2.new(1, 0, 1, 0)
+rebirthBackdrop.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+rebirthBackdrop.BackgroundTransparency = 0.6
+rebirthBackdrop.Visible = false
+rebirthBackdrop.ZIndex = 60
+rebirthBackdrop.Parent = screenGui
+
+local rebirthWindow = Instance.new("Frame")
+rebirthWindow.Name = "RebirthWindow"
+rebirthWindow.Size = UDim2.new(0, 560, 0, 520)
+rebirthWindow.Position = UDim2.new(0.5, 0, 0.5, 0)
+rebirthWindow.AnchorPoint = Vector2.new(0.5, 0.5)
+rebirthWindow.BackgroundColor3 = Color3.fromRGB(18, 22, 32)
+rebirthWindow.BorderSizePixel = 0
+rebirthWindow.ZIndex = 61
+rebirthWindow.Parent = rebirthBackdrop
+
+local rwCorner = Instance.new("UICorner"); rwCorner.CornerRadius = UDim.new(0, 16); rwCorner.Parent = rebirthWindow
+local rwStroke = Instance.new("UIStroke"); rwStroke.Color = Color3.fromRGB(255, 215, 0); rwStroke.Thickness = 2; rwStroke.Parent = rebirthWindow
+
+-- Title Bar
+local rwTitle = Instance.new("TextLabel")
+rwTitle.Size = UDim2.new(1, -70, 0, 30)
+rwTitle.Position = UDim2.new(0, 20, 0, 14)
+rwTitle.BackgroundTransparency = 1
+rwTitle.Font = Enum.Font.GothamBold
+rwTitle.TextSize = 20
+rwTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
+rwTitle.TextXAlignment = Enum.TextXAlignment.Left
+rwTitle.Text = "🔄 REBIRTH SYSTEM | РЕБІРС КАНАЛУ"
+rwTitle.ZIndex = 62
+rwTitle.Parent = rebirthWindow
+
+local rwCloseBtn = Instance.new("TextButton")
+rwCloseBtn.Size = UDim2.new(0, 32, 0, 32)
+rwCloseBtn.Position = UDim2.new(1, -46, 0, 14)
+rwCloseBtn.BackgroundColor3 = Color3.fromRGB(231, 76, 60)
+rwCloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+rwCloseBtn.Font = Enum.Font.GothamBold
+rwCloseBtn.TextSize = 16
+rwCloseBtn.Text = "✕"
+rwCloseBtn.ZIndex = 62
+rwCloseBtn.Parent = rebirthWindow
+local rwcCorner = Instance.new("UICorner"); rwcCorner.CornerRadius = UDim.new(0, 8); rwcCorner.Parent = rwCloseBtn
+rwCloseBtn.MouseButton1Click:Connect(function()
+    rebirthBackdrop.Visible = false
+end)
+
+-- 1. Status Bar Card
+local statusCard = Instance.new("Frame")
+statusCard.Size = UDim2.new(1, -40, 0, 44)
+statusCard.Position = UDim2.new(0, 20, 0, 50)
+statusCard.BackgroundColor3 = Color3.fromRGB(35, 25, 55)
+statusCard.BorderSizePixel = 0
+statusCard.ZIndex = 62
+statusCard.Parent = rebirthWindow
+local scCorner = Instance.new("UICorner"); scCorner.CornerRadius = UDim.new(0, 8); scCorner.Parent = statusCard
+local scStroke = Instance.new("UIStroke"); scStroke.Color = Color3.fromRGB(170, 80, 240); scStroke.Thickness = 1.2; scStroke.Parent = statusCard
+
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Size = UDim2.new(1, -20, 1, 0)
+statusLabel.Position = UDim2.new(0, 10, 0, 0)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Font = Enum.Font.GothamBold
+statusLabel.TextSize = 13
+statusLabel.TextColor3 = Color3.fromRGB(255, 235, 140)
+statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+statusLabel.Text = "⭐ Current: Rebirth Level 0  |  ⚡ Permanent Boost: +0%"
+statusLabel.ZIndex = 63
+statusLabel.Parent = statusCard
+
+-- 2. Requirements & Progress Card
+local reqCard = Instance.new("Frame")
+reqCard.Size = UDim2.new(1, -40, 0, 68)
+reqCard.Position = UDim2.new(0, 20, 0, 102)
+reqCard.BackgroundColor3 = Color3.fromRGB(24, 28, 40)
+reqCard.BorderSizePixel = 0
+reqCard.ZIndex = 62
+reqCard.Parent = rebirthWindow
+local rcCorner = Instance.new("UICorner"); rcCorner.CornerRadius = UDim.new(0, 8); rcCorner.Parent = reqCard
+local rcStroke = Instance.new("UIStroke"); rcStroke.Color = Color3.fromRGB(52, 152, 219); rcStroke.Thickness = 1.2; rcStroke.Parent = reqCard
+
+local reqTitle = Instance.new("TextLabel")
+reqTitle.Size = UDim2.new(1, -20, 0, 20)
+reqTitle.Position = UDim2.new(0, 10, 0, 6)
+reqTitle.BackgroundTransparency = 1
+reqTitle.Font = Enum.Font.GothamBold
+reqTitle.TextSize = 12
+reqTitle.TextColor3 = Color3.fromRGB(220, 235, 255)
+reqTitle.TextXAlignment = Enum.TextXAlignment.Left
+reqTitle.Text = "📋 Requirements for Next Rebirth:"
+reqTitle.ZIndex = 63
+reqTitle.Parent = reqCard
+
+local reqDetails = Instance.new("TextLabel")
+reqDetails.Size = UDim2.new(1, -20, 0, 18)
+reqDetails.Position = UDim2.new(0, 10, 0, 26)
+reqDetails.BackgroundTransparency = 1
+reqDetails.Font = Enum.Font.Gotham
+reqDetails.TextSize = 11
+reqDetails.TextColor3 = Color3.fromRGB(180, 195, 220)
+reqDetails.TextXAlignment = Enum.TextXAlignment.Left
+reqDetails.Text = "⭐ Subs: 0 / 500  |  💵 Cash: $0 / $250"
+reqDetails.ZIndex = 63
+reqDetails.Parent = reqCard
+
+local reqProgBg = Instance.new("Frame")
+reqProgBg.Size = UDim2.new(1, -20, 0, 12)
+reqProgBg.Position = UDim2.new(0, 10, 0, 48)
+reqProgBg.BackgroundColor3 = Color3.fromRGB(15, 18, 25)
+reqProgBg.BorderSizePixel = 0
+reqProgBg.ZIndex = 63
+reqProgBg.Parent = reqCard
+local rpbCorner = Instance.new("UICorner"); rpbCorner.CornerRadius = UDim.new(0, 6); rpbCorner.Parent = reqProgBg
+
+local reqProgFill = Instance.new("Frame")
+reqProgFill.Size = UDim2.new(0, 0, 1, 0)
+reqProgFill.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+reqProgFill.BorderSizePixel = 0
+reqProgFill.ZIndex = 64
+reqProgFill.Parent = reqProgBg
+local rpfCorner = Instance.new("UICorner"); rpfCorner.CornerRadius = UDim.new(0, 6); rpfCorner.Parent = reqProgFill
+
+-- 3. Rewards Card (ЩО ТИ ОТРИМАЄШ)
+local rewardsCard = Instance.new("Frame")
+rewardsCard.Size = UDim2.new(1, -40, 0, 150)
+rewardsCard.Position = UDim2.new(0, 20, 0, 178)
+rewardsCard.BackgroundColor3 = Color3.fromRGB(24, 30, 24)
+rewardsCard.BorderSizePixel = 0
+rewardsCard.ZIndex = 62
+rewardsCard.Parent = rebirthWindow
+local rwcCorner2 = Instance.new("UICorner"); rwcCorner2.CornerRadius = UDim.new(0, 8); rwcCorner2.Parent = rewardsCard
+local rwcStroke2 = Instance.new("UIStroke"); rwcStroke2.Color = Color3.fromRGB(46, 204, 113); rwcStroke2.Thickness = 1.2; rwcStroke2.Parent = rewardsCard
+
+local rewTitle = Instance.new("TextLabel")
+rewTitle.Size = UDim2.new(1, -20, 0, 24)
+rewTitle.Position = UDim2.new(0, 10, 0, 6)
+rewTitle.BackgroundTransparency = 1
+rewTitle.Font = Enum.Font.GothamBold
+rewTitle.TextSize = 13
+rewTitle.TextColor3 = Color3.fromRGB(100, 240, 120)
+rewTitle.TextXAlignment = Enum.TextXAlignment.Left
+rewTitle.Text = "🎁 WHAT YOU GET FOR REBIRTH (ЩО ТИ ОТРИМАЄШ):"
+rewTitle.ZIndex = 63
+rewTitle.Parent = rewardsCard
+
+local rewList = Instance.new("TextLabel")
+rewList.Size = UDim2.new(1, -20, 0, 114)
+rewList.Position = UDim2.new(0, 10, 0, 30)
+rewList.BackgroundTransparency = 1
+rewList.Font = Enum.Font.Gotham
+rewList.TextSize = 11
+rewList.TextColor3 = Color3.fromRGB(220, 240, 220)
+rewList.TextXAlignment = Enum.TextXAlignment.Left
+rewList.TextYAlignment = Enum.TextYAlignment.Top
+rewList.TextWrapped = true
+rewList.LineHeight = 1.15
+rewList.Text = "• 🚀 +50% Permanent Multiplier to ALL Cash & Subscribers (Stacks infinitely!)\n• 🔓 UNLOCK PLATFORM CONTRACT: Switch to YouTube, Twitch, TikTok, or dual Split!\n• 👑 Prestige Overhead & Chat Title: [Rebirth 1], [Rebirth 2]...\n• ⚡ +10 Max Energy Capacity (Stream longer without tiring)\n• 💵 +$50 Permanent Starter Cash Bonus on every life!"
+rewList.ZIndex = 63
+rewList.Parent = rewardsCard
+
+-- 4. Resets Warning Card (ЩО СКИДАЄТЬСЯ)
+local resetCard = Instance.new("Frame")
+resetCard.Size = UDim2.new(1, -40, 0, 95)
+resetCard.Position = UDim2.new(0, 20, 0, 336)
+resetCard.BackgroundColor3 = Color3.fromRGB(36, 24, 24)
+resetCard.BorderSizePixel = 0
+resetCard.ZIndex = 62
+resetCard.Parent = rebirthWindow
+local rstCorner = Instance.new("UICorner"); rstCorner.CornerRadius = UDim.new(0, 8); rstCorner.Parent = resetCard
+local rstStroke = Instance.new("UIStroke"); rstStroke.Color = Color3.fromRGB(231, 76, 60); rstStroke.Thickness = 1.2; rstStroke.Parent = resetCard
+
+local rstTitle = Instance.new("TextLabel")
+rstTitle.Size = UDim2.new(1, -20, 0, 22)
+rstTitle.Position = UDim2.new(0, 10, 0, 6)
+rstTitle.BackgroundTransparency = 1
+rstTitle.Font = Enum.Font.GothamBold
+rstTitle.TextSize = 12
+rstTitle.TextColor3 = Color3.fromRGB(255, 120, 120)
+rstTitle.TextXAlignment = Enum.TextXAlignment.Left
+rstTitle.Text = "⚠️ WHAT WILL RESET (ЩО СКИДАЄТЬСЯ):"
+rstTitle.ZIndex = 63
+rstTitle.Parent = resetCard
+
+local rstList = Instance.new("TextLabel")
+rstList.Size = UDim2.new(1, -20, 0, 62)
+rstList.Position = UDim2.new(0, 10, 0, 28)
+rstList.BackgroundTransparency = 1
+rstList.Font = Enum.Font.Gotham
+rstList.TextSize = 11
+rstList.TextColor3 = Color3.fromRGB(240, 210, 210)
+rstList.TextXAlignment = Enum.TextXAlignment.Left
+rstList.TextYAlignment = Enum.TextYAlignment.Top
+rstList.TextWrapped = true
+rstList.Text = "• Current Subscribers reset to 0 (New channel era begins!)\n• Current Cash resets to Starter Cash ($15 + rebirth bonus)\n• Platform contract is unlocked for your new selection!\n• (Robux gamepasses, vehicles, and Rebirth boosts are PERMANENT and NEVER reset!)"
+rstList.ZIndex = 63
+rstList.Parent = resetCard
+
+-- 5. Big Rebirth Action Button
+local rebirthActionBtn = Instance.new("TextButton")
+rebirthActionBtn.Name = "RebirthActionBtn"
+rebirthActionBtn.Size = UDim2.new(1, -40, 0, 48)
+rebirthActionBtn.Position = UDim2.new(0, 20, 1, -58)
+rebirthActionBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+rebirthActionBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+rebirthActionBtn.Font = Enum.Font.GothamBlack
+rebirthActionBtn.TextSize = 15
+rebirthActionBtn.Text = "✨ PERFORM REBIRTH (+50% PERMANENT BOOST!)"
+rebirthActionBtn.ZIndex = 63
+rebirthActionBtn.Parent = rebirthWindow
+local rabCorner = Instance.new("UICorner"); rabCorner.CornerRadius = UDim.new(0, 10); rabCorner.Parent = rebirthActionBtn
+
+local function updateRebirthModal()
+    local leaderstats = LocalPlayer:FindFirstChild("leaderstats")
+    local hypeVal = leaderstats and leaderstats:FindFirstChild("Hype") :: IntValue?
+    local moneyVal = leaderstats and leaderstats:FindFirstChild("Money") :: IntValue?
+    local rebirthsVal = leaderstats and leaderstats:FindFirstChild("Rebirths") :: IntValue?
+
+    local currentSubs = hypeVal and hypeVal.Value or 0
+    local currentCash = moneyVal and moneyVal.Value or 0
+    local currentRebirths = rebirthsVal and rebirthsVal.Value or ((LocalPlayer:GetAttribute("Rebirths") :: number?) or 0)
+
+    rebirthHudBtn.Text = `🔄 REBIRTH (Lv. {currentRebirths})`
+    statusLabel.Text = `⭐ Current: Rebirth Level {currentRebirths}  |  ⚡ Permanent Boost: +{currentRebirths * 50}%`
+
+    local reqSubs, reqMoney = StreamConfig.GetRebirthRequirements(currentRebirths)
+    reqDetails.Text = `⭐ Subs: {currentSubs} / {reqSubs}  |  💵 Cash: ${currentCash} / ${reqMoney}`
+
+    local subPct = math.clamp(currentSubs / reqSubs, 0, 1)
+    local cashPct = math.clamp(currentCash / reqMoney, 0, 1)
+    local overallPct = math.min(subPct, cashPct)
+
+    TweenService:Create(reqProgFill, TweenInfo.new(0.2), {
+        Size = UDim2.new(overallPct, 0, 1, 0)
+    }):Play()
+
+    if currentSubs >= reqSubs and currentCash >= reqMoney then
+        rebirthActionBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+        rebirthActionBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        rebirthActionBtn.Text = `✨ PERFORM REBIRTH NOW (+50% BOOST!)`
+        rebirthActionBtn.Active = true
+    else
+        rebirthActionBtn.BackgroundColor3 = Color3.fromRGB(60, 70, 85)
+        rebirthActionBtn.TextColor3 = Color3.fromRGB(160, 175, 195)
+        rebirthActionBtn.Text = `🔒 LOCKED (Need {reqSubs} Subs & ${reqMoney} Cash - {math.floor(overallPct * 100)}%)`
+        rebirthActionBtn.Active = false
+    end
+end
+
+rebirthHudBtn.MouseButton1Click:Connect(function()
+    updateRebirthModal()
+    rebirthBackdrop.Visible = true
+end)
+
+rebirthActionBtn.MouseButton1Click:Connect(function()
+    performRebirthRemote:FireServer()
+    rebirthBackdrop.Visible = false
+end)
+
+rebirthResultRemote.OnClientEvent:Connect(function(statusType: string, info: any)
+    updateRebirthModal()
+    updateContractBadge()
+end)
+
+LocalPlayer:GetAttributeChangedSignal("Rebirths"):Connect(updateRebirthModal)
+task.delay(1, updateRebirthModal)
+
+--------------------------------------------------------------------------------
+-- 3. Channel Info Bar & Survival Stats
 --------------------------------------------------------------------------------
 -- Setup Quality Rating Badge
 local setupBadge = Instance.new("Frame")
