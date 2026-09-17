@@ -5329,6 +5329,14 @@ local function startStream(player: Player, platformKey: string)
                         totalHype = math.floor(totalHype * 2.0)
                     end
 
+                    -- Rebirth Multiplier (+50% Cash & Subs per Rebirth level!)
+                    local rebirths = (player:GetAttribute("Rebirths") :: number?) or 0
+                    if rebirths > 0 then
+                        local rebirthMult = 1.0 + (rebirths * StreamConfig.Rebirth.MultiplierPerRebirth)
+                        totalMoney = math.floor(totalMoney * rebirthMult)
+                        totalHype = math.floor(totalHype * rebirthMult)
+                    end
+
                     -- Щогодинний буст 1.5х
                     local eventFolder = ReplicatedStorage:FindFirstChild("EventState")
                     local isBoostActive = eventFolder and eventFolder:FindFirstChild("IsBoostActive") and (eventFolder.IsBoostActive :: BoolValue).Value
