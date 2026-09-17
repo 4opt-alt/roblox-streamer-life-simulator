@@ -1,4 +1,4 @@
-﻿--!strict
+--!strict
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
@@ -11,6 +11,9 @@ local StreamConfig = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChi
 local remotesFolder = ReplicatedStorage:WaitForChild("Remotes") :: Folder
 local toggleStreamRemote = remotesFolder:WaitForChild("ToggleStream") :: RemoteEvent
 local promptRobuxRemote = remotesFolder:WaitForChild("PromptRobuxPurchase") :: RemoteEvent
+local lockPlatformRemote = remotesFolder:WaitForChild("LockPlatform") :: RemoteEvent
+local promptPlatformSelectRemote = remotesFolder:WaitForChild("PromptPlatformSelect") :: RemoteEvent
+local rebirthResultRemote = remotesFolder:WaitForChild("RebirthResult") :: RemoteEvent
 
 -- ScreenGui
 local screenGui = Instance.new("ScreenGui")
