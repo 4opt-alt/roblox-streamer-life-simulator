@@ -2,6 +2,13 @@
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StreamConfig = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("StreamConfig") :: ModuleScript)
+
+local remotesFolder = ReplicatedStorage:WaitForChild("Remotes") :: Folder
+local performRebirthRemote = remotesFolder:WaitForChild("PerformRebirth") :: RemoteEvent
+local rebirthResultRemote = remotesFolder:WaitForChild("RebirthResult") :: RemoteEvent
+
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui") :: PlayerGui
 
