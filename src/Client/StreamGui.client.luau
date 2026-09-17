@@ -20,6 +20,18 @@ screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 screenGui.Parent = PlayerGui
 
+local function formatCompact(n: number): string
+    if n >= 1_000_000 then
+        return string.format("%.1fM", n / 1_000_000):gsub("%.0M", "M")
+    elseif n >= 10_000 then
+        return string.format("%.1fK", n / 1_000):gsub("%.0K", "K")
+    else
+        local str = tostring(math.floor(n))
+        local formatted = str:reverse():gsub("(%d%d%d)", "%1,"):reverse()
+        return formatted:sub(1, 1) == "," and formatted:sub(2) or formatted
+    end
+end
+
 --------------------------------------------------------------------------------
 -- 0. Hourly Boost Event Banner (Top-Center HUD)
 --------------------------------------------------------------------------------
