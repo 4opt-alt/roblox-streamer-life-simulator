@@ -8114,7 +8114,7 @@ updatePlatformCounters()
 local setupBadge = Instance.new("Frame")
 setupBadge.Name = "SetupBadge"
 setupBadge.Size = UDim2.new(1, -16, 0, 22)
-setupBadge.Position = UDim2.new(0, 8, 0, 114)
+setupBadge.Position = UDim2.new(0, 8, 0, 134)
 setupBadge.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
 setupBadge.BorderSizePixel = 0
 setupBadge.Parent = streamerHub
