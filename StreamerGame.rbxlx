@@ -8528,11 +8528,13 @@ end
 rebirthHudBtn.MouseButton1Click:Connect(function()
     updateRebirthModal()
     rebirthBackdrop.Visible = true
+    rebirthBackdrop.Active = true
 end)
 
 rebirthActionBtn.MouseButton1Click:Connect(function()
     performRebirthRemote:FireServer()
     rebirthBackdrop.Visible = false
+    rebirthBackdrop.Active = false
 end)
 
 rebirthResultRemote.OnClientEvent:Connect(function(statusType: string, info: any)
