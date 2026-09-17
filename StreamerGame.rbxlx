@@ -5495,6 +5495,20 @@ local function startStream(player: Player, platformKey: string)
                 end
             end
 
+            -- Перевірка відстані для ПК-стрімів (Gaming / Just Chatting)
+            if isPC then
+                local char = player.Character
+                local root = char and char:FindFirstChild("HumanoidRootPart") :: BasePart?
+                if root then
+                    local dist = (root.Position - DESK_POSITION).Magnitude
+                    if dist > 30 then
+                        stopStream(player)
+                        rebirthResultRemote:FireClient(player, "PcLeft", "⚠️ You stepped away from your PC Battlestation! Stream ended.")
+                        break
+                    end
+                end
+            end
+
             local leaderstats = player:FindFirstChild("leaderstats")
             if leaderstats then
                 local moneyObj = leaderstats:FindFirstChild("Money") :: IntValue?
@@ -5532,6 +5546,16 @@ local function startStream(player: Player, platformKey: string)
                     -- Множники платформи (1 платформа або Split 2-Platforms з Robux)
                     totalMoney = math.floor(totalMoney * moneyMult)
                     totalHype = math.floor(totalHype * hypeMult)
+
+                    -- Множники категорії (IRL, Gaming, Just Chatting)
+                    totalMoney = math.floor(totalMoney * catInfo.MoneyMultiplier)
+                    totalHype = math.floor(totalHype * catInfo.HypeMultiplier)
+
+                    -- PC Gaming: синергія з купленими іграми в Steam (+20% грошей та +15% сабів за кожну гру)
+                    if categoryKey == "Gaming" and gamesCount > 0 then
+                        totalMoney = math.floor(totalMoney * (1.0 + (gamesCount * 0.20)))
+                        totalHype = math.floor(totalHype * (1.0 + (gamesCount * 0.15)))
+                    end
 
                     -- VIP Pass (+50% грошей, +25% сабів)
                     if player:GetAttribute("IsVIP") == true then
@@ -5709,6 +5733,13 @@ lockPlatformRemote.OnServerEvent:Connect(function(player: Player, requestedPlatf
     player:SetAttribute("LockedPlatform", lockedKey)
     player:SetAttribute("ActiveStreamPlatforms", displayNames)
     rebirthResultRemote:FireClient(player, "PlatformLocked", displayNames)
+end)
+
+-- 11. Вибір категорії стріму (Client -> Server)
+setStreamCategoryRemote.OnServerEvent:Connect(function(player: Player, requestedCategory: any)
+    if typeof(requestedCategory) == "string" and StreamConfig.Categories[requestedCategory] then
+        player:SetAttribute("StreamCategory", requestedCategory)
+    end
 end)
 
 -- 8. Виконання Ребірсу (Rebirth)
