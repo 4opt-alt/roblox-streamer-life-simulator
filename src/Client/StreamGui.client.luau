@@ -745,6 +745,7 @@ rebirthBackdrop.Size = UDim2.new(1, 0, 1, 0)
 rebirthBackdrop.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 rebirthBackdrop.BackgroundTransparency = 0.6
 rebirthBackdrop.Visible = false
+rebirthBackdrop.Active = false
 rebirthBackdrop.ZIndex = 60
 rebirthBackdrop.Parent = screenGui
 

@@ -17,6 +17,7 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "ShopGui"
 screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.DisplayOrder = 5
 screenGui.Parent = PlayerGui
 
 -- Floating Quick Shop Button on screen
