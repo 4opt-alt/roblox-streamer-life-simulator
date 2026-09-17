@@ -788,6 +788,7 @@ rwCloseBtn.Parent = rebirthWindow
 local rwcCorner = Instance.new("UICorner"); rwcCorner.CornerRadius = UDim.new(0, 8); rwcCorner.Parent = rwCloseBtn
 rwCloseBtn.MouseButton1Click:Connect(function()
     rebirthBackdrop.Visible = false
+    rebirthBackdrop.Active = false
 end)
 
 -- 1. Status Bar Card
