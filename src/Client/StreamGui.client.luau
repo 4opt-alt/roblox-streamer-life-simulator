@@ -794,6 +794,16 @@ rebirthActionBtn.ZIndex = 63
 rebirthActionBtn.Parent = rebirthWindow
 local rabCorner = Instance.new("UICorner"); rabCorner.CornerRadius = UDim.new(0, 10); rabCorner.Parent = rebirthActionBtn
 
+local function formatNumber(n: number): string
+    local formatted = tostring(math.floor(n))
+    local k
+    while true do
+        formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", "%1,%2")
+        if k == 0 then break end
+    end
+    return formatted
+end
+
 local function updateRebirthModal()
     local leaderstats = LocalPlayer:FindFirstChild("leaderstats")
     local hypeVal = leaderstats and leaderstats:FindFirstChild("Hype") :: IntValue?
@@ -804,11 +814,14 @@ local function updateRebirthModal()
     local currentCash = moneyVal and moneyVal.Value or 0
     local currentRebirths = rebirthsVal and rebirthsVal.Value or ((LocalPlayer:GetAttribute("Rebirths") :: number?) or 0)
 
+    local nextLevel = currentRebirths + 1
+    local nextReward = (StreamConfig :: any).GetRebirthReward(nextLevel)
+
     rebirthHudBtn.Text = `🔄 REBIRTH (Lv. {currentRebirths})`
     statusLabel.Text = `⭐ Current: Rebirth Level {currentRebirths}  |  ⚡ Permanent Boost: +{currentRebirths * 50}%`
 
     local reqSubs, reqMoney = StreamConfig.GetRebirthRequirements(currentRebirths)
-    reqDetails.Text = `⭐ Subs: {currentSubs} / {reqSubs}  |  💵 Cash: ${currentCash} / ${reqMoney}`
+    reqDetails.Text = `⭐ Subs: {formatNumber(currentSubs)} / {formatNumber(reqSubs)}  |  💵 Cash: ${formatNumber(currentCash)} / ${formatNumber(reqMoney)}`
 
     local subPct = math.clamp(currentSubs / reqSubs, 0, 1)
     local cashPct = math.clamp(currentCash / reqMoney, 0, 1)
@@ -818,15 +831,18 @@ local function updateRebirthModal()
         Size = UDim2.new(overallPct, 0, 1, 0)
     }):Play()
 
+    rewTitle.Text = `🏆 НАГОРОДА ЗА РЕБІРС: {nextReward.ButtonIcon} {nextReward.ButtonNameUA}!`
+    rewList.Text = `• 🏆 ТРОФЕЙ YOUTUBE: 3D-кнопка {nextReward.ButtonNameUA} з'явиться на стіні над сетапом!\n• 👑 Престижний надголовий титул: {nextReward.TitleTag}\n• 🚀 +50% Постійний множник до заробітку (Cash & Subs)\n• 🔓 Розблокування контракту: Обирай нову платформу або Dual-Stream!\n• ⚡ +15 До максимального запасу енергії & +$100 стартових коштів!`
+
     if currentSubs >= reqSubs and currentCash >= reqMoney then
         rebirthActionBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
         rebirthActionBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        rebirthActionBtn.Text = `✨ PERFORM REBIRTH NOW (+50% BOOST!)`
+        rebirthActionBtn.Text = `✨ PERFORM REBIRTH NOW (+50% BOOST & {nextReward.ButtonIcon} BUTTON!)`
         rebirthActionBtn.Active = true
     else
         rebirthActionBtn.BackgroundColor3 = Color3.fromRGB(60, 70, 85)
         rebirthActionBtn.TextColor3 = Color3.fromRGB(160, 175, 195)
-        rebirthActionBtn.Text = `🔒 LOCKED (Need {reqSubs} Subs & ${reqMoney} Cash - {math.floor(overallPct * 100)}%)`
+        rebirthActionBtn.Text = `🔒 LOCKED (Need {formatNumber(reqSubs)} Subs & ${formatNumber(reqMoney)} Cash - {math.floor(overallPct * 100)}%)`
         rebirthActionBtn.Active = false
     end
 end
