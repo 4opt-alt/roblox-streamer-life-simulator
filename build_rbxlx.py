@@ -38,6 +38,8 @@ def create_rbxlx():
         vehicle_gui_src = f.read()
     with open(os.path.join(src_dir, "Client", "CityWaypoints.client.luau"), "r", encoding="utf-8") as f:
         city_waypoints_src = f.read()
+    with open(os.path.join(src_dir, "Client", "RobuxStoreGui.client.luau"), "r", encoding="utf-8") as f:
+        robux_store_gui_src = f.read()
 
     part_counter = [2000]
     def make_part(name, size, pos, rot=(0,0,0), color="4281545523", material=256, anchored=True, can_collide=True, transparency=0, light=None, is_seat=False, shape=None, children_xml=""):
@@ -818,6 +820,12 @@ def create_rbxlx():
 				<Properties>
 					<string name="Name">CityWaypoints</string>
 					<ProtectedString name="Source"><![CDATA[{city_waypoints_src}]]></ProtectedString>
+				</Properties>
+			</Item>
+			<Item class="LocalScript" referent="RBX_RobuxStoreGui">
+				<Properties>
+					<string name="Name">RobuxStoreGui</string>
+					<ProtectedString name="Source"><![CDATA[{robux_store_gui_src}]]></ProtectedString>
 				</Properties>
 			</Item>
 		</Item>

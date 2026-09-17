@@ -120,7 +120,7 @@ local ShopConfig: { [string]: ShopItem } = {
         IconText = "🍔",
     },
 
-    -- 4. Multi-Stream License
+    -- 4. Multi-Stream License (Cash)
     MultiStreamLicense = {
         Id = "MultiStreamLicense",
         Category = "License",
@@ -134,4 +134,101 @@ local ShopConfig: { [string]: ShopItem } = {
     },
 }
 
+export type RobuxProduct = {
+    Id: string,
+    Name: string,
+    PriceRobux: number,
+    Type: "GamePass" | "DevProduct",
+    Category: "VIP" | "Boost" | "Cash" | "Special",
+    Description: string,
+    IconText: string,
+    BadgeText: string,
+}
+
+local RobuxProducts: { [string]: RobuxProduct } = {
+    Pass_VIP = {
+        Id = "Pass_VIP",
+        Name = "VIP Streamer Status",
+        PriceRobux = 99,
+        Type = "GamePass",
+        Category = "VIP",
+        Description = "Permanent [VIP] golden tag, glowing golden studio setup, +50% Stream Money & +25% Subs permanently!",
+        IconText = "👑",
+        BadgeText = "BEST VALUE",
+    },
+    Boost_Viral2X = {
+        Id = "Boost_Viral2X",
+        Name = "2X Viral Stream Boost (15m)",
+        PriceRobux = 25,
+        Type = "DevProduct",
+        Category = "Boost",
+        Description = "Doubles ALL subscriber gains from streaming and interactive choice events for 15 minutes!",
+        IconText = "🚀",
+        BadgeText = "POPULAR",
+    },
+    Surge_Energy = {
+        Id = "Surge_Energy",
+        Name = "Infinite Energy Surge (5m)",
+        PriceRobux = 15,
+        Type = "DevProduct",
+        Category = "Boost",
+        Description = "Instant 100% Energy restore + 5 minutes of Infinite Stamina (stream without getting tired)!",
+        IconText = "⚡",
+        BadgeText = "INSTANT",
+    },
+    Alert_SuperChat = {
+        Id = "Alert_SuperChat",
+        Name = "Server-Wide Super-Chat Alert",
+        PriceRobux = 35,
+        Type = "DevProduct",
+        Category = "Special",
+        Description = "Broadcasts an epic gold banner to ALL players on the server + grants $200 Cash and +500 Subs!",
+        IconText = "📣",
+        BadgeText = "SHOW OFF",
+    },
+    Cash_Pack_Small = {
+        Id = "Cash_Pack_Small",
+        Name = "Starter Cash (+ $300)",
+        PriceRobux = 19,
+        Type = "DevProduct",
+        Category = "Cash",
+        Description = "Instant boost to buy your first games in Steam and facecam microphone!",
+        IconText = "💵",
+        BadgeText = "+ $300",
+    },
+    Cash_Pack_Medium = {
+        Id = "Cash_Pack_Medium",
+        Name = "Pro Cash Vault (+ $1,500)",
+        PriceRobux = 49,
+        Type = "DevProduct",
+        Category = "Cash",
+        Description = "Instantly afford the Dual 165Hz Curved Screens and RTX Gaming Battlestation!",
+        IconText = "💰",
+        BadgeText = "+ $1,500",
+    },
+    Cash_Pack_Large = {
+        Id = "Cash_Pack_Large",
+        Name = "Whale Bankroll (+ $5,000)",
+        PriceRobux = 99,
+        Type = "DevProduct",
+        Category = "Cash",
+        Description = "Instant millionaire streamer status! Buy every item in the game immediately!",
+        IconText = "💎",
+        BadgeText = "+ $5,000",
+    },
+    MultiStreamLicense = {
+        Id = "MultiStreamLicense",
+        Name = "Multi-Stream (YouTube + Twitch)",
+        PriceRobux = 49,
+        Type = "GamePass",
+        Category = "Special",
+        Description = "Permanent cross-platform streaming with +85% Money and +50% Subscribers!",
+        IconText = "⭐",
+        BadgeText = "CROSS-PLATFORM",
+    },
+}
+
+(ShopConfig :: any).RobuxProducts = RobuxProducts
+
 return ShopConfig
+

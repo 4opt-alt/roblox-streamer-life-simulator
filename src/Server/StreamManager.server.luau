@@ -138,8 +138,19 @@ local function updateOverhead(character: Model, player: Player)
         local cLabel = container:FindFirstChild("ChannelNameLabel") :: TextLabel?
         local sLabel = container:FindFirstChild("StatsLabel") :: TextLabel?
 
+        local isVIP = player:GetAttribute("IsVIP") == true
         if cLabel then
-            cLabel.Text = `📺 {channelName}`
+            if isVIP then
+                cLabel.Text = `👑 [VIP] {channelName}`
+                cLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+            else
+                cLabel.Text = `📺 {channelName}`
+                cLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            end
+        end
+        local stroke = container:FindFirstChildOfClass("UIStroke")
+        if stroke then
+            stroke.Color = isVIP and Color3.fromRGB(255, 215, 0) or Color3.fromRGB(52, 152, 219)
         end
         if sLabel then
             local isLive = isStreaming[player]
@@ -332,8 +343,14 @@ local function startStream(player: Player, platformKey: string)
             elapsedSeconds += 1
 
             -- 1. Симуляція виживання: витрата Енергії (Energy Drain)
+            local infiniteExp = (player:GetAttribute("InfiniteEnergyExpiry") :: number?) or 0
+            local hasInfiniteEnergy = infiniteExp > os.time()
+
             local currentEnergy = (player:GetAttribute("Energy") :: number?) or 100
-            if elapsedSeconds % StreamConfig.EnergyDrainSeconds == 0 then
+            if hasInfiniteEnergy then
+                currentEnergy = 100
+                player:SetAttribute("Energy", 100)
+            elseif elapsedSeconds % StreamConfig.EnergyDrainSeconds == 0 then
                 currentEnergy = math.max(0, currentEnergy - 1)
                 player:SetAttribute("Energy", currentEnergy)
 
@@ -373,7 +390,7 @@ local function startStream(player: Player, platformKey: string)
                     local totalHype = baseHype + equipHypeBonus
 
                     -- Штраф втоми (якщо енергія < 25% — дохід падає на 50%)
-                    if currentEnergy < 25 then
+                    if currentEnergy < 25 and not hasInfiniteEnergy then
                         totalMoney = math.floor(totalMoney * 0.5)
                         totalHype = math.floor(totalHype * 0.5)
                     end
@@ -381,6 +398,18 @@ local function startStream(player: Player, platformKey: string)
                     -- Множники платформи (YouTube, Twitch, TikTok, Multi-Stream)
                     totalMoney = math.floor(totalMoney * platformInfo.MoneyMultiplier)
                     totalHype = math.floor(totalHype * platformInfo.HypeMultiplier)
+
+                    -- VIP Pass (+50% грошей, +25% сабів)
+                    if player:GetAttribute("IsVIP") == true then
+                        totalMoney = math.floor(totalMoney * 1.5)
+                        totalHype = math.floor(totalHype * 1.25)
+                    end
+
+                    -- 2X Viral Stream Boost (Robux DevProduct)
+                    local viralBoostExp = (player:GetAttribute("ViralBoostExpiry") :: number?) or 0
+                    if viralBoostExp > os.time() then
+                        totalHype = math.floor(totalHype * 2.0)
+                    end
 
                     -- Щогодинний буст 1.5х
                     local eventFolder = ReplicatedStorage:FindFirstChild("EventState")
@@ -456,7 +485,17 @@ submitChoiceRemote.OnServerEvent:Connect(function(player: Player, eventId: any, 
         -- При 50 сабів: 50 * 0.10 = +5
         -- Для початківця: мінімум +5
         hypeDelta = math.max(5, math.round(currentHype * chosenOption.SuccessHypeMultiplier))
-        moneyDelta = chosenOption.MoneyReward
+        -- 2X Viral Boost multiplier
+        if (player:GetAttribute("ViralBoostExpiry") or 0) > os.time() then
+            hypeDelta = math.floor(hypeDelta * 2.0)
+        end
+        -- VIP Multipliers (+25% subs, +50% cash)
+        if player:GetAttribute("IsVIP") == true then
+            hypeDelta = math.floor(hypeDelta * 1.25)
+            moneyDelta = math.floor(chosenOption.MoneyReward * 1.5)
+        else
+            moneyDelta = chosenOption.MoneyReward
+        end
         message = chosenOption.SuccessMessage
     else
         -- Точна формула невдачі:

@@ -33,8 +33,16 @@ if not promptRobuxRemote then
     promptRobuxRemote.Parent = remotesFolder
 end
 
+local broadcastSuperChatRemote = remotesFolder:FindFirstChild("BroadcastSuperChat") :: RemoteEvent?
+if not broadcastSuperChatRemote then
+    broadcastSuperChatRemote = Instance.new("RemoteEvent")
+    broadcastSuperChatRemote.Name = "BroadcastSuperChat"
+    broadcastSuperChatRemote.Parent = remotesFolder
+end
+
 local MarketplaceService = game:GetService("MarketplaceService")
 local MULTISTREAM_GAMEPASS_ID = 99999999 -- Placeholder Gamepass ID
+local VIP_GAMEPASS_ID = 88888888 -- Placeholder VIP Gamepass ID
 
 
 local function recalculateBonuses(player: Player)
@@ -103,32 +111,94 @@ buyItemRemote.OnServerEvent:Connect(function(player: Player, itemId: any)
     shopResultRemote:FireClient(player, itemId, true, `Successfully purchased {item.Name}!`)
 end)
 
--- Обробка запиту на купівлю ліцензії за Робукси
-promptRobuxRemote.OnServerEvent:Connect(function(player: Player, itemId: any)
-    if itemId == "MultiStreamLicense" then
-        if player:GetAttribute("Owned_MultiStreamLicense") == true then
-            shopResultRemote:FireClient(player, itemId, false, "Already owned!")
+local function grantRobuxProduct(player: Player, productId: string)
+    local leaderstats = player:FindFirstChild("leaderstats")
+    local moneyVal = leaderstats and leaderstats:FindFirstChild("Money") :: IntValue?
+    local hypeVal = leaderstats and leaderstats:FindFirstChild("Hype") :: IntValue?
+
+    if productId == "Pass_VIP" then
+        if player:GetAttribute("Owned_Pass_VIP") == true then
+            shopResultRemote:FireClient(player, productId, false, "VIP Pass is already owned!")
             return
         end
+        player:SetAttribute("Owned_Pass_VIP", true)
+        player:SetAttribute("IsVIP", true)
+        recalculateBonuses(player)
+        shopResultRemote:FireClient(player, productId, true, "👑 VIP Status Activated! Permanent +50% Cash & +25% Subs!")
+    elseif productId == "Boost_Viral2X" then
+        local now = os.time()
+        local currentExpiry = math.max(now, (player:GetAttribute("ViralBoostExpiry") :: number?) or 0)
+        local newExpiry = currentExpiry + 15 * 60
+        player:SetAttribute("ViralBoostExpiry", newExpiry)
+        shopResultRemote:FireClient(player, productId, true, "🚀 2X Viral Stream Boost Activated for 15 minutes!")
+    elseif productId == "Surge_Energy" then
+        player:SetAttribute("Energy", 100)
+        local now = os.time()
+        local currentEnergyExp = math.max(now, (player:GetAttribute("InfiniteEnergyExpiry") :: number?) or 0)
+        local newExpiry = currentEnergyExp + 5 * 60
+        player:SetAttribute("InfiniteEnergyExpiry", newExpiry)
+        shopResultRemote:FireClient(player, productId, true, "⚡ Energy Refilled to 100% & Infinite Stamina for 5 mins!")
+    elseif productId == "Alert_SuperChat" then
+        if moneyVal then moneyVal.Value += 200 end
+        if hypeVal then hypeVal.Value += 500 end
+        broadcastSuperChatRemote:FireAllClients(player.DisplayName, 500)
+        shopResultRemote:FireClient(player, productId, true, "📣 Super-Chat Broadcast Sent to entire server! +$200 & +500 Subs!")
+    elseif productId == "Cash_Pack_Small" then
+        if moneyVal then moneyVal.Value += 300 end
+        shopResultRemote:FireClient(player, productId, true, "💵 +$300 Cash Added to your balance!")
+    elseif productId == "Cash_Pack_Medium" then
+        if moneyVal then moneyVal.Value += 1500 end
+        shopResultRemote:FireClient(player, productId, true, "💰 +$1,500 Cash Added to your balance!")
+    elseif productId == "Cash_Pack_Large" then
+        if moneyVal then moneyVal.Value += 5000 end
+        shopResultRemote:FireClient(player, productId, true, "💎 +$5,000 Cash Added to your balance!")
+    elseif productId == "MultiStreamLicense" then
+        if player:GetAttribute("Owned_MultiStreamLicense") == true then
+            shopResultRemote:FireClient(player, productId, false, "Multi-Stream is already owned!")
+            return
+        end
+        player:SetAttribute("Owned_MultiStreamLicense", true)
+        recalculateBonuses(player)
+        shopResultRemote:FireClient(player, productId, true, "⭐ Multi-Stream Combo (YouTube + Twitch) unlocked!")
+    end
+end
 
+promptRobuxRemote.OnServerEvent:Connect(function(player: Player, productId: any)
+    if typeof(productId) ~= "string" then return end
+
+    local robuxProducts = (ShopConfig :: any).RobuxProducts
+    local prod = robuxProducts and robuxProducts[productId]
+    if not prod then return end
+
+    if prod.Type == "GamePass" then
+        local passId = (productId == "Pass_VIP") and VIP_GAMEPASS_ID or MULTISTREAM_GAMEPASS_ID
         local success = pcall(function()
-            MarketplaceService:PromptGamePassPurchase(player, MULTISTREAM_GAMEPASS_ID)
+            MarketplaceService:PromptGamePassPurchase(player, passId)
         end)
-
-        -- Якщо Gamepass ще не опублікований у хмарі Roblox (локальний тест), активуємо ліцензію для тестування
-        if not success or MULTISTREAM_GAMEPASS_ID == 99999999 then
-            player:SetAttribute("Owned_MultiStreamLicense", true)
-            recalculateBonuses(player)
-            shopResultRemote:FireClient(player, itemId, true, "⭐ Multi-Stream Combo unlocked via Robux!")
+        -- Fallback for local Studio testing where pass is unlisted
+        if not success or passId == 99999999 or passId == 88888888 then
+            grantRobuxProduct(player, productId)
+        end
+    else
+        -- Developer Product purchase
+        local mockProductId = 12345678
+        local success = pcall(function()
+            MarketplaceService:PromptProductPurchase(player, mockProductId)
+        end)
+        -- Fallback for local Studio testing
+        if not success or mockProductId == 12345678 then
+            grantRobuxProduct(player, productId)
         end
     end
 end)
 
 MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(player: Player, passId: number, purchased: boolean)
-    if purchased and passId == MULTISTREAM_GAMEPASS_ID then
-        player:SetAttribute("Owned_MultiStreamLicense", true)
-        recalculateBonuses(player)
-        shopResultRemote:FireClient(player, "MultiStreamLicense", true, "⭐ Multi-Stream Combo unlocked via Robux!")
+    if purchased then
+        if passId == MULTISTREAM_GAMEPASS_ID then
+            grantRobuxProduct(player, "MultiStreamLicense")
+        elseif passId == VIP_GAMEPASS_ID then
+            grantRobuxProduct(player, "Pass_VIP")
+        end
     end
 end)
 
@@ -138,5 +208,9 @@ Players.PlayerAdded:Connect(function(player)
     player:SetAttribute("GamesOwnedCount", 0)
     player:SetAttribute("GearOwnedCount", 0)
     player:SetAttribute("Energy", 100)
+    player:SetAttribute("ViralBoostExpiry", 0)
+    player:SetAttribute("InfiniteEnergyExpiry", 0)
+    player:SetAttribute("IsVIP", false)
 end)
+
 
