@@ -8535,6 +8535,7 @@ for idx, p in platformsList do
 
     platformRowCards[p.Id] = card
     platformSelectBtns[p.Id] = selBtn
+    platformClickAreas[p.Id] = clickArea
 end
 
 -- 4. Confirm & Lock Button
@@ -8555,12 +8556,14 @@ local lCorner = Instance.new("UICorner"); lCorner.CornerRadius = UDim.new(0, 10)
 local function updateLockState()
     local locked = LocalPlayer:GetAttribute("LockedPlatform")
     if locked and locked ~= "" then
-        launchBtn.BackgroundColor3 = Color3.fromRGB(80, 90, 110)
+        launchBtn.BackgroundColor3 = Color3.fromRGB(55, 65, 80)
         launchBtn.Text = `🔒 CONTRACT ACTIVE: {locked:gsub("+", " + ")} (REBIRTH TO SWITCH)`
+        launchBtn.TextColor3 = Color3.fromRGB(180, 190, 210)
         launchBtn.AutoButtonColor = false
     else
         launchBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
         launchBtn.Text = "🔒 CONFIRM & LOCK PLATFORM (UNTIL REBIRTH)"
+        launchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
         launchBtn.AutoButtonColor = true
     end
 end
@@ -8589,8 +8592,10 @@ launchBtn.MouseButton1Click:Connect(function()
 end)
 
 LocalPlayer:GetAttributeChangedSignal("LockedPlatform"):Connect(function()
+    syncWithLock()
+    updateModeBanner()
+    refreshPlatformRows()
     updateLockState()
-    updateSummaryRow()
 end)
 
 updateModeBanner()
@@ -8613,6 +8618,14 @@ end)
 -- Open Menu Listener & Global Function
 --------------------------------------------------------------------------------
 local function openMenu(isRebirth: boolean?)
+    local locked = LocalPlayer:GetAttribute("LockedPlatform")
+    if isRebirth or not locked or locked == "" then
+        if not selectedPlatforms or not next(selectedPlatforms) then
+            selectedPlatforms = { YouTube = true }
+        end
+    else
+        syncWithLock()
+    end
     updateModeBanner()
     refreshPlatformRows()
     updateLockState()
