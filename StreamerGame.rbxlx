@@ -5207,14 +5207,15 @@ local function updateOverhead(character: Model, player: Player)
 
         local isVIP = player:GetAttribute("IsVIP") == true
         local rebirths = (player:GetAttribute("Rebirths") :: number?) or 0
-        local rebirthTag = if rebirths > 0 then `⭐[Rebirth {rebirths}] ` else ""
+        local tierReward = if rebirths > 0 then (StreamConfig :: any).GetRebirthReward(rebirths) else nil
+        local rebirthTag = if tierReward then `{tierReward.TitleTag} ` elseif rebirths > 0 then `⭐[Rebirth {rebirths}] ` else ""
 
         if cLabel then
             if isVIP then
                 cLabel.Text = `👑 [VIP] {rebirthTag}{channelName}`
                 cLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
             else
-                cLabel.Text = `📺 {rebirthTag}{channelName}`
+                cLabel.Text = `{rebirthTag}{channelName}`
                 cLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
             end
         end
@@ -5336,14 +5337,177 @@ local function equipPhone(player: Player)
 end
 
 --------------------------------------------------------------------------------
--- Керування ПК-монітором та робочим столом (PC Battlestation)
+-- 3D Кнопки YouTube на стіні над сетапом (YouTube Play Buttons Wall of Fame)
 --------------------------------------------------------------------------------
 local DESK_POSITION = Vector3.new(0, 4.5, -70)
+
+local function updateStudioAwards(player: Player)
+    local rebirths = (player:GetAttribute("Rebirths") :: number?) or 0
+    if rebirths <= 0 then return end
+
+    local awardsFolder = workspace:FindFirstChild("YouTubeAwardsWall") :: Folder?
+    if not awardsFolder then
+        awardsFolder = Instance.new("Folder")
+        awardsFolder.Name = "YouTubeAwardsWall"
+        awardsFolder.Parent = workspace
+    end
+
+    local xOffsets = {
+        [1] = -4.0,
+        [2] = -2.0,
+        [3] = 0.0,
+        [4] = 2.0,
+        [5] = 4.0,
+    }
+
+    local channelName = player:GetAttribute("ChannelName") or (player.DisplayName .. " TV")
+
+    for lvl = 1, math.min(rebirths, 5) do
+        local plaqueName = `Award_Tier_{lvl}`
+        local tier = (StreamConfig :: any).RebirthTiers[lvl]
+        if not tier then continue end
+
+        local existingModel = awardsFolder:FindFirstChild(plaqueName) :: Model?
+        if existingModel then
+            -- Update channel name if already exists
+            local face = existingModel:FindFirstChild("FacePlate") :: BasePart?
+            local sg = face and face:FindFirstChild("PlaqueGui") :: SurfaceGui?
+            local bg = sg and sg:FindFirstChildOfClass("Frame")
+            local nameLbl = bg and bg:FindFirstChild("NameLabel") :: TextLabel?
+            if nameLbl then
+                nameLbl.Text = channelName
+            end
+            continue
+        end
+
+        local plaqueModel = Instance.new("Model")
+        plaqueModel.Name = plaqueName
+
+        local posX = xOffsets[lvl] or (lvl * 2.0 - 6.0)
+        local posY = 8.6
+        local posZ = -73.15
+
+        -- 1. Outer Frame (Shadow box brushed metal frame)
+        local frame = Instance.new("Part")
+        frame.Name = "Frame"
+        frame.Size = Vector3.new(1.7, 2.2, 0.12)
+        frame.CFrame = CFrame.new(posX, posY, posZ)
+        frame.Anchored = true
+        frame.CanCollide = false
+        frame.Material = Enum.Material.Metal
+        frame.Color = Color3.fromRGB(18, 20, 26)
+        frame.Parent = plaqueModel
+
+        -- 2. Inner Plaque Face
+        local face = Instance.new("Part")
+        face.Name = "FacePlate"
+        face.Size = Vector3.new(1.5, 2.0, 0.04)
+        face.CFrame = CFrame.new(posX, posY, posZ + 0.05)
+        face.Anchored = true
+        face.CanCollide = false
+        face.Material = tier.Material
+        face.Color = tier.PlaqueColor
+        face.Parent = plaqueModel
+
+        -- 3. Point Light Glow
+        local glow = Instance.new("PointLight")
+        glow.Color = tier.GlowColor
+        glow.Brightness = 1.0
+        glow.Range = 6
+        glow.Parent = face
+
+        -- 4. SurfaceGui for Authentic YouTube Button Inscription
+        local sg = Instance.new("SurfaceGui")
+        sg.Name = "PlaqueGui"
+        sg.Face = Enum.NormalId.Front
+        sg.CanvasSize = Vector2.new(300, 400)
+        sg.LightInfluence = 0
+        sg.SizingMode = Enum.SurfaceGuiSizingMode.FixedSize
+        sg.Parent = face
+
+        local bg = Instance.new("Frame")
+        bg.Size = UDim2.new(1, 0, 1, 0)
+        bg.BackgroundTransparency = 1
+        bg.Parent = sg
+
+        -- Red YouTube Play Button Icon
+        local playBtnBg = Instance.new("Frame")
+        playBtnBg.Size = UDim2.new(0, 120, 0, 84)
+        playBtnBg.Position = UDim2.new(0.5, -60, 0, 36)
+        playBtnBg.BackgroundColor3 = (lvl == 3) and Color3.fromRGB(0, 200, 255) or ((lvl == 5) and Color3.fromRGB(200, 10, 40) or Color3.fromRGB(230, 33, 23))
+        playBtnBg.BorderSizePixel = 0
+        playBtnBg.Parent = bg
+        local pbc = Instance.new("UICorner"); pbc.CornerRadius = UDim.new(0, 24); pbc.Parent = playBtnBg
+
+        local playTriangle = Instance.new("TextLabel")
+        playTriangle.Size = UDim2.new(1, 0, 1, 0)
+        playTriangle.BackgroundTransparency = 1
+        playTriangle.Font = Enum.Font.GothamBold
+        playTriangle.TextSize = 42
+        playTriangle.TextColor3 = Color3.fromRGB(255, 255, 255)
+        playTriangle.Text = "▶"
+        playTriangle.Parent = playBtnBg
+
+        -- Inscription
+        local ytLogo = Instance.new("TextLabel")
+        ytLogo.Size = UDim2.new(1, 0, 0, 30)
+        ytLogo.Position = UDim2.new(0, 0, 0, 136)
+        ytLogo.BackgroundTransparency = 1
+        ytLogo.Font = Enum.Font.GothamBlack
+        ytLogo.TextSize = 22
+        ytLogo.TextColor3 = (lvl == 2) and Color3.fromRGB(120, 90, 10) or Color3.fromRGB(25, 25, 30)
+        ytLogo.Text = "YouTube"
+        ytLogo.Parent = bg
+
+        local presTo = Instance.new("TextLabel")
+        presTo.Size = UDim2.new(1, 0, 0, 18)
+        presTo.Position = UDim2.new(0, 0, 0, 172)
+        presTo.BackgroundTransparency = 1
+        presTo.Font = Enum.Font.GothamMedium
+        presTo.TextSize = 13
+        presTo.TextColor3 = (lvl == 2) and Color3.fromRGB(100, 75, 10) or Color3.fromRGB(60, 60, 70)
+        presTo.Text = "PRESENTED TO"
+        presTo.Parent = bg
+
+        local nameLabel = Instance.new("TextLabel")
+        nameLabel.Name = "NameLabel"
+        nameLabel.Size = UDim2.new(1, -20, 0, 36)
+        nameLabel.Position = UDim2.new(0, 10, 0, 196)
+        nameLabel.BackgroundTransparency = 1
+        nameLabel.Font = Enum.Font.GothamBlack
+        nameLabel.TextSize = 20
+        nameLabel.TextColor3 = (lvl == 2) and Color3.fromRGB(80, 50, 0) or Color3.fromRGB(10, 10, 15)
+        nameLabel.TextScaled = true
+        nameLabel.Text = channelName
+        nameLabel.Parent = bg
+
+        local forPassing = Instance.new("TextLabel")
+        forPassing.Size = UDim2.new(1, 0, 0, 18)
+        forPassing.Position = UDim2.new(0, 0, 0, 240)
+        forPassing.BackgroundTransparency = 1
+        forPassing.Font = Enum.Font.Gotham
+        forPassing.TextSize = 12
+        forPassing.TextColor3 = (lvl == 2) and Color3.fromRGB(100, 75, 10) or Color3.fromRGB(70, 70, 80)
+        forPassing.Text = "FOR PASSING"
+        forPassing.Parent = bg
+
+        local milestoneLabel = Instance.new("TextLabel")
+        milestoneLabel.Size = UDim2.new(1, 0, 0, 32)
+        milestoneLabel.Position = UDim2.new(0, 0, 0, 262)
+        milestoneLabel.BackgroundTransparency = 1
+        milestoneLabel.Font = Enum.Font.GothamBold
+        milestoneLabel.TextSize = 17
+        milestoneLabel.TextColor3 = (lvl == 2) and Color3.fromRGB(80, 50, 0) or Color3.fromRGB(15, 15, 20)
+        milestoneLabel.Text = tier.MilestoneText:upper()
+        milestoneLabel.Parent = bg
+
+        plaqueModel.Parent = awardsFolder
+    end
+end
 
 --------------------------------------------------------------------------------
 -- Керування ПК-монітором, веб-камерою та сетапом (PC Battlestation WebCam)
 --------------------------------------------------------------------------------
-local DESK_POSITION = Vector3.new(0, 4.5, -70)
 local webcamLoopThread: thread? = nil
 
 local function updateMonitorDisplay(isLive: boolean, categoryKey: string?, platformStr: string?, player: Player?)
