@@ -1,7 +1,7 @@
 import os
 import math
 
-def create_rbxlx():
+def create_rbxlx(auto_push=True):
     base_dir = os.path.dirname(os.path.abspath(__file__))
     src_dir = os.path.join(base_dir, "src")
     
