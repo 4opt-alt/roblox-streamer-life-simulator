@@ -1,15 +1,10 @@
 --!strict
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui") :: PlayerGui
-
-local remotesFolder = ReplicatedStorage:WaitForChild("Remotes") :: Folder
-local flipCarRemote = remotesFolder:WaitForChild("FlipCar") :: RemoteEvent
 
 -- ScreenGui for Driving HUD
 local screenGui = Instance.new("ScreenGui")
@@ -33,7 +28,7 @@ dashCorner.CornerRadius = UDim.new(0, 14)
 dashCorner.Parent = dashFrame
 
 local dashStroke = Instance.new("UIStroke")
-dashStroke.Color = Color3.fromRGB(231, 76, 60)
+dashStroke.Color = Color3.fromRGB(60, 170, 255)
 dashStroke.Thickness = 2
 dashStroke.Parent = dashFrame
 
@@ -59,9 +54,9 @@ statusLabel.Position = UDim2.new(0, 15, 0, 48)
 statusLabel.BackgroundTransparency = 1
 statusLabel.Font = Enum.Font.GothamMedium
 statusLabel.TextSize = 12
-statusLabel.TextColor3 = Color3.fromRGB(231, 76, 60)
+statusLabel.TextColor3 = Color3.fromRGB(60, 170, 255)
 statusLabel.TextXAlignment = Enum.TextXAlignment.Left
-statusLabel.Text = "🚗 STARTER SEDAN"
+statusLabel.Text = "🛹 GALAXY HOVERBOARD"
 statusLabel.Parent = dashFrame
 
 -- Controls Reminder Text
@@ -76,7 +71,7 @@ controlsLabel.TextColor3 = Color3.fromRGB(210, 215, 230)
 controlsLabel.TextXAlignment = Enum.TextXAlignment.Right
 controlsLabel.TextYAlignment = Enum.TextYAlignment.Center
 controlsLabel.TextWrapped = true
-controlsLabel.Text = "<b>[W/S]</b> Drive / Reverse\n<b>[A/D]</b> Steer  |  <b>[F]</b> Flip Car\n<b>[Space / Jump]</b> Exit Vehicle"
+controlsLabel.Text = "<b>[W/S]</b> Move / Reverse\n<b>[A/D]</b> Turn Left / Right\n<b>[Space]</b> Get Off Hoverboard"
 controlsLabel.RichText = true
 controlsLabel.Parent = dashFrame
 
@@ -103,7 +98,7 @@ local function onSeated(active: boolean, seatPart: Instance?)
         if speedConn then speedConn:Disconnect() end
         speedConn = RunService.RenderStepped:Connect(function()
             if not currentSeat or not currentSeat.Parent then return end
-            local chassis = currentSeat.Parent:FindFirstChild("CarChassis") :: BasePart?
+            local chassis = currentSeat.Parent:FindFirstChild("HoverboardBody") :: BasePart?
             if chassis then
                 local speedStudsPerSec = chassis.AssemblyLinearVelocity.Magnitude
                 -- 1 stud ≈ 0.28 meters -> speed * 0.28 * 3.6 ≈ speed * 1.0 km/h
@@ -131,11 +126,3 @@ if LocalPlayer.Character then
     bindCharacter(LocalPlayer.Character)
 end
 LocalPlayer.CharacterAdded:Connect(bindCharacter)
-
--- Flip Car Keybind (F)
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    if input.KeyCode == Enum.KeyCode.F and currentSeat ~= nil then
-        flipCarRemote:FireServer()
-    end
-end)

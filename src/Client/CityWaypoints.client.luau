@@ -26,13 +26,13 @@ local waypoints: { WaypointData } = {
         GetPosition = function() return Vector3.new(0, 6, -62) end,
     },
     {
-        Name = "Starter Car",
-        Icon = "🚗",
-        Color = Color3.fromRGB(231, 76, 60),
+        Name = "Galaxy Hoverboard",
+        Icon = "🛹",
+        Color = Color3.fromRGB(60, 170, 255),
         GetPosition = function()
-            local car = workspace:FindFirstChild("StarterCar", true) :: Model?
-            local chassis = car and car:FindFirstChild("CarChassis") :: BasePart?
-            return chassis and (chassis.Position + Vector3.new(0, 3, 0))
+            local board = workspace:FindFirstChild("Hoverboard", true) :: Model?
+            local deck = board and board:FindFirstChild("HoverboardBody") :: BasePart?
+            return deck and (deck.Position + Vector3.new(0, 3, 0))
         end,
     },
     {

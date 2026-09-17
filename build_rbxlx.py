@@ -123,8 +123,10 @@ def create_rbxlx(auto_push=True):
     RUG_COLOR = 4283852150
     GOLD_COLOR = 4294956800
     TECH_PLAZA = 4282335025
-    CAR_RED = 4292742930        # rgb(215, 45, 45)
-    CAR_GLASS = 4284581240
+    HOVER_NAVY_DARK = 4279376444   # rgb(18, 26, 60) - деко-корпус "галактика"
+    HOVER_GRIP_BLACK = 4279374356  # rgb(18, 18, 20) - чорна протиковзка накладка
+    HOVER_WHEEL_BLACK = 4278979598 # rgb(12, 12, 14) - колеса
+    HOVER_LED_BLUE = 4282166015    # rgb(60, 170, 255) - синя LED-підсвітка
 
     city_parts = []
 
@@ -279,52 +281,52 @@ def create_rbxlx(auto_push=True):
                                 light=("PointLight", (1.0, 0.95, 0.9), 1.8, 30)))
 
     # =========================================================================
-    # 3. DRIVABLE STARTER CAR (Parked in Driveway at X=14, Z=-42)
+    # 3. DRIVABLE GALAXY HOVERBOARD (Parked in Driveway at X=14, Z=-42)
     # =========================================================================
-    car_parts = []
-    
-    # Chassis with DrivePrompt ProximityPrompt and 3D Badge
-    chassis_children = '''
-				<Item class="ProximityPrompt" referent="RBX_CarDrivePrompt">
+    hoverboard_parts = []
+
+    # Deck (root/chassis) with RidePrompt ProximityPrompt and 3D Badge
+    hoverboard_children = '''
+				<Item class="ProximityPrompt" referent="RBX_HoverRidePrompt">
 					<Properties>
-						<string name="Name">DrivePrompt</string>
-						<string name="ObjectText">Starter Sedan</string>
-						<string name="ActionText">Drive Car (E)</string>
-						<float name="MaxActivationDistance">14</float>
+						<string name="Name">RidePrompt</string>
+						<string name="ObjectText">Galaxy Hoverboard</string>
+						<string name="ActionText">Ride (E)</string>
+						<float name="MaxActivationDistance">10</float>
 						<float name="HoldDuration">0</float>
 						<token name="KeyboardKeyCode">101</token>
 						<bool name="RequiresLineOfSight">false</bool>
 					</Properties>
 				</Item>
-				<Item class="BillboardGui" referent="RBX_CarBadge">
+				<Item class="BillboardGui" referent="RBX_HoverBadge">
 					<Properties>
-						<string name="Name">CarBadge</string>
-						<Vector3 name="StudsOffset"><X>0</X><Y>4.8</Y><Z>0</Z></Vector3>
-						<UDim2 name="Size"><XS>0</XS><XO>160</XO><YS>0</YS><YO>42</YO></UDim2>
+						<string name="Name">HoverBadge</string>
+						<Vector3 name="StudsOffset"><X>0</X><Y>2.6</Y><Z>0</Z></Vector3>
+						<UDim2 name="Size"><XS>0</XS><XO>190</XO><YS>0</YS><YO>42</YO></UDim2>
 						<bool name="AlwaysOnTop">true</bool>
 						<float name="MaxDistance">90</float>
 						<float name="LightInfluence">0</float>
 					</Properties>
-					<Item class="Frame" referent="RBX_CarBadgeF">
+					<Item class="Frame" referent="RBX_HoverBadgeF">
 						<Properties>
 							<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
 							<Color3 name="BackgroundColor3"><R>0.08</R><G>0.1</G><B>0.14</B></Color3>
 							<float name="BackgroundTransparency">0.2</float>
 						</Properties>
-						<Item class="UICorner" referent="RBX_CarBadgeC">
+						<Item class="UICorner" referent="RBX_HoverBadgeC">
 							<Properties><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
 						</Item>
-						<Item class="UIStroke" referent="RBX_CarBadgeS">
+						<Item class="UIStroke" referent="RBX_HoverBadgeS">
 							<Properties>
-								<Color3 name="Color"><R>0.9</R><G>0.3</G><B>0.24</B></Color3>
+								<Color3 name="Color"><R>0.235</R><G>0.667</G><B>1</B></Color3>
 								<float name="Thickness">2</float>
 							</Properties>
 						</Item>
-						<Item class="TextLabel" referent="RBX_CarBadgeL">
+						<Item class="TextLabel" referent="RBX_HoverBadgeL">
 							<Properties>
 								<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
 								<float name="BackgroundTransparency">1</float>
-								<string name="Text">🚗 Starter Sedan [E]</string>
+								<string name="Text">🛹 Galaxy Hoverboard [E]</string>
 								<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 								<token name="Font">17</token>
 								<float name="TextSize">14</float>
@@ -333,38 +335,30 @@ def create_rbxlx(auto_push=True):
 					</Item>
 				</Item>'''
 
-    car_parts.append(make_part("CarChassis", (7.0, 0.8, 13.0), (14, 1.8, -42), color=CAR_RED, material=800, anchored=True, children_xml=chassis_children))
-    car_parts.append(make_part("VehicleSeat", (2.0, 0.6, 2.0), (12.6, 2.6, -42), color=CHAIR_BLACK, material=816, anchored=True, can_collide=False, is_seat="vehicle"))
-    car_parts.append(make_part("PassengerSeat", (2.0, 0.6, 2.0), (15.4, 2.6, -42), color=CHAIR_BLACK, material=816, anchored=True, can_collide=False, is_seat=True))
-    
-    # Body parts (can_collide=False to avoid clipping issues during seat mount)
-    car_parts.append(make_part("CarHood", (6.8, 1.0, 4.2), (14, 2.5, -46.5), color=CAR_RED, material=256, anchored=True, can_collide=False))
-    car_parts.append(make_part("CarTrunk", (6.8, 1.2, 3.8), (14, 2.6, -37.4), color=CAR_RED, material=256, anchored=True, can_collide=False))
-    car_parts.append(make_part("CarRoof", (6.4, 0.4, 5.2), (14, 4.8, -42), color=CAR_RED, material=256, anchored=True, can_collide=False))
-    car_parts.append(make_part("WindshieldFront", (6.2, 2.2, 0.2), (14, 3.7, -44.5), rot=(-30, 0, 0), color=CAR_GLASS, material=304, transparency=0.4, anchored=True, can_collide=False))
-    car_parts.append(make_part("WindshieldBack", (6.2, 2.2, 0.2), (14, 3.7, -39.5), rot=(30, 0, 0), color=CAR_GLASS, material=304, transparency=0.4, anchored=True, can_collide=False))
-    car_parts.append(make_part("SteeringWheel", (1.0, 1.0, 0.2), (12.6, 3.2, -43.6), rot=(-25, 0, 0), color=DESK_LEGS, material=256, anchored=True, can_collide=False))
-    
-    # Headlights & Taillights
-    car_parts.append(make_part("HeadlightL", (0.8, 0.5, 0.2), (11.6, 2.4, -48.7), color=4294967295, material=288, anchored=True, can_collide=False,
-                               light=("SpotLight", (1, 1, 0.9), 3.5, 45)))
-    car_parts.append(make_part("HeadlightR", (0.8, 0.5, 0.2), (16.4, 2.4, -48.7), color=4294967295, material=288, anchored=True, can_collide=False,
-                               light=("SpotLight", (1, 1, 0.9), 3.5, 45)))
-    car_parts.append(make_part("TaillightL", (0.8, 0.5, 0.2), (11.6, 2.6, -35.4), color=CHAIR_RED, material=288, anchored=True, can_collide=False))
-    car_parts.append(make_part("TaillightR", (0.8, 0.5, 0.2), (16.4, 2.6, -35.4), color=CHAIR_RED, material=288, anchored=True, can_collide=False))
-    
-    # Wheels (can_collide=True for ground contact)
-    car_parts.append(make_part("WheelFL", (1.4, 1.8, 1.8), (10.2, 1.8, -46.0), color=DESK_LEGS, material=256, anchored=True, can_collide=True))
-    car_parts.append(make_part("WheelFR", (1.4, 1.8, 1.8), (17.8, 1.8, -46.0), color=DESK_LEGS, material=256, anchored=True, can_collide=True))
-    car_parts.append(make_part("WheelRL", (1.4, 1.8, 1.8), (10.2, 1.8, -38.0), color=DESK_LEGS, material=256, anchored=True, can_collide=True))
-    car_parts.append(make_part("WheelRR", (1.4, 1.8, 1.8), (17.8, 1.8, -38.0), color=DESK_LEGS, material=256, anchored=True, can_collide=True))
+    hoverboard_parts.append(make_part("HoverboardBody", (1.6, 0.3, 4.4), (14, 2.0, -42), color=HOVER_NAVY_DARK, material=256, anchored=True, can_collide=False, children_xml=hoverboard_children))
+    hoverboard_parts.append(make_part("VehicleSeat", (1.2, 0.2, 1.2), (14, 2.3, -42), color=CHAIR_BLACK, material=816, anchored=True, can_collide=False, transparency=0.85, is_seat="vehicle"))
 
-    car_model_xml = f'''
-		<Item class="Model" referent="RBX_StarterCar">
+    # Deco "galaxy" stripe + grip footpads (can_collide=False, welded to the deck)
+    hoverboard_parts.append(make_part("GalaxyAccent", (0.6, 0.05, 3.8), (14, 2.16, -42), color=RGB_PURPLE, material=256, anchored=True, can_collide=False))
+    hoverboard_parts.append(make_part("FootpadFront", (1.3, 0.08, 1.5), (14, 2.19, -43.4), color=HOVER_GRIP_BLACK, material=816, anchored=True, can_collide=False))
+    hoverboard_parts.append(make_part("FootpadBack", (1.3, 0.08, 1.5), (14, 2.19, -40.6), color=HOVER_GRIP_BLACK, material=816, anchored=True, can_collide=False))
+
+    # Blue LED strips along both edges (Neon + soft glow, matches reference photo)
+    hoverboard_parts.append(make_part("LedStripL", (0.1, 0.12, 4.2), (13.15, 2.0, -42), color=HOVER_LED_BLUE, material=288, anchored=True, can_collide=False,
+                               light=("PointLight", (0.3, 0.65, 1), 2.0, 16)))
+    hoverboard_parts.append(make_part("LedStripR", (0.1, 0.12, 4.2), (14.85, 2.0, -42), color=HOVER_LED_BLUE, material=288, anchored=True, can_collide=False,
+                               light=("PointLight", (0.3, 0.65, 1), 2.0, 16)))
+
+    # Wheels (cylinders, can_collide=True for ground contact)
+    hoverboard_parts.append(make_part("WheelFront", (0.4, 1.0, 1.0), (14, 1.4, -44.0), color=HOVER_WHEEL_BLACK, material=256, anchored=True, can_collide=True, shape=2))
+    hoverboard_parts.append(make_part("WheelBack", (0.4, 1.0, 1.0), (14, 1.4, -40.0), color=HOVER_WHEEL_BLACK, material=256, anchored=True, can_collide=True, shape=2))
+
+    hoverboard_model_xml = f'''
+		<Item class="Model" referent="RBX_Hoverboard">
 			<Properties>
-				<string name="Name">StarterCar</string>
+				<string name="Name">Hoverboard</string>
 			</Properties>
-			{"".join(car_parts)}
+			{"".join(hoverboard_parts)}
 		</Item>'''
 
     # =========================================================================
@@ -432,7 +426,7 @@ def create_rbxlx(auto_push=True):
     city_parts.append(make_part("TechCounter", (14, 3.5, 2.5), (46, 2.25, 42), color=DESK_TOP, material=256, children_xml=tech_counter_children))
     city_parts.append(make_part("TechShowcaseGlass", (13.6, 1.5, 0.2), (46, 4.75, 42), color=RGB_CYAN, material=304, transparency=0.4))
     city_parts.append(make_part("TechShowcasePC1", (1.4, 2.4, 2.2), (43, 3.0, 32), color=DESK_LEGS, material=256))
-    city_parts.append(make_part("TechShowcasePC2", (1.4, 2.4, 2.2), (48, 3.0, 32), color=CAR_RED, material=256))
+    city_parts.append(make_part("TechShowcasePC2", (1.4, 2.4, 2.2), (48, 3.0, 32), color=CHAIR_RED, material=256))
 
     # =========================================================================
     # 5. GROCERY STORE ("Burger & Snacks Mart" at X = -46, Z = 40)
@@ -636,7 +630,7 @@ def create_rbxlx(auto_push=True):
 			</Properties>
 			{all_parts_xml}
 			{spawn_xml}
-			{car_model_xml}
+			{hoverboard_model_xml}
 		</Item>
 		{leaderboard_display_xml}
 		<Item class="Clouds" referent="RBX_Clouds">
@@ -725,11 +719,6 @@ def create_rbxlx(auto_push=True):
 			<Item class="RemoteEvent" referent="RBX_StreamChoiceResult">
 				<Properties>
 					<string name="Name">StreamChoiceResult</string>
-				</Properties>
-			</Item>
-			<Item class="RemoteEvent" referent="RBX_FlipCar">
-				<Properties>
-					<string name="Name">FlipCar</string>
 				</Properties>
 			</Item>
 		</Item>
@@ -866,9 +855,14 @@ def create_rbxlx(auto_push=True):
 				<R>0.588</R><G>0.647</G><B>0.765</B>
 			</Color3>
 			<float name="Brightness">2.6</float>
-			<float name="ClockTime">13.5</float>
+			<float name="ClockTime">12.0</float>
 			<float name="GeographicLatitude">35</float>
 		</Properties>
+		<Item class="Sky" referent="RBX_Sky">
+			<Properties>
+				<string name="Name">Sky</string>
+			</Properties>
+		</Item>
 		<Item class="Atmosphere" referent="RBX_Atmosphere">
 			<Properties>
 				<string name="Name">Atmosphere</string>

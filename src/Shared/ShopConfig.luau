@@ -1,6 +1,6 @@
 --!strict
 
-export type ShopCategory = "Gear" | "Game" | "Food" | "License"
+export type ShopCategory = "Gear" | "Game" | "Food" | "License" | "Vehicle"
 
 export type ShopItem = {
     Id: string,
@@ -118,6 +118,19 @@ local ShopConfig: { [string]: ShopItem } = {
         EnergyRestore = 75,
         Description = "Hearty meal for long streaming grinds! Restores +75% Energy.",
         IconText = "🍔",
+    },
+
+    -- 4. Personal Transport (parked in the driveway)
+    Hoverboard = {
+        Id = "Hoverboard",
+        Category = "Vehicle",
+        Name = "Galaxy Hoverboard",
+        Price = 250,
+        MoneyBonusPerTick = 0,
+        HypeBonusPerTick = 0,
+        EnergyRestore = 0,
+        Description = "Blue galaxy-pattern hoverboard with glowing LED trim! Zip around the city (press E to ride).",
+        IconText = "🛹",
     },
 }
 

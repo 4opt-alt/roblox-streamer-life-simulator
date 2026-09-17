@@ -3,7 +3,7 @@ local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
--- Create FlipCar remote if not present
+-- Remotes (created idempotently — ShopManager may also create ShopItemPurchased first)
 local remotesFolder = ReplicatedStorage:FindFirstChild("Remotes")
 if not remotesFolder then
     remotesFolder = Instance.new("Folder")
@@ -11,103 +11,75 @@ if not remotesFolder then
     remotesFolder.Parent = ReplicatedStorage
 end
 
-local flipCarRemote = remotesFolder:FindFirstChild("FlipCar") :: RemoteEvent?
-if not flipCarRemote then
-    flipCarRemote = Instance.new("RemoteEvent")
-    flipCarRemote.Name = "FlipCar"
-    flipCarRemote.Parent = remotesFolder
+local shopResultRemote = remotesFolder:FindFirstChild("ShopItemPurchased") :: RemoteEvent?
+if not shopResultRemote then
+    shopResultRemote = Instance.new("RemoteEvent")
+    shopResultRemote.Name = "ShopItemPurchased"
+    shopResultRemote.Parent = remotesFolder
 end
 
-local function setupCar()
-    local car = workspace:WaitForChild("CityWorld", 10) and workspace.CityWorld:WaitForChild("StarterCar", 10) :: Model?
-    if not car then
-        car = workspace:WaitForChild("StarterCar", 5) :: Model?
+local HOVERBOARD_ITEM_ID = "Hoverboard"
+
+local function setupHoverboard()
+    local board = workspace:WaitForChild("CityWorld", 10) and workspace.CityWorld:WaitForChild("Hoverboard", 10) :: Model?
+    if not board then
+        board = workspace:WaitForChild("Hoverboard", 5) :: Model?
     end
-    if not car then return end
+    if not board then return end
 
-    local chassis = car:WaitForChild("CarChassis", 5) :: BasePart?
-    local seat = car:WaitForChild("VehicleSeat", 5) :: VehicleSeat?
-    local passSeat = car:FindFirstChild("PassengerSeat") :: Seat?
-    if not chassis or not seat then return end
+    local deck = board:WaitForChild("HoverboardBody", 5) :: BasePart?
+    local seat = board:WaitForChild("VehicleSeat", 5) :: VehicleSeat?
+    if not deck or not seat then return end
 
-    car.PrimaryPart = chassis
+    board.PrimaryPart = deck
 
-    -- Автоматично зварюємо всі деталі машини разом (WeldConstraint), щоб вона не розвалювалася!
-    for _, part in car:GetDescendants() do
-        if part:IsA("BasePart") and part ~= chassis then
+    -- Автоматично зварюємо всі деталі гіроскутера разом (WeldConstraint), щоб він не розвалювався!
+    for _, part in board:GetDescendants() do
+        if part:IsA("BasePart") and part ~= deck then
             part.Anchored = false
-            -- Тільки колеса мають колізію з землею. Кузов, дах і вікна CanCollide = false, щоб гравець не застрягав!
+            -- Тільки колеса мають колізію з землею. Дека, накладки, LED-смуги CanCollide = false.
             part.CanCollide = (part.Name:find("Wheel") ~= nil)
-            part.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.5, 0.5, 100, 100)
+            part.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.5, 0.5, 70, 100)
 
-            -- Створюємо WeldConstraint до шасі
-            local weld = part:FindFirstChild("CarWeld") :: WeldConstraint?
+            local weld = part:FindFirstChild("HoverWeld") :: WeldConstraint?
             if not weld then
                 weld = Instance.new("WeldConstraint")
-                weld.Name = "CarWeld"
-                weld.Part0 = chassis
+                weld.Name = "HoverWeld"
+                weld.Part0 = deck
                 weld.Part1 = part
                 weld.Parent = part
             end
         end
     end
 
-    chassis.Anchored = false
-    chassis.CanCollide = true
-    chassis.CustomPhysicalProperties = PhysicalProperties.new(1.8, 0.9, 0.5, 100, 100)
+    deck.Anchored = false
+    deck.CanCollide = false
+    deck.CustomPhysicalProperties = PhysicalProperties.new(1.2, 0.6, 0.5, 60, 100)
 
-    -- 3D Floating Badge над авто
-    local existingBadge = chassis:FindFirstChild("CarBadge") :: BillboardGui?
-    if not existingBadge then
-        existingBadge = Instance.new("BillboardGui")
-        existingBadge.Name = "CarBadge"
-        existingBadge.Size = UDim2.new(0, 160, 0, 42)
-        existingBadge.StudsOffset = Vector3.new(0, 4.8, 0)
-        existingBadge.AlwaysOnTop = true
-        existingBadge.MaxDistance = 90
-        existingBadge.Parent = chassis
+    -- 3D Floating Badge над гіроскутером
+    local existingBadge = deck:FindFirstChild("HoverBadge") :: BillboardGui?
 
-        local badgeFrame = Instance.new("Frame")
-        badgeFrame.Size = UDim2.new(1, 0, 1, 0)
-        badgeFrame.BackgroundColor3 = Color3.fromRGB(22, 26, 36)
-        badgeFrame.BackgroundTransparency = 0.2
-        badgeFrame.BorderSizePixel = 0
-        badgeFrame.Parent = existingBadge
-
-        local bCorner = Instance.new("UICorner")
-        bCorner.CornerRadius = UDim.new(0, 10)
-        bCorner.Parent = badgeFrame
-
-        local bStroke = Instance.new("UIStroke")
-        bStroke.Color = Color3.fromRGB(231, 76, 60)
-        bStroke.Thickness = 2
-        bStroke.Parent = badgeFrame
-
-        local bLabel = Instance.new("TextLabel")
-        bLabel.Size = UDim2.new(1, 0, 1, 0)
-        bLabel.BackgroundTransparency = 1
-        bLabel.Font = Enum.Font.GothamBold
-        bLabel.TextSize = 14
-        bLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        bLabel.Text = "🚗 Starter Sedan [E]"
-        bLabel.Parent = badgeFrame
+    -- Надійний ProximityPrompt для посадки (E)
+    local ridePrompt = deck:FindFirstChild("RidePrompt") :: ProximityPrompt?
+    if not ridePrompt then
+        ridePrompt = Instance.new("ProximityPrompt")
+        ridePrompt.Name = "RidePrompt"
+        ridePrompt.ObjectText = "Galaxy Hoverboard"
+        ridePrompt.ActionText = "Ride (E)"
+        ridePrompt.HoldDuration = 0
+        ridePrompt.MaxActivationDistance = 10
+        ridePrompt.KeyboardKeyCode = Enum.KeyCode.E
+        ridePrompt.RequiresLineOfSight = false
+        ridePrompt.Parent = deck
     end
 
-    -- Надійний ProximityPrompt для посадки за кермо (E)
-    local drivePrompt = chassis:FindFirstChild("DrivePrompt") :: ProximityPrompt?
-    if not drivePrompt then
-        drivePrompt = Instance.new("ProximityPrompt")
-        drivePrompt.Name = "DrivePrompt"
-        drivePrompt.ObjectText = "Starter Sedan"
-        drivePrompt.ActionText = "Drive Car (E)"
-        drivePrompt.HoldDuration = 0
-        drivePrompt.MaxActivationDistance = 14
-        drivePrompt.KeyboardKeyCode = Enum.KeyCode.E
-        drivePrompt.RequiresLineOfSight = false
-        drivePrompt.Parent = chassis
-    end
+    ridePrompt.Triggered:Connect(function(player: Player)
+        -- Гейт власності: гіроскутер потрібно спочатку купити в магазині
+        if not (player:GetAttribute("Owned_" .. HOVERBOARD_ITEM_ID) == true) then
+            shopResultRemote:FireClient(player, HOVERBOARD_ITEM_ID, false, "🛹 Купи Galaxy Hoverboard в магазині, щоб покататись!")
+            return
+        end
 
-    drivePrompt.Triggered:Connect(function(player: Player)
         local character = player.Character
         if character then
             local humanoid = character:FindFirstChildOfClass("Humanoid")
@@ -118,139 +90,82 @@ local function setupCar()
     end)
 
     seat:GetPropertyChangedSignal("Occupant"):Connect(function()
-        if drivePrompt then
-            drivePrompt.Enabled = (seat.Occupant == nil)
+        if ridePrompt then
+            ridePrompt.Enabled = (seat.Occupant == nil)
         end
         if existingBadge then
             existingBadge.Enabled = (seat.Occupant == nil)
         end
     end)
 
-    -- Пасажирське сидіння
-    if passSeat then
-        local passPrompt = Instance.new("ProximityPrompt")
-        passPrompt.Name = "PassengerPrompt"
-        passPrompt.ObjectText = "Passenger Seat"
-        passPrompt.ActionText = "Sit as Passenger"
-        passPrompt.HoldDuration = 0
-        passPrompt.MaxActivationDistance = 12
-        passPrompt.KeyboardKeyCode = Enum.KeyCode.G
-        passPrompt.RequiresLineOfSight = false
-        passPrompt.Parent = passSeat
-
-        passPrompt.Triggered:Connect(function(player: Player)
-            local character = player.Character
-            if character then
-                local humanoid = character:FindFirstChildOfClass("Humanoid")
-                if humanoid and passSeat.Occupant == nil then
-                    passSeat:Sit(humanoid)
-                end
-            end
-        end)
-
-        passSeat:GetPropertyChangedSignal("Occupant"):Connect(function()
-            passPrompt.Enabled = (passSeat.Occupant == nil)
-        end)
-    end
-
-    -- Надійний аркадний привід (BodyVelocity + BodyAngularVelocity)
-    local bv = chassis:FindFirstChild("CarVelocity") :: BodyVelocity?
+    -- Аркадний привід (BodyVelocity + BodyAngularVelocity), відрегульована швидкість гіроскутера
+    local bv = deck:FindFirstChild("HoverVelocity") :: BodyVelocity?
     if not bv then
         bv = Instance.new("BodyVelocity")
-        bv.Name = "CarVelocity"
+        bv.Name = "HoverVelocity"
         bv.MaxForce = Vector3.new(0, 0, 0)
         bv.Velocity = Vector3.zero
-        bv.Parent = chassis
+        bv.Parent = deck
     end
 
-    local bav = chassis:FindFirstChild("CarAngularVelocity") :: BodyAngularVelocity?
+    local bav = deck:FindFirstChild("HoverAngularVelocity") :: BodyAngularVelocity?
     if not bav then
         bav = Instance.new("BodyAngularVelocity")
-        bav.Name = "CarAngularVelocity"
+        bav.Name = "HoverAngularVelocity"
         bav.MaxTorque = Vector3.new(0, 0, 0)
         bav.AngularVelocity = Vector3.zero
-        bav.Parent = chassis
+        bav.Parent = deck
     end
 
-    -- Стабілізатор горизонтального положення (запобігає перевертанню)
-    local bg = chassis:FindFirstChild("CarGyro") :: BodyGyro?
+    -- Стабілізатор горизонтального положення (запобігає перевертанню гіроскутера)
+    local bg = deck:FindFirstChild("HoverGyro") :: BodyGyro?
     if not bg then
         bg = Instance.new("BodyGyro")
-        bg.Name = "CarGyro"
-        bg.MaxTorque = Vector3.new(1e5, 0, 1e5)
+        bg.Name = "HoverGyro"
+        bg.MaxTorque = Vector3.new(4e4, 0, 4e4)
         bg.P = 3000
-        bg.Parent = chassis
+        bg.Parent = deck
     end
 
-    local CAR_SPEED = 52
-    local TURN_SPEED = 2.4
-    local spawnPosition = Vector3.new(14, 2.5, -42)
+    local HOVER_SPEED = 34    -- відрегульована швидкість (повільніше і безпечніше за машину)
+    local TURN_SPEED = 3.2    -- швидкість повороту
+    local spawnPosition = Vector3.new(14, 2.6, -42)
 
-    -- Обробка перевертання авто на клавішу F або при застряганні
-    local function flipCar()
-        local currentPos = chassis.Position
-        local look = chassis.CFrame.LookVector
-        chassis.CFrame = CFrame.lookAt(currentPos + Vector3.new(0, 3.5, 0), currentPos + Vector3.new(look.X, 0, look.Z))
-        chassis.AssemblyLinearVelocity = Vector3.zero
-        chassis.AssemblyAngularVelocity = Vector3.zero
-    end
-
-    flipCarRemote.OnServerEvent:Connect(function(player: Player)
-        local character = player.Character
-        if character and seat and seat.Occupant == character:FindFirstChildOfClass("Humanoid") then
-            flipCar()
-        end
-    end)
-
-    -- Цикл керування рухом автомобіля
+    -- Цикл керування рухом гіроскутера
     RunService.Heartbeat:Connect(function()
-        if not seat or not chassis or not bv or not bav or not bg then return end
+        if not seat or not deck or not bv or not bav or not bg then return end
 
-        local driver = seat.Occupant
-        if driver then
-            -- Гравець за кермом: передаємо команди W/S та A/D
+        local rider = seat.Occupant
+        if rider then
+            -- Гравець на гіроскутері: передаємо команди W/S та A/D
             local throttle = seat.ThrottleFloat
             local steer = seat.SteerFloat
 
             -- Рух вперед/назад
-            bv.MaxForce = Vector3.new(3e5, 0, 3e5)
-            bv.Velocity = chassis.CFrame.LookVector * (throttle * CAR_SPEED)
+            bv.MaxForce = Vector3.new(2.2e5, 0, 2.2e5)
+            bv.Velocity = deck.CFrame.LookVector * (throttle * HOVER_SPEED)
 
             -- Поворот вліво/вправо
-            bav.MaxTorque = Vector3.new(0, 3e5, 0)
+            bav.MaxTorque = Vector3.new(0, 2.2e5, 0)
             bav.AngularVelocity = Vector3.new(0, -steer * TURN_SPEED, 0)
 
-            -- Стабілізація орієнтації
-            bg.CFrame = CFrame.new(chassis.Position, chassis.Position + chassis.CFrame.LookVector)
-
-            -- Увімкнення фар
-            for _, descendant in car:GetDescendants() do
-                if descendant:IsA("SpotLight") then
-                    descendant.Enabled = true
-                end
-            end
+            -- Стабілізація орієнтації (рівний гіроскутер)
+            bg.CFrame = CFrame.new(deck.Position, deck.Position + deck.CFrame.LookVector)
         else
-            -- Машина пуста: стоїть на ручнику
-            bv.MaxForce = Vector3.new(3e5, 0, 3e5)
+            -- Гіроскутер пустий: стоїть на місці
+            bv.MaxForce = Vector3.new(2.2e5, 0, 2.2e5)
             bv.Velocity = Vector3.zero
-            bav.MaxTorque = Vector3.new(0, 3e5, 0)
+            bav.MaxTorque = Vector3.new(0, 2.2e5, 0)
             bav.AngularVelocity = Vector3.zero
-
-            -- Вимкнення фар
-            for _, descendant in car:GetDescendants() do
-                if descendant:IsA("SpotLight") then
-                    descendant.Enabled = false
-                end
-            end
         end
 
-        -- Автоматичне повернення машини, якщо вона впала нижче карти
-        if chassis.Position.Y < -20 then
-            chassis.CFrame = CFrame.new(spawnPosition)
-            chassis.AssemblyLinearVelocity = Vector3.zero
-            chassis.AssemblyAngularVelocity = Vector3.zero
+        -- Автоматичне повернення гіроскутера, якщо він впав нижче карти
+        if deck.Position.Y < -20 then
+            deck.CFrame = CFrame.new(spawnPosition)
+            deck.AssemblyLinearVelocity = Vector3.zero
+            deck.AssemblyAngularVelocity = Vector3.zero
         end
     end)
 end
 
-task.spawn(setupCar)
+task.spawn(setupHoverboard)
