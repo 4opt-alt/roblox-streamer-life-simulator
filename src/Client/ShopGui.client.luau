@@ -29,6 +29,9 @@ openShopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 openShopBtn.Font = Enum.Font.GothamBold
 openShopBtn.TextSize = 15
 openShopBtn.Text = "🛒 Shop"
+openShopBtn.ZIndex = 10
+openShopBtn.AutoButtonColor = true
+openShopBtn.Active = true
 openShopBtn.Parent = screenGui
 
 local btnCorner = Instance.new("UICorner")
