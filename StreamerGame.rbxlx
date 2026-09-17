@@ -7828,13 +7828,13 @@ local setChannelNameRemote = remotesFolder:WaitForChild("SetChannelName") :: Rem
 local streamGui = PlayerGui:WaitForChild("StreamGui") :: ScreenGui
 local streamButton = streamGui:WaitForChild("StreamButton") :: TextButton
 
--- Channel Bar
-local channelBar = streamGui:WaitForChild("ChannelBar") :: Frame
+-- Streamer Hub, Channel Bar & Chat Panel
+local streamerHub = streamGui:WaitForChild("StreamerHub", 10) :: Frame?
+local channelBar = (streamerHub and streamerHub:WaitForChild("ChannelBar", 5)) or streamGui:WaitForChild("ChannelBar") :: Frame
 local channelTitleLabel = channelBar:WaitForChild("ChannelTitleLabel") :: TextLabel
 local editChannelButton = channelBar:WaitForChild("EditChannelButton") :: TextButton
 
--- Live Chat Panel
-local chatContainer = streamGui:WaitForChild("ChatContainer") :: Frame
+local chatContainer = (streamerHub and streamerHub:WaitForChild("ChatContainer", 5)) or streamGui:WaitForChild("ChatContainer") :: Frame
 local chatHeader = chatContainer:WaitForChild("ChatHeader") :: TextLabel
 local scrollingFrame = chatContainer:WaitForChild("ChatScrollingFrame") :: ScrollingFrame
 
