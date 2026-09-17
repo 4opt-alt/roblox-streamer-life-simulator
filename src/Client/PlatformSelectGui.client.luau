@@ -626,6 +626,14 @@ local function openMenu(isRebirth: boolean?)
         if not selectedPlatforms or not next(selectedPlatforms) then
             selectedPlatforms = { YouTube = true }
         end
+        local hasSplit = LocalPlayer:GetAttribute("Owned_MultiStreamLicense") == true
+        if hasSplit and getSelectedCount() < 2 then
+            if selectedPlatforms["YouTube"] then
+                selectedPlatforms["Twitch"] = true
+            else
+                selectedPlatforms["YouTube"] = true
+            end
+        end
     else
         syncWithLock()
     end

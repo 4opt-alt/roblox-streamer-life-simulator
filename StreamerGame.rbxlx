@@ -4391,20 +4391,111 @@ local StreamConfig: ConfigType = {
     },
 
     Rebirth = {
-        BaseRequiredSubs = 100,      -- 100 subs for first rebirth (takes ~20s of streaming)
-        BaseRequiredMoney = 50,      -- $50 cash for first rebirth
         MultiplierPerRebirth = 0.50, -- +50% permanent boost per rebirth
-        StarterCashBonusPerRebirth = 50, -- +$50 extra starting money per rebirth
-        MaxEnergyBonusPerRebirth = 10,   -- +10 max energy capacity per rebirth
+        StarterCashBonusPerRebirth = 100, -- +$100 extra starting money per rebirth
+        MaxEnergyBonusPerRebirth = 15,   -- +15 max energy capacity per rebirth
+    },
+
+    RebirthTiers = {
+        [1] = {
+            Level = 1,
+            RequiredSubs = 100_000,
+            RequiredMoney = 15_000,
+            ButtonName = "YouTube Silver Play Button",
+            ButtonNameUA = "Срібна кнопка YouTube",
+            MilestoneText = "100,000 Subscribers",
+            ButtonIcon = "🥈",
+            TitleTag = "[🥈 Silver Creator]",
+            PlaqueColor = Color3.fromRGB(225, 230, 240),
+            GlowColor = Color3.fromRGB(200, 215, 255),
+            Material = Enum.Material.Metal,
+        },
+        [2] = {
+            Level = 2,
+            RequiredSubs = 500_000,
+            RequiredMoney = 75_000,
+            ButtonName = "YouTube Gold Play Button",
+            ButtonNameUA = "Золота кнопка YouTube",
+            MilestoneText = "500,000 Subscribers",
+            ButtonIcon = "🥇",
+            TitleTag = "[🥇 Gold Creator]",
+            PlaqueColor = Color3.fromRGB(255, 215, 0),
+            GlowColor = Color3.fromRGB(255, 200, 50),
+            Material = Enum.Material.Metal,
+        },
+        [3] = {
+            Level = 3,
+            RequiredSubs = 1_000_000,
+            RequiredMoney = 250_000,
+            ButtonName = "YouTube Diamond Play Button",
+            ButtonNameUA = "Діамантова кнопка YouTube",
+            MilestoneText = "1,000,000 Subscribers",
+            ButtonIcon = "💎",
+            TitleTag = "[💎 Diamond Creator]",
+            PlaqueColor = Color3.fromRGB(150, 235, 255),
+            GlowColor = Color3.fromRGB(80, 220, 255),
+            Material = Enum.Material.Glass,
+        },
+        [4] = {
+            Level = 4,
+            RequiredSubs = 5_000_000,
+            RequiredMoney = 1_000_000,
+            ButtonName = "YouTube Custom Ruby Play Button",
+            ButtonNameUA = "Рубінова кнопка YouTube",
+            MilestoneText = "5,000,000 Subscribers",
+            ButtonIcon = "🔴",
+            TitleTag = "[🔴 Ruby Legend]",
+            PlaqueColor = Color3.fromRGB(255, 40, 80),
+            GlowColor = Color3.fromRGB(255, 60, 90),
+            Material = Enum.Material.Neon,
+        },
+        [5] = {
+            Level = 5,
+            RequiredSubs = 10_000_000,
+            RequiredMoney = 5_000_000,
+            ButtonName = "YouTube Red Diamond Play Button",
+            ButtonNameUA = "Червоний Діамант YouTube",
+            MilestoneText = "10,000,000 Subscribers",
+            ButtonIcon = "👑",
+            TitleTag = "[👑 YouTube Royalty]",
+            PlaqueColor = Color3.fromRGB(220, 20, 60),
+            GlowColor = Color3.fromRGB(255, 30, 70),
+            Material = Enum.Material.Glass,
+        },
     },
 }
 
 function StreamConfig.GetRebirthRequirements(currentRebirths: number): (number, number)
-    local r = currentRebirths or 0
-    local scale = math.pow(1.5, r)
-    local reqSubs = math.floor(StreamConfig.Rebirth.BaseRequiredSubs * scale)
-    local reqMoney = math.floor(StreamConfig.Rebirth.BaseRequiredMoney * scale)
-    return reqSubs, reqMoney
+    local nextLevel = (currentRebirths or 0) + 1
+    local tier = (StreamConfig :: any).RebirthTiers[nextLevel]
+    if tier then
+        return tier.RequiredSubs, tier.RequiredMoney
+    else
+        local overflow = nextLevel - 5
+        local reqSubs = math.floor(10_000_000 * math.pow(2.5, overflow))
+        local reqMoney = math.floor(5_000_000 * math.pow(2.0, overflow))
+        return reqSubs, reqMoney
+    end
+end
+
+function StreamConfig.GetRebirthReward(nextRebirthLevel: number): any
+    local tier = (StreamConfig :: any).RebirthTiers[nextRebirthLevel]
+    if tier then
+        return tier
+    end
+    return {
+        Level = nextRebirthLevel,
+        RequiredSubs = 10_000_000,
+        RequiredMoney = 5_000_000,
+        ButtonName = `YouTube Milestone ${nextRebirthLevel} Award`,
+        ButtonNameUA = `Трофей YouTube ${nextRebirthLevel}-го рівня`,
+        MilestoneText = `Rebirth Level ${nextRebirthLevel}`,
+        ButtonIcon = "👑",
+        TitleTag = `[👑 Creator Lv.{nextRebirthLevel}]`,
+        PlaqueColor = Color3.fromRGB(255, 215, 0),
+        GlowColor = Color3.fromRGB(255, 220, 80),
+        Material = Enum.Material.Neon,
+    }
 end
 
 return StreamConfig
@@ -8898,6 +8989,14 @@ local function openMenu(isRebirth: boolean?)
     if isRebirth or not locked or locked == "" then
         if not selectedPlatforms or not next(selectedPlatforms) then
             selectedPlatforms = { YouTube = true }
+        end
+        local hasSplit = LocalPlayer:GetAttribute("Owned_MultiStreamLicense") == true
+        if hasSplit and getSelectedCount() < 2 then
+            if selectedPlatforms["YouTube"] then
+                selectedPlatforms["Twitch"] = true
+            else
+                selectedPlatforms["YouTube"] = true
+            end
         end
     else
         syncWithLock()
