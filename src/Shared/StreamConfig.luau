@@ -11,6 +11,18 @@ export type PlatformInfo = {
     LicensePrice: number,
 }
 
+export type CategoryInfo = {
+    Id: string,
+    Name: string,
+    Device: string,
+    Description: string,
+    Icon: string,
+    ColorHex: string,
+    MoneyMultiplier: number,
+    HypeMultiplier: number,
+    RequiresPC: boolean,
+}
+
 export type ConfigType = {
     IncomeIntervalSeconds: number,
     StarterMoney: number,
@@ -19,6 +31,8 @@ export type ConfigType = {
     BaseSubChance: number,
     MaxEnergy: number,
     EnergyDrainSeconds: number,
+    EnergyDrainPerSecond: number?,
+    EnergyRestRecoverySeconds: number?,
     EventCycleDurationSeconds: number,
     EventBoostDurationSeconds: number,
     EventMoneyMultiplier: number,
@@ -28,22 +42,29 @@ export type ConfigType = {
     MinChannelNameLength: number,
     MaxChannelNameLength: number,
     Platforms: { [string]: PlatformInfo },
+    Categories: { [string]: CategoryInfo },
     ViewerComments: { string },
+    IRLComments: { string }?,
+    GamingComments: { string }?,
+    JustChattingComments: { string }?,
     LowEnergyComments: { string },
     NoGameComments: { string },
     ProComments: { string },
     ViewerNames: { string },
+    Rebirth: any?,
 }
 
 local StreamConfig: ConfigType = {
-    -- Real survival starter economy (Streamer Life Simulator style)
+    -- Streamer progression economy
     IncomeIntervalSeconds = 1,
     StarterMoney = 15,          -- Starting pocket change: $15
     StarterHype = 0,            -- 0 Subscribers at start
-    BaseDonationChance = 0.35,  -- 35% chance to earn $1 on starter stream (no gear)
-    BaseSubChance = 0.25,       -- 25% chance to gain +1 Sub on starter stream
+    BaseDonationChance = 0.90,  -- 90% chance to earn money each second
+    BaseSubChance = 0.95,       -- 95% chance to gain subscribers each second
     MaxEnergy = 100,
-    EnergyDrainSeconds = 3,     -- -1% Energy every 3 seconds of streaming
+    EnergyDrainSeconds = 1,     -- Energy check interval
+    EnergyDrainPerSecond = 1.5, -- -1.5% Energy per second of streaming (~65s stream)
+    EnergyRestRecoverySeconds = 1.5, -- Rest recovery: +3% energy every 1.5s when not streaming
 
     -- Hourly Boost Event Settings
     EventCycleDurationSeconds = 3600,
@@ -103,6 +124,70 @@ local StreamConfig: ConfigType = {
         },
     },
 
+    -- Categories (IRL = Phone anywhere, Gaming & Just Chatting = PC Battlestation)
+    Categories = {
+        IRL = {
+            Id = "IRL",
+            Name = "📱 IRL",
+            Device = "Phone",
+            Description = "Mobile stream on phone! Roam anywhere in the city.",
+            Icon = "📱",
+            ColorHex = "#00F2FE",
+            MoneyMultiplier = 1.0,
+            HypeMultiplier = 1.35,
+            RequiresPC = false,
+        },
+        Gaming = {
+            Id = "Gaming",
+            Name = "🎮 Gaming",
+            Device = "PC",
+            Description = "Stream PC games at your Battlestation desk! +Bonus from Steam games.",
+            Icon = "🎮",
+            ColorHex = "#9B51E0",
+            MoneyMultiplier = 1.35,
+            HypeMultiplier = 1.15,
+            RequiresPC = true,
+        },
+        JustChatting = {
+            Id = "JustChatting",
+            Name = "🎙️ Just Chatting",
+            Device = "PC",
+            Description = "Talk show at your computer desk! High community donations and superchats.",
+            Icon = "🎙️",
+            ColorHex = "#FF9900",
+            MoneyMultiplier = 1.45,
+            HypeMultiplier = 1.10,
+            RequiresPC = true,
+        },
+    },
+
+    IRLComments = {
+        "Where are you heading today?",
+        "Show us the car!!",
+        "Burger Mart mukbang stream??",
+        "Nice weather out there!",
+        "Watch the street lol",
+        "IRL streams are so entertaining!",
+    },
+
+    GamingComments = {
+        "POG play!!",
+        "Insane clutch bro!",
+        "What rank are you in this game?",
+        "240 FPS looks buttery clean!",
+        "Nice gameplay!",
+        "Streamer cracked at games!",
+    },
+
+    JustChattingComments = {
+        "Deep thoughts today!",
+        "Facts, speak on it!",
+        "LMAO so true!",
+        "Read my superchat please!!",
+        "Best podcast / talk show!",
+        "Sending $5 for the great advice!",
+    },
+
     -- Dynamic Comments based on Streamer Status
     ViewerComments = {
         "hello streamer!",
@@ -154,6 +239,22 @@ local StreamConfig: ConfigType = {
         "Vortex99",
         "EchoStream",
     },
+
+    Rebirth = {
+        BaseRequiredSubs = 100,      -- 100 subs for first rebirth (takes ~20s of streaming)
+        BaseRequiredMoney = 50,      -- $50 cash for first rebirth
+        MultiplierPerRebirth = 0.50, -- +50% permanent boost per rebirth
+        StarterCashBonusPerRebirth = 50, -- +$50 extra starting money per rebirth
+        MaxEnergyBonusPerRebirth = 10,   -- +10 max energy capacity per rebirth
+    },
 }
+
+function StreamConfig.GetRebirthRequirements(currentRebirths: number): (number, number)
+    local r = currentRebirths or 0
+    local scale = math.pow(1.5, r)
+    local reqSubs = math.floor(StreamConfig.Rebirth.BaseRequiredSubs * scale)
+    local reqMoney = math.floor(StreamConfig.Rebirth.BaseRequiredMoney * scale)
+    return reqSubs, reqMoney
+end
 
 return StreamConfig

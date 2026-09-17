@@ -25,6 +25,12 @@ local function setupLeaderstats(player: Player)
     hype.Value = 0 -- Стартовий хайп
     hype.Parent = leaderstats
 
+    -- Змінна Rebirths (Рівень Ребірсу)
+    local rebirths = Instance.new("IntValue")
+    rebirths.Name = "Rebirths"
+    rebirths.Value = 0
+    rebirths.Parent = leaderstats
+
     leaderstats.Parent = player
 end
 

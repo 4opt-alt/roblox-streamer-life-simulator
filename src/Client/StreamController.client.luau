@@ -19,13 +19,13 @@ local setChannelNameRemote = remotesFolder:WaitForChild("SetChannelName") :: Rem
 local streamGui = PlayerGui:WaitForChild("StreamGui") :: ScreenGui
 local streamButton = streamGui:WaitForChild("StreamButton") :: TextButton
 
--- Channel Bar
-local channelBar = streamGui:WaitForChild("ChannelBar") :: Frame
+-- Streamer Hub, Channel Bar & Chat Panel
+local streamerHub = streamGui:WaitForChild("StreamerHub", 10) :: Frame?
+local channelBar = (streamerHub and streamerHub:WaitForChild("ChannelBar", 5)) or streamGui:WaitForChild("ChannelBar") :: Frame
 local channelTitleLabel = channelBar:WaitForChild("ChannelTitleLabel") :: TextLabel
 local editChannelButton = channelBar:WaitForChild("EditChannelButton") :: TextButton
 
--- Live Chat Panel
-local chatContainer = streamGui:WaitForChild("ChatContainer") :: Frame
+local chatContainer = (streamerHub and streamerHub:WaitForChild("ChatContainer", 5)) or streamGui:WaitForChild("ChatContainer") :: Frame
 local chatHeader = chatContainer:WaitForChild("ChatHeader") :: TextLabel
 local scrollingFrame = chatContainer:WaitForChild("ChatScrollingFrame") :: ScrollingFrame
 
@@ -162,12 +162,20 @@ local function startCommentLoop()
             local gearCount = LocalPlayer:GetAttribute("GearOwnedCount") or 0
 
             local commentPool = StreamConfig.ViewerComments
+            local catKey = (LocalPlayer:GetAttribute("StreamCategory") :: string?) or "Gaming"
+
             if energy < 25 and #StreamConfig.LowEnergyComments > 0 then
                 -- Втомлений стрімер
                 commentPool = StreamConfig.LowEnergyComments
-            elseif gamesCount == 0 and #StreamConfig.NoGameComments > 0 and math.random() < 0.65 then
-                -- Стрімер без ігор (глядачам нудно, просять купити ігри в Steam)
+            elseif catKey == "Gaming" and gamesCount == 0 and #StreamConfig.NoGameComments > 0 and math.random() < 0.65 then
+                -- Стрімер без ігор
                 commentPool = StreamConfig.NoGameComments
+            elseif catKey == "IRL" and StreamConfig.IRLComments and #StreamConfig.IRLComments > 0 and math.random() < 0.60 then
+                commentPool = StreamConfig.IRLComments
+            elseif catKey == "Gaming" and StreamConfig.GamingComments and #StreamConfig.GamingComments > 0 and math.random() < 0.60 then
+                commentPool = StreamConfig.GamingComments
+            elseif catKey == "JustChatting" and StreamConfig.JustChattingComments and #StreamConfig.JustChattingComments > 0 and math.random() < 0.60 then
+                commentPool = StreamConfig.JustChattingComments
             elseif gearCount >= 3 and #StreamConfig.ProComments > 0 and math.random() < 0.5 then
                 -- Крутий стрімер з топовим сетапом
                 commentPool = StreamConfig.ProComments
@@ -182,18 +190,46 @@ local function startCommentLoop()
 end
 
 --------------------------------------------------------------------------------
--- Stream Toggle Interaction with Platform Selection
+-- Stream Toggle Interaction with Platform Selection & Category Checks
 --------------------------------------------------------------------------------
 streamButton.MouseButton1Click:Connect(function()
     if isLocalStreaming then
         -- Stop stream directly
         toggleStreamRemote:FireServer()
     else
-        -- Open Platform Selection modal!
+        local lockedPlat = LocalPlayer:GetAttribute("LockedPlatform")
+        if not lockedPlat or lockedPlat == "" then
+            -- Platform not selected yet: open contract selection window
+            if _G.OpenPlatformSelect then
+                _G.OpenPlatformSelect(false)
+            end
+            return
+        end
+
+        local catKey = (LocalPlayer:GetAttribute("StreamCategory") :: string?) or "Gaming"
+        local char = LocalPlayer.Character
+        local root = char and char:FindFirstChild("HumanoidRootPart") :: BasePart?
+        local deskPos = Vector3.new(0, 4.5, -70)
+
+        if (catKey == "Gaming" or catKey == "JustChatting") and root then
+            local dist = (root.Position - deskPos).Magnitude
+            if dist > 24 then
+                addComment("SYSTEM", "⚠️ You must be at your Computer Battlestation to stream Gaming or Just Chatting! (Sit at your PC or switch to 📱 IRL)")
+                return
+            end
+        end
+
+        -- Stream directly with locked contract!
+        toggleStreamRemote:FireServer(lockedPlat)
+    end
+end)
+
+-- Prompt platform contract choice on join if not locked yet
+task.delay(2.5, function()
+    local locked = LocalPlayer:GetAttribute("LockedPlatform")
+    if not locked or locked == "" then
         if _G.OpenPlatformSelect then
-            _G.OpenPlatformSelect()
-        else
-            toggleStreamRemote:FireServer("YouTube")
+            _G.OpenPlatformSelect(false)
         end
     end
 end)
@@ -202,13 +238,15 @@ streamStateChangedRemote.OnClientEvent:Connect(function(streamingState: boolean,
     isLocalStreaming = streamingState
     local currentChannel = LocalPlayer:GetAttribute("ChannelName") or LocalPlayer.DisplayName
     local plat = platformKey or "YouTube"
+    local catKey = (LocalPlayer:GetAttribute("StreamCategory") :: string?) or "Gaming"
+    local catIcon = if catKey == "IRL" then "📱" elseif catKey == "JustChatting" then "🎙️" else "🎮"
 
     if isLocalStreaming then
         TweenService:Create(streamButton, TweenInfo.new(0.25), {
             BackgroundColor3 = Color3.fromRGB(231, 76, 60),
         }):Play()
         streamButton.Text = `⏹ Stop Stream ({plat})`
-        chatHeader.Text = `  🔴 «{currentChannel}» LIVE [{plat}]`
+        chatHeader.Text = `  🔴 «{currentChannel}» LIVE [{plat}] [{catIcon} {catKey}]`
         chatHeader.TextColor3 = Color3.fromRGB(255, 120, 120)
 
         startCommentLoop()

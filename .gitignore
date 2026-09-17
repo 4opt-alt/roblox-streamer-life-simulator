@@ -6,3 +6,9 @@ __pycache__/
 *.log
 .DS_Store
 Thumbs.db
+
+# Roblox Studio's own runtime lock file for the open place — Studio holds
+# an OS-level handle on this while it's open, so if git ever tracks it,
+# a pull/merge that touches it fails with "unable to unlink ... Invalid
+# argument" whenever Studio is running. Never commit it.
+*.rbxlx.lock

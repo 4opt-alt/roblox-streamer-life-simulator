@@ -2,6 +2,14 @@
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StreamConfig = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("StreamConfig") :: ModuleScript)
+
+local remotesFolder = ReplicatedStorage:WaitForChild("Remotes") :: Folder
+local performRebirthRemote = remotesFolder:WaitForChild("PerformRebirth") :: RemoteEvent
+local rebirthResultRemote = remotesFolder:WaitForChild("RebirthResult") :: RemoteEvent
+local setStreamCategoryRemote = remotesFolder:WaitForChild("SetStreamCategory") :: RemoteEvent
+
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui") :: PlayerGui
 
@@ -79,6 +87,115 @@ task.spawn(function()
 end)
 
 --------------------------------------------------------------------------------
+-- 0.5. Stream Category Selector (📱 IRL on Phone vs 🎮 Gaming / 🎙️ Talk on PC)
+--------------------------------------------------------------------------------
+local categoryHintLabel = Instance.new("TextLabel")
+categoryHintLabel.Name = "CategoryHintLabel"
+categoryHintLabel.Size = UDim2.new(0, 420, 0, 18)
+categoryHintLabel.Position = UDim2.new(0.5, -210, 0.785, 0)
+categoryHintLabel.BackgroundTransparency = 1
+categoryHintLabel.Font = Enum.Font.GothamMedium
+categoryHintLabel.TextSize = 11
+categoryHintLabel.TextColor3 = Color3.fromRGB(200, 215, 240)
+categoryHintLabel.Text = "🎮 PC Gaming: Stream at your Computer Battlestation! (+Steam Games Bonus)"
+categoryHintLabel.Parent = screenGui
+
+local categoryBar = Instance.new("Frame")
+categoryBar.Name = "CategoryBar"
+categoryBar.Size = UDim2.new(0, 400, 0, 34)
+categoryBar.Position = UDim2.new(0.5, -200, 0.818, 0)
+categoryBar.BackgroundTransparency = 1
+categoryBar.Parent = screenGui
+
+local catLayout = Instance.new("UIListLayout")
+catLayout.FillDirection = Enum.FillDirection.Horizontal
+catLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+catLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+catLayout.Padding = UDim.new(0, 8)
+catLayout.Parent = categoryBar
+
+local function createCategoryBtn(id: string, text: string)
+    local btn = Instance.new("TextButton")
+    btn.Name = `CatBtn_{id}`
+    btn.Size = UDim2.new(0, 124, 0, 32)
+    btn.BackgroundColor3 = Color3.fromRGB(25, 28, 38)
+    btn.TextColor3 = Color3.fromRGB(180, 195, 220)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 12
+    btn.Text = text
+    btn.Parent = categoryBar
+
+    local cCorner = Instance.new("UICorner"); cCorner.CornerRadius = UDim.new(0, 8); cCorner.Parent = btn
+    local cStroke = Instance.new("UIStroke"); cStroke.Color = Color3.fromRGB(50, 60, 80); cStroke.Thickness = 1.2; cStroke.Parent = btn
+
+    return btn, cStroke
+end
+
+local btnIRL, strokeIRL = createCategoryBtn("IRL", "📱 IRL (Phone)")
+local btnGaming, strokeGaming = createCategoryBtn("Gaming", "🎮 Gaming (PC)")
+local btnChatting, strokeChatting = createCategoryBtn("JustChatting", "🎙️ Chatting (PC)")
+
+local currentCategory = "Gaming"
+
+local function updateCategoryUI()
+    local cat = (LocalPlayer:GetAttribute("StreamCategory") :: string?) or currentCategory
+    currentCategory = cat
+
+    -- Reset all
+    btnIRL.BackgroundColor3 = Color3.fromRGB(22, 26, 36)
+    btnIRL.TextColor3 = Color3.fromRGB(160, 175, 200)
+    strokeIRL.Color = Color3.fromRGB(45, 55, 75)
+    strokeIRL.Thickness = 1
+
+    btnGaming.BackgroundColor3 = Color3.fromRGB(22, 26, 36)
+    btnGaming.TextColor3 = Color3.fromRGB(160, 175, 200)
+    strokeGaming.Color = Color3.fromRGB(45, 55, 75)
+    strokeGaming.Thickness = 1
+
+    btnChatting.BackgroundColor3 = Color3.fromRGB(22, 26, 36)
+    btnChatting.TextColor3 = Color3.fromRGB(160, 175, 200)
+    strokeChatting.Color = Color3.fromRGB(45, 55, 75)
+    strokeChatting.Thickness = 1
+
+    if cat == "IRL" then
+        btnIRL.BackgroundColor3 = Color3.fromRGB(0, 80, 100)
+        btnIRL.TextColor3 = Color3.fromRGB(0, 242, 254)
+        strokeIRL.Color = Color3.fromRGB(0, 242, 254)
+        strokeIRL.Thickness = 2
+        categoryHintLabel.Text = "📱 IRL Mode: Mobile stream on phone anywhere! Walk, drive, explore shops."
+        categoryHintLabel.TextColor3 = Color3.fromRGB(0, 242, 254)
+    elseif cat == "JustChatting" then
+        btnChatting.BackgroundColor3 = Color3.fromRGB(70, 45, 10)
+        btnChatting.TextColor3 = Color3.fromRGB(255, 180, 50)
+        strokeChatting.Color = Color3.fromRGB(255, 160, 20)
+        strokeChatting.Thickness = 2
+        categoryHintLabel.Text = "🎙️ Just Chatting: Studio talk show on PC! High chat donations & superchats."
+        categoryHintLabel.TextColor3 = Color3.fromRGB(255, 200, 80)
+    else
+        btnGaming.BackgroundColor3 = Color3.fromRGB(55, 25, 80)
+        btnGaming.TextColor3 = Color3.fromRGB(210, 140, 255)
+        strokeGaming.Color = Color3.fromRGB(180, 90, 255)
+        strokeGaming.Thickness = 2
+        categoryHintLabel.Text = "🎮 PC Gaming: Stream at your Computer Battlestation! +Bonus from Steam games."
+        categoryHintLabel.TextColor3 = Color3.fromRGB(210, 160, 255)
+    end
+end
+
+local function onCategoryClick(catKey: string)
+    currentCategory = catKey
+    LocalPlayer:SetAttribute("StreamCategory", catKey)
+    setStreamCategoryRemote:FireServer(catKey)
+    updateCategoryUI()
+end
+
+btnIRL.MouseButton1Click:Connect(function() onCategoryClick("IRL") end)
+btnGaming.MouseButton1Click:Connect(function() onCategoryClick("Gaming") end)
+btnChatting.MouseButton1Click:Connect(function() onCategoryClick("JustChatting") end)
+
+LocalPlayer:GetAttributeChangedSignal("StreamCategory"):Connect(updateCategoryUI)
+updateCategoryUI()
+
+--------------------------------------------------------------------------------
 -- 1. Stream Control Button
 --------------------------------------------------------------------------------
 local streamButton = Instance.new("TextButton")
@@ -119,45 +236,234 @@ streamButton.MouseButton1Up:Connect(function()
 end)
 
 --------------------------------------------------------------------------------
--- 2. Channel Info Bar & Survival Stats
+-- 2. Rebirth HUD Bar & Rebirth Modal Window
 --------------------------------------------------------------------------------
--- Setup Quality Rating Badge
+--------------------------------------------------------------------------------
+-- 2. Modern Unified Streamer Hub (All-in-One Left Dashboard Panel)
+--------------------------------------------------------------------------------
+local streamerHub = Instance.new("Frame")
+streamerHub.Name = "StreamerHub"
+streamerHub.Size = UDim2.new(0, 320, 0, 340)
+streamerHub.Position = UDim2.new(0.015, 0, 0.44, 0)
+streamerHub.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
+streamerHub.BackgroundTransparency = 0.12
+streamerHub.BorderSizePixel = 0
+streamerHub.Parent = screenGui
+
+local hubCorner = Instance.new("UICorner"); hubCorner.CornerRadius = UDim.new(0, 12); hubCorner.Parent = streamerHub
+local hubStroke = Instance.new("UIStroke"); hubStroke.Color = Color3.fromRGB(48, 58, 80); hubStroke.Thickness = 1.2; hubStroke.Parent = streamerHub
+
+-- Row 1: Channel Title + Quick Edit + Rebirth Badge
+local channelBar = Instance.new("Frame")
+channelBar.Name = "ChannelBar"
+channelBar.Size = UDim2.new(1, -16, 0, 32)
+channelBar.Position = UDim2.new(0, 8, 0, 8)
+channelBar.BackgroundColor3 = Color3.fromRGB(22, 27, 38)
+channelBar.BorderSizePixel = 0
+channelBar.Parent = streamerHub
+
+local cbCorner = Instance.new("UICorner"); cbCorner.CornerRadius = UDim.new(0, 8); cbCorner.Parent = channelBar
+local cbStroke = Instance.new("UIStroke"); cbStroke.Color = Color3.fromRGB(45, 55, 75); cbStroke.Thickness = 1; cbStroke.Parent = channelBar
+
+local channelTitleLabel = Instance.new("TextLabel")
+channelTitleLabel.Name = "ChannelTitleLabel"
+channelTitleLabel.Size = UDim2.new(1, -125, 1, 0)
+channelTitleLabel.Position = UDim2.new(0, 8, 0, 0)
+channelTitleLabel.BackgroundTransparency = 1
+channelTitleLabel.Font = Enum.Font.GothamBold
+channelTitleLabel.TextSize = 13
+channelTitleLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+channelTitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+channelTitleLabel.TextTruncate = Enum.TextTruncate.AtEnd
+channelTitleLabel.Text = "📺 Channel: Loading..."
+channelTitleLabel.Parent = channelBar
+
+local editChannelButton = Instance.new("TextButton")
+editChannelButton.Name = "EditChannelButton"
+editChannelButton.Size = UDim2.new(0, 24, 0, 24)
+editChannelButton.Position = UDim2.new(1, -120, 0.5, -12)
+editChannelButton.BackgroundColor3 = Color3.fromRGB(35, 45, 65)
+editChannelButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+editChannelButton.Font = Enum.Font.GothamBold
+editChannelButton.TextSize = 12
+editChannelButton.Text = "✏️"
+editChannelButton.Parent = channelBar
+local ecCorner = Instance.new("UICorner"); ecCorner.CornerRadius = UDim.new(0, 6); ecCorner.Parent = editChannelButton
+
+local rebirthHudBtn = Instance.new("TextButton")
+rebirthHudBtn.Name = "RebirthHudBtn"
+rebirthHudBtn.Size = UDim2.new(0, 90, 0, 24)
+rebirthHudBtn.Position = UDim2.new(1, -92, 0.5, -12)
+rebirthHudBtn.BackgroundColor3 = Color3.fromRGB(95, 40, 150)
+rebirthHudBtn.TextColor3 = Color3.fromRGB(255, 235, 120)
+rebirthHudBtn.Font = Enum.Font.GothamBold
+rebirthHudBtn.TextSize = 11
+rebirthHudBtn.Text = "🔄 REBIRTH (Lv. 0)"
+rebirthHudBtn.Parent = channelBar
+local rhbCorner = Instance.new("UICorner"); rhbCorner.CornerRadius = UDim.new(0, 6); rhbCorner.Parent = rebirthHudBtn
+local rhbStroke = Instance.new("UIStroke"); rhbStroke.Color = Color3.fromRGB(255, 215, 0); rhbStroke.Thickness = 1.2; rhbStroke.Parent = rebirthHudBtn
+
+-- Row 2: Contract Badge & Live Platform Indicators
+local platformsRowBar = Instance.new("Frame")
+platformsRowBar.Name = "PlatformsRowBar"
+platformsRowBar.Size = UDim2.new(1, -16, 0, 24)
+platformsRowBar.Position = UDim2.new(0, 8, 0, 44)
+platformsRowBar.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
+platformsRowBar.BorderSizePixel = 0
+platformsRowBar.Parent = streamerHub
+
+local prCorner = Instance.new("UICorner"); prCorner.CornerRadius = UDim.new(0, 6); prCorner.Parent = platformsRowBar
+local prStroke = Instance.new("UIStroke"); prStroke.Color = Color3.fromRGB(42, 50, 68); prStroke.Thickness = 1; prStroke.Parent = platformsRowBar
+
+local contractHudBtn = Instance.new("TextButton")
+contractHudBtn.Name = "ContractHudBtn"
+contractHudBtn.Size = UDim2.new(0, 125, 1, 0)
+contractHudBtn.Position = UDim2.new(0, 6, 0, 0)
+contractHudBtn.BackgroundTransparency = 1
+contractHudBtn.Font = Enum.Font.GothamBold
+contractHudBtn.TextSize = 10
+contractHudBtn.TextColor3 = Color3.fromRGB(180, 210, 255)
+contractHudBtn.TextXAlignment = Enum.TextXAlignment.Left
+contractHudBtn.Text = "📡 Contract: None ⚠️"
+contractHudBtn.Parent = platformsRowBar
+
+local function updateContractBadge()
+    local locked = LocalPlayer:GetAttribute("LockedPlatform")
+    if locked and locked ~= "" then
+        contractHudBtn.Text = `📡 {locked:gsub("+", "+")} 🔒`
+        contractHudBtn.TextColor3 = Color3.fromRGB(120, 240, 160)
+    else
+        contractHudBtn.Text = "📡 Pick Platform ⚠️"
+        contractHudBtn.TextColor3 = Color3.fromRGB(255, 200, 80)
+    end
+end
+
+LocalPlayer:GetAttributeChangedSignal("LockedPlatform"):Connect(updateContractBadge)
+updateContractBadge()
+
+contractHudBtn.MouseButton1Click:Connect(function()
+    if _G.OpenPlatformSelect then
+        _G.OpenPlatformSelect(false)
+    end
+end)
+
+local pillsFrame = Instance.new("Frame")
+pillsFrame.Size = UDim2.new(0, 168, 1, 0)
+pillsFrame.Position = UDim2.new(1, -170, 0, 0)
+pillsFrame.BackgroundTransparency = 1
+pillsFrame.Parent = platformsRowBar
+
+local prLayout = Instance.new("UIListLayout")
+prLayout.FillDirection = Enum.FillDirection.Horizontal
+prLayout.Padding = UDim.new(0, 4)
+prLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+prLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+prLayout.Parent = pillsFrame
+
+local ytPill = Instance.new("TextLabel")
+ytPill.Name = "YtPill"
+ytPill.Size = UDim2.new(0, 52, 0, 18)
+ytPill.BackgroundColor3 = Color3.fromRGB(26, 30, 42)
+ytPill.Font = Enum.Font.GothamBold
+ytPill.TextSize = 9
+ytPill.TextColor3 = Color3.fromRGB(140, 150, 170)
+ytPill.Text = "🔴 YT ○"
+ytPill.Parent = pillsFrame
+local ypCorner = Instance.new("UICorner"); ypCorner.CornerRadius = UDim.new(0, 4); ypCorner.Parent = ytPill
+
+local twitchPill = Instance.new("TextLabel")
+twitchPill.Name = "TwitchPill"
+twitchPill.Size = UDim2.new(0, 52, 0, 18)
+twitchPill.BackgroundColor3 = Color3.fromRGB(26, 30, 42)
+twitchPill.Font = Enum.Font.GothamBold
+twitchPill.TextSize = 9
+twitchPill.TextColor3 = Color3.fromRGB(140, 150, 170)
+twitchPill.Text = "🟣 TW ○"
+twitchPill.Parent = pillsFrame
+local tpCorner = Instance.new("UICorner"); tpCorner.CornerRadius = UDim.new(0, 4); tpCorner.Parent = twitchPill
+
+local tiktokPill = Instance.new("TextLabel")
+tiktokPill.Name = "TiktokPill"
+tiktokPill.Size = UDim2.new(0, 52, 0, 18)
+tiktokPill.BackgroundColor3 = Color3.fromRGB(26, 30, 42)
+tiktokPill.Font = Enum.Font.GothamBold
+tiktokPill.TextSize = 9
+tiktokPill.TextColor3 = Color3.fromRGB(140, 150, 170)
+tiktokPill.Text = "🎵 TT ○"
+tiktokPill.Parent = pillsFrame
+local tkCorner = Instance.new("UICorner"); tkCorner.CornerRadius = UDim.new(0, 4); tkCorner.Parent = tiktokPill
+
+local function updatePlatformsRow()
+    local isYT = LocalPlayer:GetAttribute("IsStreamingYouTube") == true
+    local isTwitch = LocalPlayer:GetAttribute("IsStreamingTwitch") == true
+    local isTikTok = LocalPlayer:GetAttribute("IsStreamingTikTok") == true
+
+    if isYT then
+        ytPill.BackgroundColor3 = Color3.fromRGB(180, 20, 20)
+        ytPill.TextColor3 = Color3.fromRGB(255, 255, 255)
+        ytPill.Text = "🔴 YT ●"
+    else
+        ytPill.BackgroundColor3 = Color3.fromRGB(24, 28, 38)
+        ytPill.TextColor3 = Color3.fromRGB(120, 130, 150)
+        ytPill.Text = "🔴 YT ○"
+    end
+
+    if isTwitch then
+        twitchPill.BackgroundColor3 = Color3.fromRGB(130, 40, 220)
+        twitchPill.TextColor3 = Color3.fromRGB(255, 255, 255)
+        twitchPill.Text = "🟣 TW ●"
+    else
+        twitchPill.BackgroundColor3 = Color3.fromRGB(24, 28, 38)
+        twitchPill.TextColor3 = Color3.fromRGB(120, 130, 150)
+        twitchPill.Text = "🟣 TW ○"
+    end
+
+    if isTikTok then
+        tiktokPill.BackgroundColor3 = Color3.fromRGB(0, 160, 180)
+        tiktokPill.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tiktokPill.Text = "🎵 TT ●"
+    else
+        tiktokPill.BackgroundColor3 = Color3.fromRGB(24, 28, 38)
+        tiktokPill.TextColor3 = Color3.fromRGB(120, 130, 150)
+        tiktokPill.Text = "🎵 TT ○"
+    end
+end
+
+LocalPlayer:GetAttributeChangedSignal("IsStreamingYouTube"):Connect(updatePlatformsRow)
+LocalPlayer:GetAttributeChangedSignal("IsStreamingTwitch"):Connect(updatePlatformsRow)
+LocalPlayer:GetAttributeChangedSignal("IsStreamingTikTok"):Connect(updatePlatformsRow)
+updatePlatformsRow()
+
+-- Row 3: Setup Quality Rank + Compact Energy Meter
 local setupBadge = Instance.new("Frame")
 setupBadge.Name = "SetupBadge"
-setupBadge.Size = UDim2.new(0, 320, 0, 26)
-setupBadge.Position = UDim2.new(0.02, 0, 0.545, 0)
-setupBadge.BackgroundColor3 = Color3.fromRGB(20, 24, 32)
-setupBadge.BackgroundTransparency = 0.25
+setupBadge.Size = UDim2.new(1, -16, 0, 22)
+setupBadge.Position = UDim2.new(0, 8, 0, 72)
+setupBadge.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
 setupBadge.BorderSizePixel = 0
-setupBadge.Parent = screenGui
+setupBadge.Parent = streamerHub
 
-local sCorner = Instance.new("UICorner")
-sCorner.CornerRadius = UDim.new(0, 6)
-sCorner.Parent = setupBadge
-
-local sStroke = Instance.new("UIStroke")
-sStroke.Color = Color3.fromRGB(255, 170, 0)
-sStroke.Transparency = 0.5
-sStroke.Thickness = 1
-sStroke.Parent = setupBadge
+local sCorner = Instance.new("UICorner"); sCorner.CornerRadius = UDim.new(0, 6); sCorner.Parent = setupBadge
+local sStroke = Instance.new("UIStroke"); sStroke.Color = Color3.fromRGB(42, 50, 68); sStroke.Thickness = 1; sStroke.Parent = setupBadge
 
 local setupLabel = Instance.new("TextLabel")
 setupLabel.Name = "SetupLabel"
-setupLabel.Size = UDim2.new(1, -16, 1, 0)
-setupLabel.Position = UDim2.new(0, 8, 0, 0)
+setupLabel.Size = UDim2.new(0.58, 0, 1, 0)
+setupLabel.Position = UDim2.new(0, 6, 0, 0)
 setupLabel.BackgroundTransparency = 1
 setupLabel.Font = Enum.Font.GothamBold
-setupLabel.TextSize = 11
+setupLabel.TextSize = 10
 setupLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
 setupLabel.TextXAlignment = Enum.TextXAlignment.Left
-setupLabel.Text = "⭐ Setup: Potato Setup (0 games, 0 gear)"
+setupLabel.Text = "⭐ Potato (0G, 0Eq)"
 setupLabel.Parent = setupBadge
 
 local function updateSetupBadge()
     local rank = LocalPlayer:GetAttribute("StreamRankTitle") or "Potato Setup"
     local games = LocalPlayer:GetAttribute("GamesOwnedCount") or 0
     local gear = LocalPlayer:GetAttribute("GearOwnedCount") or 0
-    setupLabel.Text = `⭐ Setup: {rank} ({games} games, {gear} gear)`
+    local shortRank = rank:gsub(" Setup", ""):gsub(" Battlestation", ""):gsub(" Creator", "")
+    setupLabel.Text = `⭐ {shortRank} ({games}G, {gear}Eq)`
 end
 
 LocalPlayer:GetAttributeChangedSignal("StreamRankTitle"):Connect(updateSetupBadge)
@@ -165,43 +471,15 @@ LocalPlayer:GetAttributeChangedSignal("GamesOwnedCount"):Connect(updateSetupBadg
 LocalPlayer:GetAttributeChangedSignal("GearOwnedCount"):Connect(updateSetupBadge)
 updateSetupBadge()
 
-local channelBar = Instance.new("Frame")
-channelBar.Name = "ChannelBar"
-channelBar.Size = UDim2.new(0, 320, 0, 36)
-channelBar.Position = UDim2.new(0.02, 0, 0.585, 0)
-channelBar.BackgroundColor3 = Color3.fromRGB(25, 28, 36)
-channelBar.BackgroundTransparency = 0.25
-channelBar.BorderSizePixel = 0
-channelBar.Parent = screenGui
-
-local barCorner = Instance.new("UICorner")
-barCorner.CornerRadius = UDim.new(0, 8)
-barCorner.Parent = channelBar
-
-local barStroke = Instance.new("UIStroke")
-barStroke.Color = Color3.fromRGB(52, 152, 219)
-barStroke.Transparency = 0.6
-barStroke.Thickness = 1
-barStroke.Parent = channelBar
-
--- Energy / Stamina Bar (Survival System)
 local energyBar = Instance.new("Frame")
 energyBar.Name = "EnergyBar"
-energyBar.Size = UDim2.new(0, 320, 0, 24)
-energyBar.Position = UDim2.new(0.02, 0, 0.635, 0)
-energyBar.BackgroundColor3 = Color3.fromRGB(20, 24, 32)
-energyBar.BackgroundTransparency = 0.25
+energyBar.Size = UDim2.new(0.38, 0, 0, 14)
+energyBar.Position = UDim2.new(1, -118, 0.5, -7)
+energyBar.BackgroundColor3 = Color3.fromRGB(15, 18, 25)
 energyBar.BorderSizePixel = 0
-energyBar.Parent = screenGui
-
-local eCorner = Instance.new("UICorner")
-eCorner.CornerRadius = UDim.new(0, 6)
-eCorner.Parent = energyBar
-
-local eStroke = Instance.new("UIStroke")
-eStroke.Color = Color3.fromRGB(46, 204, 113)
-eStroke.Thickness = 1
-eStroke.Parent = energyBar
+energyBar.Parent = setupBadge
+local eCorner = Instance.new("UICorner"); eCorner.CornerRadius = UDim.new(0, 5); eCorner.Parent = energyBar
+local eStroke = Instance.new("UIStroke"); eStroke.Color = Color3.fromRGB(46, 204, 113); eStroke.Thickness = 1; eStroke.Parent = energyBar
 
 local energyFill = Instance.new("Frame")
 energyFill.Name = "EnergyFill"
@@ -209,19 +487,16 @@ energyFill.Size = UDim2.new(1, 0, 1, 0)
 energyFill.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
 energyFill.BorderSizePixel = 0
 energyFill.Parent = energyBar
-
-local efCorner = Instance.new("UICorner")
-efCorner.CornerRadius = UDim.new(0, 6)
-efCorner.Parent = energyFill
+local efCorner = Instance.new("UICorner"); efCorner.CornerRadius = UDim.new(0, 5); efCorner.Parent = energyFill
 
 local energyLabel = Instance.new("TextLabel")
 energyLabel.Name = "EnergyLabel"
 energyLabel.Size = UDim2.new(1, 0, 1, 0)
 energyLabel.BackgroundTransparency = 1
 energyLabel.Font = Enum.Font.GothamBold
-energyLabel.TextSize = 11
+energyLabel.TextSize = 9
 energyLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-energyLabel.Text = "⚡ Energy: 100%"
+energyLabel.Text = "⚡ 100%"
 energyLabel.ZIndex = 2
 energyLabel.Parent = energyBar
 
@@ -236,208 +511,63 @@ local function updateEnergy()
     if energy > 50 then
         energyFill.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
         eStroke.Color = Color3.fromRGB(46, 204, 113)
-        energyLabel.Text = `⚡ Energy: {energy}%`
+        energyLabel.Text = `⚡ {energy}%`
     elseif energy >= 25 then
         energyFill.BackgroundColor3 = Color3.fromRGB(243, 156, 18)
         eStroke.Color = Color3.fromRGB(243, 156, 18)
-        energyLabel.Text = `⚡ Energy: {energy}% (Getting Tired)`
+        energyLabel.Text = `⚡ {energy}%`
     else
         energyFill.BackgroundColor3 = Color3.fromRGB(231, 76, 60)
         eStroke.Color = Color3.fromRGB(231, 76, 60)
-        energyLabel.Text = `⚡ Energy: {energy}% (Starving! Go to Burger Mart)`
+        energyLabel.Text = `⚡ {energy}% ⚠️`
     end
 end
 
 LocalPlayer:GetAttributeChangedSignal("Energy"):Connect(updateEnergy)
 updateEnergy()
 
-local channelTitleLabel = Instance.new("TextLabel")
-channelTitleLabel.Name = "ChannelTitleLabel"
-channelTitleLabel.Size = UDim2.new(1, -95, 1, 0)
-channelTitleLabel.Position = UDim2.new(0, 10, 0, 0)
-channelTitleLabel.BackgroundTransparency = 1
-channelTitleLabel.Font = Enum.Font.GothamBold
-channelTitleLabel.TextSize = 13
-channelTitleLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
-channelTitleLabel.Text = "📺 Channel: Loading..."
-channelTitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-channelTitleLabel.TextTruncate = Enum.TextTruncate.AtEnd
-channelTitleLabel.Parent = channelBar
-
-local editChannelButton = Instance.new("TextButton")
-editChannelButton.Name = "EditChannelButton"
-editChannelButton.Size = UDim2.new(0, 80, 0, 26)
-editChannelButton.Position = UDim2.new(1, -85, 0.5, -13)
-editChannelButton.BackgroundColor3 = Color3.fromRGB(41, 128, 185)
-editChannelButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-editChannelButton.Font = Enum.Font.GothamMedium
-editChannelButton.TextSize = 12
-editChannelButton.Text = "✏️ Edit"
-editChannelButton.Parent = channelBar
-
-local editBtnCorner = Instance.new("UICorner")
-editBtnCorner.CornerRadius = UDim.new(0, 6)
-editBtnCorner.Parent = editChannelButton
-
---------------------------------------------------------------------------------
--- 3. Dedicated Platforms Status Bar (Окрема строка моніторингу для всіх платформ)
---------------------------------------------------------------------------------
-local platformsRowBar = Instance.new("Frame")
-platformsRowBar.Name = "PlatformsRowBar"
-platformsRowBar.Size = UDim2.new(0, 320, 0, 26)
-platformsRowBar.Position = UDim2.new(0.02, 0, 0.672, 0)
-platformsRowBar.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
-platformsRowBar.BackgroundTransparency = 0.2
-platformsRowBar.BorderSizePixel = 0
-platformsRowBar.Parent = screenGui
-
-local prCorner = Instance.new("UICorner"); prCorner.CornerRadius = UDim.new(0, 6); prCorner.Parent = platformsRowBar
-local prStroke = Instance.new("UIStroke"); prStroke.Color = Color3.fromRGB(50, 60, 80); prStroke.Thickness = 1; prStroke.Parent = platformsRowBar
-
-local prLayout = Instance.new("UIListLayout")
-prLayout.FillDirection = Enum.FillDirection.Horizontal
-prLayout.Padding = UDim.new(0, 5)
-prLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-prLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-prLayout.Parent = platformsRowBar
-
-local ytPill = Instance.new("TextLabel")
-ytPill.Name = "YtPill"
-ytPill.Size = UDim2.new(0, 98, 0, 20)
-ytPill.BackgroundColor3 = Color3.fromRGB(26, 30, 42)
-ytPill.Font = Enum.Font.GothamBold
-ytPill.TextSize = 10
-ytPill.TextColor3 = Color3.fromRGB(140, 150, 170)
-ytPill.Text = "🔴 YT: ○ OFF"
-ytPill.Parent = platformsRowBar
-local ypCorner = Instance.new("UICorner"); ypCorner.CornerRadius = UDim.new(0, 5); ypCorner.Parent = ytPill
-
-local twitchPill = Instance.new("TextLabel")
-twitchPill.Name = "TwitchPill"
-twitchPill.Size = UDim2.new(0, 98, 0, 20)
-twitchPill.BackgroundColor3 = Color3.fromRGB(26, 30, 42)
-twitchPill.Font = Enum.Font.GothamBold
-twitchPill.TextSize = 10
-twitchPill.TextColor3 = Color3.fromRGB(140, 150, 170)
-twitchPill.Text = "🟣 Twitch: ○ OFF"
-twitchPill.Parent = platformsRowBar
-local tpCorner = Instance.new("UICorner"); tpCorner.CornerRadius = UDim.new(0, 5); tpCorner.Parent = twitchPill
-
-local tiktokPill = Instance.new("TextLabel")
-tiktokPill.Name = "TiktokPill"
-tiktokPill.Size = UDim2.new(0, 98, 0, 20)
-tiktokPill.BackgroundColor3 = Color3.fromRGB(26, 30, 42)
-tiktokPill.Font = Enum.Font.GothamBold
-tiktokPill.TextSize = 10
-tiktokPill.TextColor3 = Color3.fromRGB(140, 150, 170)
-tiktokPill.Text = "🎵 TikTok: ○ OFF"
-tiktokPill.Parent = platformsRowBar
-local tkCorner = Instance.new("UICorner"); tkCorner.CornerRadius = UDim.new(0, 5); tkCorner.Parent = tiktokPill
-
-local function updatePlatformsRow()
-    local isYT = LocalPlayer:GetAttribute("IsStreamingYouTube") == true
-    local isTwitch = LocalPlayer:GetAttribute("IsStreamingTwitch") == true
-    local isTikTok = LocalPlayer:GetAttribute("IsStreamingTikTok") == true
-
-    if isYT then
-        ytPill.BackgroundColor3 = Color3.fromRGB(180, 20, 20)
-        ytPill.TextColor3 = Color3.fromRGB(255, 255, 255)
-        ytPill.Text = "🔴 YT: ● LIVE"
-    else
-        ytPill.BackgroundColor3 = Color3.fromRGB(26, 30, 42)
-        ytPill.TextColor3 = Color3.fromRGB(140, 150, 170)
-        ytPill.Text = "🔴 YT: ○ OFF"
-    end
-
-    if isTwitch then
-        twitchPill.BackgroundColor3 = Color3.fromRGB(130, 40, 220)
-        twitchPill.TextColor3 = Color3.fromRGB(255, 255, 255)
-        twitchPill.Text = "🟣 Twitch: ● LIVE"
-    else
-        twitchPill.BackgroundColor3 = Color3.fromRGB(26, 30, 42)
-        twitchPill.TextColor3 = Color3.fromRGB(140, 150, 170)
-        twitchPill.Text = "🟣 Twitch: ○ OFF"
-    end
-
-    if isTikTok then
-        tiktokPill.BackgroundColor3 = Color3.fromRGB(0, 160, 180)
-        tiktokPill.TextColor3 = Color3.fromRGB(255, 255, 255)
-        tiktokPill.Text = "🎵 TikTok: ● LIVE"
-    else
-        tiktokPill.BackgroundColor3 = Color3.fromRGB(26, 30, 42)
-        tiktokPill.TextColor3 = Color3.fromRGB(140, 150, 170)
-        tiktokPill.Text = "🎵 TikTok: ○ OFF"
-    end
-
-    local activeCount = (isYT and 1 or 0) + (isTwitch and 1 or 0) + (isTikTok and 1 or 0)
-    if activeCount >= 2 then
-        prStroke.Color = Color3.fromRGB(255, 215, 0)
-    elseif activeCount == 1 then
-        prStroke.Color = Color3.fromRGB(46, 204, 113)
-    else
-        prStroke.Color = Color3.fromRGB(50, 60, 80)
-    end
-end
-
-LocalPlayer:GetAttributeChangedSignal("IsStreamingYouTube"):Connect(updatePlatformsRow)
-LocalPlayer:GetAttributeChangedSignal("IsStreamingTwitch"):Connect(updatePlatformsRow)
-LocalPlayer:GetAttributeChangedSignal("IsStreamingTikTok"):Connect(updatePlatformsRow)
-updatePlatformsRow()
-
---------------------------------------------------------------------------------
--- 4. Live Chat Panel
---------------------------------------------------------------------------------
+-- Row 4: Integrated Live Chat Panel
 local chatContainer = Instance.new("Frame")
 chatContainer.Name = "ChatContainer"
-chatContainer.Size = UDim2.new(0, 320, 0, 195)
-chatContainer.Position = UDim2.new(0.02, 0, 0.705, 0)
-chatContainer.BackgroundColor3 = Color3.fromRGB(20, 22, 28)
-chatContainer.BackgroundTransparency = 0.25
+chatContainer.Size = UDim2.new(1, -16, 1, -104)
+chatContainer.Position = UDim2.new(0, 8, 0, 98)
+chatContainer.BackgroundColor3 = Color3.fromRGB(16, 19, 27)
+chatContainer.BackgroundTransparency = 0.2
 chatContainer.BorderSizePixel = 0
-chatContainer.Parent = screenGui
+chatContainer.Parent = streamerHub
 
-local containerCorner = Instance.new("UICorner")
-containerCorner.CornerRadius = UDim.new(0, 10)
-containerCorner.Parent = chatContainer
-
-local containerStroke = Instance.new("UIStroke")
-containerStroke.Color = Color3.fromRGB(60, 65, 80)
-containerStroke.Transparency = 0.5
-containerStroke.Thickness = 1
-containerStroke.Parent = chatContainer
+local containerCorner = Instance.new("UICorner"); containerCorner.CornerRadius = UDim.new(0, 8); containerCorner.Parent = chatContainer
+local containerStroke = Instance.new("UIStroke"); containerStroke.Color = Color3.fromRGB(38, 46, 62); containerStroke.Thickness = 1; containerStroke.Parent = chatContainer
 
 local chatHeader = Instance.new("TextLabel")
 chatHeader.Name = "ChatHeader"
-chatHeader.Size = UDim2.new(1, 0, 0, 30)
+chatHeader.Size = UDim2.new(1, 0, 0, 24)
 chatHeader.Position = UDim2.new(0, 0, 0, 0)
-chatHeader.BackgroundColor3 = Color3.fromRGB(30, 33, 42)
-chatHeader.BackgroundTransparency = 0.3
-chatHeader.TextColor3 = Color3.fromRGB(220, 225, 235)
+chatHeader.BackgroundColor3 = Color3.fromRGB(22, 27, 38)
+chatHeader.BackgroundTransparency = 0.2
+chatHeader.TextColor3 = Color3.fromRGB(210, 220, 235)
 chatHeader.Font = Enum.Font.GothamBold
-chatHeader.TextSize = 13
+chatHeader.TextSize = 11
 chatHeader.Text = "  💬 Live Chat (Offline)"
 chatHeader.TextXAlignment = Enum.TextXAlignment.Left
 chatHeader.Parent = chatContainer
-
-local headerCorner = Instance.new("UICorner")
-headerCorner.CornerRadius = UDim.new(0, 10)
-headerCorner.Parent = chatHeader
+local headerCorner = Instance.new("UICorner"); headerCorner.CornerRadius = UDim.new(0, 8); headerCorner.Parent = chatHeader
 
 local scrollingFrame = Instance.new("ScrollingFrame")
 scrollingFrame.Name = "ChatScrollingFrame"
-scrollingFrame.Size = UDim2.new(1, -12, 1, -40)
-scrollingFrame.Position = UDim2.new(0, 6, 0, 34)
+scrollingFrame.Size = UDim2.new(1, -8, 1, -28)
+scrollingFrame.Position = UDim2.new(0, 4, 0, 26)
 scrollingFrame.BackgroundTransparency = 1
 scrollingFrame.BorderSizePixel = 0
-scrollingFrame.ScrollBarThickness = 5
-scrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 110, 130)
+scrollingFrame.ScrollBarThickness = 4
+scrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(80, 95, 120)
 scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 scrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
 scrollingFrame.Parent = chatContainer
 
 local listLayout = Instance.new("UIListLayout")
 listLayout.SortOrder = Enum.SortOrder.LayoutOrder
-listLayout.Padding = UDim.new(0, 5)
+listLayout.Padding = UDim.new(0, 4)
 listLayout.Parent = scrollingFrame
 
 local padding = Instance.new("UIPadding")
@@ -446,6 +576,280 @@ padding.PaddingRight = UDim.new(0, 4)
 padding.PaddingTop = UDim.new(0, 4)
 padding.PaddingBottom = UDim.new(0, 4)
 padding.Parent = scrollingFrame
+
+--------------------------------------------------------------------------------
+-- REBIRTH MODAL WINDOW (Детальний інтерфейс ребірсу)
+--------------------------------------------------------------------------------
+local rebirthBackdrop = Instance.new("Frame")
+rebirthBackdrop.Name = "RebirthBackdrop"
+rebirthBackdrop.Size = UDim2.new(1, 0, 1, 0)
+rebirthBackdrop.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+rebirthBackdrop.BackgroundTransparency = 0.6
+rebirthBackdrop.Visible = false
+rebirthBackdrop.ZIndex = 60
+rebirthBackdrop.Parent = screenGui
+
+local rebirthWindow = Instance.new("Frame")
+rebirthWindow.Name = "RebirthWindow"
+rebirthWindow.Size = UDim2.new(0, 560, 0, 520)
+rebirthWindow.Position = UDim2.new(0.5, 0, 0.5, 0)
+rebirthWindow.AnchorPoint = Vector2.new(0.5, 0.5)
+rebirthWindow.BackgroundColor3 = Color3.fromRGB(18, 22, 32)
+rebirthWindow.BorderSizePixel = 0
+rebirthWindow.ZIndex = 61
+rebirthWindow.Parent = rebirthBackdrop
+
+local rwCorner = Instance.new("UICorner"); rwCorner.CornerRadius = UDim.new(0, 16); rwCorner.Parent = rebirthWindow
+local rwStroke = Instance.new("UIStroke"); rwStroke.Color = Color3.fromRGB(255, 215, 0); rwStroke.Thickness = 2; rwStroke.Parent = rebirthWindow
+
+-- Title Bar
+local rwTitle = Instance.new("TextLabel")
+rwTitle.Size = UDim2.new(1, -70, 0, 30)
+rwTitle.Position = UDim2.new(0, 20, 0, 14)
+rwTitle.BackgroundTransparency = 1
+rwTitle.Font = Enum.Font.GothamBold
+rwTitle.TextSize = 20
+rwTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
+rwTitle.TextXAlignment = Enum.TextXAlignment.Left
+rwTitle.Text = "🔄 REBIRTH SYSTEM | РЕБІРС КАНАЛУ"
+rwTitle.ZIndex = 62
+rwTitle.Parent = rebirthWindow
+
+local rwCloseBtn = Instance.new("TextButton")
+rwCloseBtn.Size = UDim2.new(0, 32, 0, 32)
+rwCloseBtn.Position = UDim2.new(1, -46, 0, 14)
+rwCloseBtn.BackgroundColor3 = Color3.fromRGB(231, 76, 60)
+rwCloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+rwCloseBtn.Font = Enum.Font.GothamBold
+rwCloseBtn.TextSize = 16
+rwCloseBtn.Text = "✕"
+rwCloseBtn.ZIndex = 62
+rwCloseBtn.Parent = rebirthWindow
+local rwcCorner = Instance.new("UICorner"); rwcCorner.CornerRadius = UDim.new(0, 8); rwcCorner.Parent = rwCloseBtn
+rwCloseBtn.MouseButton1Click:Connect(function()
+    rebirthBackdrop.Visible = false
+end)
+
+-- 1. Status Bar Card
+local statusCard = Instance.new("Frame")
+statusCard.Size = UDim2.new(1, -40, 0, 44)
+statusCard.Position = UDim2.new(0, 20, 0, 50)
+statusCard.BackgroundColor3 = Color3.fromRGB(35, 25, 55)
+statusCard.BorderSizePixel = 0
+statusCard.ZIndex = 62
+statusCard.Parent = rebirthWindow
+local scCorner = Instance.new("UICorner"); scCorner.CornerRadius = UDim.new(0, 8); scCorner.Parent = statusCard
+local scStroke = Instance.new("UIStroke"); scStroke.Color = Color3.fromRGB(170, 80, 240); scStroke.Thickness = 1.2; scStroke.Parent = statusCard
+
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Size = UDim2.new(1, -20, 1, 0)
+statusLabel.Position = UDim2.new(0, 10, 0, 0)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Font = Enum.Font.GothamBold
+statusLabel.TextSize = 13
+statusLabel.TextColor3 = Color3.fromRGB(255, 235, 140)
+statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+statusLabel.Text = "⭐ Current: Rebirth Level 0  |  ⚡ Permanent Boost: +0%"
+statusLabel.ZIndex = 63
+statusLabel.Parent = statusCard
+
+-- 2. Requirements & Progress Card
+local reqCard = Instance.new("Frame")
+reqCard.Size = UDim2.new(1, -40, 0, 68)
+reqCard.Position = UDim2.new(0, 20, 0, 102)
+reqCard.BackgroundColor3 = Color3.fromRGB(24, 28, 40)
+reqCard.BorderSizePixel = 0
+reqCard.ZIndex = 62
+reqCard.Parent = rebirthWindow
+local rcCorner = Instance.new("UICorner"); rcCorner.CornerRadius = UDim.new(0, 8); rcCorner.Parent = reqCard
+local rcStroke = Instance.new("UIStroke"); rcStroke.Color = Color3.fromRGB(52, 152, 219); rcStroke.Thickness = 1.2; rcStroke.Parent = reqCard
+
+local reqTitle = Instance.new("TextLabel")
+reqTitle.Size = UDim2.new(1, -20, 0, 20)
+reqTitle.Position = UDim2.new(0, 10, 0, 6)
+reqTitle.BackgroundTransparency = 1
+reqTitle.Font = Enum.Font.GothamBold
+reqTitle.TextSize = 12
+reqTitle.TextColor3 = Color3.fromRGB(220, 235, 255)
+reqTitle.TextXAlignment = Enum.TextXAlignment.Left
+reqTitle.Text = "📋 Requirements for Next Rebirth:"
+reqTitle.ZIndex = 63
+reqTitle.Parent = reqCard
+
+local reqDetails = Instance.new("TextLabel")
+reqDetails.Size = UDim2.new(1, -20, 0, 18)
+reqDetails.Position = UDim2.new(0, 10, 0, 26)
+reqDetails.BackgroundTransparency = 1
+reqDetails.Font = Enum.Font.Gotham
+reqDetails.TextSize = 11
+reqDetails.TextColor3 = Color3.fromRGB(180, 195, 220)
+reqDetails.TextXAlignment = Enum.TextXAlignment.Left
+reqDetails.Text = "⭐ Subs: 0 / 500  |  💵 Cash: $0 / $250"
+reqDetails.ZIndex = 63
+reqDetails.Parent = reqCard
+
+local reqProgBg = Instance.new("Frame")
+reqProgBg.Size = UDim2.new(1, -20, 0, 12)
+reqProgBg.Position = UDim2.new(0, 10, 0, 48)
+reqProgBg.BackgroundColor3 = Color3.fromRGB(15, 18, 25)
+reqProgBg.BorderSizePixel = 0
+reqProgBg.ZIndex = 63
+reqProgBg.Parent = reqCard
+local rpbCorner = Instance.new("UICorner"); rpbCorner.CornerRadius = UDim.new(0, 6); rpbCorner.Parent = reqProgBg
+
+local reqProgFill = Instance.new("Frame")
+reqProgFill.Size = UDim2.new(0, 0, 1, 0)
+reqProgFill.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+reqProgFill.BorderSizePixel = 0
+reqProgFill.ZIndex = 64
+reqProgFill.Parent = reqProgBg
+local rpfCorner = Instance.new("UICorner"); rpfCorner.CornerRadius = UDim.new(0, 6); rpfCorner.Parent = reqProgFill
+
+-- 3. Rewards Card (ЩО ТИ ОТРИМАЄШ)
+local rewardsCard = Instance.new("Frame")
+rewardsCard.Size = UDim2.new(1, -40, 0, 150)
+rewardsCard.Position = UDim2.new(0, 20, 0, 178)
+rewardsCard.BackgroundColor3 = Color3.fromRGB(24, 30, 24)
+rewardsCard.BorderSizePixel = 0
+rewardsCard.ZIndex = 62
+rewardsCard.Parent = rebirthWindow
+local rwcCorner2 = Instance.new("UICorner"); rwcCorner2.CornerRadius = UDim.new(0, 8); rwcCorner2.Parent = rewardsCard
+local rwcStroke2 = Instance.new("UIStroke"); rwcStroke2.Color = Color3.fromRGB(46, 204, 113); rwcStroke2.Thickness = 1.2; rwcStroke2.Parent = rewardsCard
+
+local rewTitle = Instance.new("TextLabel")
+rewTitle.Size = UDim2.new(1, -20, 0, 24)
+rewTitle.Position = UDim2.new(0, 10, 0, 6)
+rewTitle.BackgroundTransparency = 1
+rewTitle.Font = Enum.Font.GothamBold
+rewTitle.TextSize = 13
+rewTitle.TextColor3 = Color3.fromRGB(100, 240, 120)
+rewTitle.TextXAlignment = Enum.TextXAlignment.Left
+rewTitle.Text = "🎁 WHAT YOU GET FOR REBIRTH (ЩО ТИ ОТРИМАЄШ):"
+rewTitle.ZIndex = 63
+rewTitle.Parent = rewardsCard
+
+local rewList = Instance.new("TextLabel")
+rewList.Size = UDim2.new(1, -20, 0, 114)
+rewList.Position = UDim2.new(0, 10, 0, 30)
+rewList.BackgroundTransparency = 1
+rewList.Font = Enum.Font.Gotham
+rewList.TextSize = 11
+rewList.TextColor3 = Color3.fromRGB(220, 240, 220)
+rewList.TextXAlignment = Enum.TextXAlignment.Left
+rewList.TextYAlignment = Enum.TextYAlignment.Top
+rewList.TextWrapped = true
+rewList.LineHeight = 1.15
+rewList.Text = "• 🚀 +50% Permanent Multiplier to ALL Cash & Subscribers (Stacks infinitely!)\n• 🔓 UNLOCK PLATFORM CONTRACT: Switch to YouTube, Twitch, TikTok, or dual Split!\n• 👑 Prestige Overhead & Chat Title: [Rebirth 1], [Rebirth 2]...\n• ⚡ +10 Max Energy Capacity (Stream longer without tiring)\n• 💵 +$50 Permanent Starter Cash Bonus on every life!"
+rewList.ZIndex = 63
+rewList.Parent = rewardsCard
+
+-- 4. Resets Warning Card (ЩО СКИДАЄТЬСЯ)
+local resetCard = Instance.new("Frame")
+resetCard.Size = UDim2.new(1, -40, 0, 95)
+resetCard.Position = UDim2.new(0, 20, 0, 336)
+resetCard.BackgroundColor3 = Color3.fromRGB(36, 24, 24)
+resetCard.BorderSizePixel = 0
+resetCard.ZIndex = 62
+resetCard.Parent = rebirthWindow
+local rstCorner = Instance.new("UICorner"); rstCorner.CornerRadius = UDim.new(0, 8); rstCorner.Parent = resetCard
+local rstStroke = Instance.new("UIStroke"); rstStroke.Color = Color3.fromRGB(231, 76, 60); rstStroke.Thickness = 1.2; rstStroke.Parent = resetCard
+
+local rstTitle = Instance.new("TextLabel")
+rstTitle.Size = UDim2.new(1, -20, 0, 22)
+rstTitle.Position = UDim2.new(0, 10, 0, 6)
+rstTitle.BackgroundTransparency = 1
+rstTitle.Font = Enum.Font.GothamBold
+rstTitle.TextSize = 12
+rstTitle.TextColor3 = Color3.fromRGB(255, 120, 120)
+rstTitle.TextXAlignment = Enum.TextXAlignment.Left
+rstTitle.Text = "⚠️ WHAT WILL RESET (ЩО СКИДАЄТЬСЯ):"
+rstTitle.ZIndex = 63
+rstTitle.Parent = resetCard
+
+local rstList = Instance.new("TextLabel")
+rstList.Size = UDim2.new(1, -20, 0, 62)
+rstList.Position = UDim2.new(0, 10, 0, 28)
+rstList.BackgroundTransparency = 1
+rstList.Font = Enum.Font.Gotham
+rstList.TextSize = 11
+rstList.TextColor3 = Color3.fromRGB(240, 210, 210)
+rstList.TextXAlignment = Enum.TextXAlignment.Left
+rstList.TextYAlignment = Enum.TextYAlignment.Top
+rstList.TextWrapped = true
+rstList.Text = "• Current Subscribers reset to 0 (New channel era begins!)\n• Current Cash resets to Starter Cash ($15 + rebirth bonus)\n• Platform contract is unlocked for your new selection!\n• (Robux gamepasses, vehicles, and Rebirth boosts are PERMANENT and NEVER reset!)"
+rstList.ZIndex = 63
+rstList.Parent = resetCard
+
+-- 5. Big Rebirth Action Button
+local rebirthActionBtn = Instance.new("TextButton")
+rebirthActionBtn.Name = "RebirthActionBtn"
+rebirthActionBtn.Size = UDim2.new(1, -40, 0, 48)
+rebirthActionBtn.Position = UDim2.new(0, 20, 1, -58)
+rebirthActionBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+rebirthActionBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+rebirthActionBtn.Font = Enum.Font.GothamBlack
+rebirthActionBtn.TextSize = 15
+rebirthActionBtn.Text = "✨ PERFORM REBIRTH (+50% PERMANENT BOOST!)"
+rebirthActionBtn.ZIndex = 63
+rebirthActionBtn.Parent = rebirthWindow
+local rabCorner = Instance.new("UICorner"); rabCorner.CornerRadius = UDim.new(0, 10); rabCorner.Parent = rebirthActionBtn
+
+local function updateRebirthModal()
+    local leaderstats = LocalPlayer:FindFirstChild("leaderstats")
+    local hypeVal = leaderstats and leaderstats:FindFirstChild("Hype") :: IntValue?
+    local moneyVal = leaderstats and leaderstats:FindFirstChild("Money") :: IntValue?
+    local rebirthsVal = leaderstats and leaderstats:FindFirstChild("Rebirths") :: IntValue?
+
+    local currentSubs = hypeVal and hypeVal.Value or 0
+    local currentCash = moneyVal and moneyVal.Value or 0
+    local currentRebirths = rebirthsVal and rebirthsVal.Value or ((LocalPlayer:GetAttribute("Rebirths") :: number?) or 0)
+
+    rebirthHudBtn.Text = `🔄 REBIRTH (Lv. {currentRebirths})`
+    statusLabel.Text = `⭐ Current: Rebirth Level {currentRebirths}  |  ⚡ Permanent Boost: +{currentRebirths * 50}%`
+
+    local reqSubs, reqMoney = StreamConfig.GetRebirthRequirements(currentRebirths)
+    reqDetails.Text = `⭐ Subs: {currentSubs} / {reqSubs}  |  💵 Cash: ${currentCash} / ${reqMoney}`
+
+    local subPct = math.clamp(currentSubs / reqSubs, 0, 1)
+    local cashPct = math.clamp(currentCash / reqMoney, 0, 1)
+    local overallPct = math.min(subPct, cashPct)
+
+    TweenService:Create(reqProgFill, TweenInfo.new(0.2), {
+        Size = UDim2.new(overallPct, 0, 1, 0)
+    }):Play()
+
+    if currentSubs >= reqSubs and currentCash >= reqMoney then
+        rebirthActionBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+        rebirthActionBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        rebirthActionBtn.Text = `✨ PERFORM REBIRTH NOW (+50% BOOST!)`
+        rebirthActionBtn.Active = true
+    else
+        rebirthActionBtn.BackgroundColor3 = Color3.fromRGB(60, 70, 85)
+        rebirthActionBtn.TextColor3 = Color3.fromRGB(160, 175, 195)
+        rebirthActionBtn.Text = `🔒 LOCKED (Need {reqSubs} Subs & ${reqMoney} Cash - {math.floor(overallPct * 100)}%)`
+        rebirthActionBtn.Active = false
+    end
+end
+
+rebirthHudBtn.MouseButton1Click:Connect(function()
+    updateRebirthModal()
+    rebirthBackdrop.Visible = true
+end)
+
+rebirthActionBtn.MouseButton1Click:Connect(function()
+    performRebirthRemote:FireServer()
+    rebirthBackdrop.Visible = false
+end)
+
+rebirthResultRemote.OnClientEvent:Connect(function(statusType: string, info: any)
+    updateRebirthModal()
+    updateContractBadge()
+end)
+
+LocalPlayer:GetAttributeChangedSignal("Rebirths"):Connect(updateRebirthModal)
+task.delay(1, updateRebirthModal)
+
+
 
 --------------------------------------------------------------------------------
 -- 4. Channel Naming Modal Window
