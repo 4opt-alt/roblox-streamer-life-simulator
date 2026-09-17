@@ -1,4 +1,4 @@
-﻿import os
+import os
 import sys
 import time
 import subprocess
@@ -96,6 +96,12 @@ def sync_to_github():
             if desk_mtime > proj_mtime + 1:
                 shutil.copy2(DESKTOP_RBXLX, proj_rbxlx)
                 print(f"[{time.strftime('%H:%M:%S')}] Copied updated StreamerGame.rbxlx from Desktop")
+            else:
+                try:
+                    import build_rbxlx
+                    build_rbxlx.create_rbxlx(auto_push=False)
+                except Exception as b_err:
+                    pass
 
         subprocess.run([GIT_EXE, "add", "-A"], cwd=PROJECT_DIR, check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         
