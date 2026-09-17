@@ -5463,10 +5463,84 @@ toggleStreamRemote.OnServerEvent:Connect(function(player: Player, requestedPlatf
     if isStreaming[player] then
         stopStream(player)
     else
-        local platKey = if typeof(requestedPlatform) == "string" and StreamConfig.Platforms[requestedPlatform]
-            then requestedPlatform
-            else "YouTube"
-        startStream(player, platKey)
+        -- Перевіряємо, чи гравець закріпив платформу до ребірсу
+        local lockedPlat = player:GetAttribute("LockedPlatform") :: string?
+        if not lockedPlat or lockedPlat == "" then
+            -- Якщо платформа ще не вибрана — відкриваємо вікно вибору платформи
+            promptPlatformSelectRemote:FireClient(player, false)
+            return
+        end
+
+        startStream(player, lockedPlat)
+    end
+end)
+
+-- 7. Закріплення платформи до ребірсу (Client -> Server)
+lockPlatformRemote.OnServerEvent:Connect(function(player: Player, requestedPlatform: any)
+    if typeof(requestedPlatform) ~= "string" then return end
+
+    -- Якщо платформа вже зафіксована для поточного ребірсу — блокуємо зміну
+    local existingLock = player:GetAttribute("LockedPlatform")
+    if existingLock and existingLock ~= "" then
+        rebirthResultRemote:FireClient(player, "PlatformAlreadyLocked", existingLock)
+        return
+    end
+
+    local validPlatforms, _, _ = parsePlatformSelection(player, requestedPlatform)
+    local lockedKey = table.concat(validPlatforms, "+")
+    local displayNames = table.concat(validPlatforms, " + ")
+
+    player:SetAttribute("LockedPlatform", lockedKey)
+    player:SetAttribute("ActiveStreamPlatforms", displayNames)
+    rebirthResultRemote:FireClient(player, "PlatformLocked", displayNames)
+end)
+
+-- 8. Виконання Ребірсу (Rebirth)
+performRebirthRemote.OnServerEvent:Connect(function(player: Player)
+    local leaderstats = player:FindFirstChild("leaderstats")
+    if not leaderstats then return end
+
+    local hypeObj = leaderstats:FindFirstChild("Hype") :: IntValue?
+    local moneyObj = leaderstats:FindFirstChild("Money") :: IntValue?
+    local rebirthsObj = leaderstats:FindFirstChild("Rebirths") :: IntValue?
+    if not hypeObj or not moneyObj then return end
+
+    local currentRebirths = rebirthsObj and rebirthsObj.Value or ((player:GetAttribute("Rebirths") :: number?) or 0)
+    local reqSubs, reqMoney = StreamConfig.GetRebirthRequirements(currentRebirths)
+
+    if hypeObj.Value >= reqSubs and moneyObj.Value >= reqMoney then
+        if isStreaming[player] then
+            stopStream(player)
+        end
+
+        local newRebirths = currentRebirths + 1
+        if rebirthsObj then
+            rebirthsObj.Value = newRebirths
+        end
+        player:SetAttribute("Rebirths", newRebirths)
+
+        -- Скидання параметрів поточної кар'єри
+        hypeObj.Value = 0
+        local starterBonus = newRebirths * StreamConfig.Rebirth.StarterCashBonusPerRebirth
+        moneyObj.Value = StreamConfig.StarterMoney + starterBonus
+
+        local maxEnergy = StreamConfig.MaxEnergy + (newRebirths * StreamConfig.Rebirth.MaxEnergyBonusPerRebirth)
+        player:SetAttribute("MaxEnergy", maxEnergy)
+        player:SetAttribute("Energy", maxEnergy)
+
+        -- РОЗБЛОКУВАННЯ ПЛАТФОРМИ: гравець може вибрати нову платформу для нового життя!
+        player:SetAttribute("LockedPlatform", nil)
+        player:SetAttribute("ActiveStreamPlatforms", nil)
+
+        if player.Character then
+            updateOverhead(player.Character, player)
+        end
+
+        -- Сповіщаємо клієнта та відкриваємо вікно вибору нової платформи
+        rebirthResultRemote:FireClient(player, "RebirthSuccess", newRebirths)
+        promptPlatformSelectRemote:FireClient(player, true)
+    else
+        rebirthResultRemote:FireClient(player, "RebirthFailed", `Requires {reqSubs} Subs and ${reqMoney} Cash!`)
     end
 end)
 
