@@ -268,7 +268,7 @@ local hubStroke = Instance.new("UIStroke"); hubStroke.Color = Color3.fromRGB(48,
 -- Row 1: Channel Title + Quick Edit + Rebirth Badge
 local channelBar = Instance.new("Frame")
 channelBar.Name = "ChannelBar"
-channelBar.Size = UDim2.new(1, -16, 0, 32)
+channelBar.Size = UDim2.new(1, -16, 0, 52)
 channelBar.Position = UDim2.new(0, 8, 0, 8)
 channelBar.BackgroundColor3 = Color3.fromRGB(22, 27, 38)
 channelBar.BorderSizePixel = 0
@@ -279,8 +279,8 @@ local cbStroke = Instance.new("UIStroke"); cbStroke.Color = Color3.fromRGB(45, 5
 
 local channelTitleLabel = Instance.new("TextLabel")
 channelTitleLabel.Name = "ChannelTitleLabel"
-channelTitleLabel.Size = UDim2.new(1, -125, 1, 0)
-channelTitleLabel.Position = UDim2.new(0, 8, 0, 0)
+channelTitleLabel.Size = UDim2.new(1, -42, 0, 24)
+channelTitleLabel.Position = UDim2.new(0, 8, 0, 4)
 channelTitleLabel.BackgroundTransparency = 1
 channelTitleLabel.Font = Enum.Font.GothamBold
 channelTitleLabel.TextSize = 13
@@ -292,24 +292,24 @@ channelTitleLabel.Parent = channelBar
 
 local editChannelButton = Instance.new("TextButton")
 editChannelButton.Name = "EditChannelButton"
-editChannelButton.Size = UDim2.new(0, 26, 0, 22)
-editChannelButton.Position = UDim2.new(1, -135, 0.5, -11)
+editChannelButton.Size = UDim2.new(0, 28, 0, 22)
+editChannelButton.Position = UDim2.new(1, -32, 0, 5)
 editChannelButton.BackgroundColor3 = Color3.fromRGB(35, 45, 65)
 editChannelButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 editChannelButton.Font = Enum.Font.GothamBold
-editChannelButton.TextSize = 12
+editChannelButton.TextSize = 13
 editChannelButton.Text = "✏️"
 editChannelButton.Parent = channelBar
 local ecCorner = Instance.new("UICorner"); ecCorner.CornerRadius = UDim.new(0, 6); ecCorner.Parent = editChannelButton
 
 local rebirthHudBtn = Instance.new("TextButton")
 rebirthHudBtn.Name = "RebirthHudBtn"
-rebirthHudBtn.Size = UDim2.new(0, 125, 0, 22)
-rebirthHudBtn.Position = UDim2.new(1, -127, 0.5, -11)
-rebirthHudBtn.BackgroundColor3 = Color3.fromRGB(95, 40, 150)
+rebirthHudBtn.Size = UDim2.new(1, -16, 0, 22)
+rebirthHudBtn.Position = UDim2.new(0, 8, 0, 26)
+rebirthHudBtn.BackgroundColor3 = Color3.fromRGB(75, 30, 130)
 rebirthHudBtn.TextColor3 = Color3.fromRGB(255, 235, 120)
 rebirthHudBtn.Font = Enum.Font.GothamBold
-rebirthHudBtn.TextSize = 11
+rebirthHudBtn.TextSize = 12
 rebirthHudBtn.TextScaled = false
 rebirthHudBtn.ClipsDescendants = false
 rebirthHudBtn.Text = "🔄 REBIRTH Lv.0"
@@ -321,7 +321,7 @@ local rhbStroke = Instance.new("UIStroke"); rhbStroke.Color = Color3.fromRGB(255
 local platformsRowBar = Instance.new("Frame")
 platformsRowBar.Name = "PlatformsRowBar"
 platformsRowBar.Size = UDim2.new(1, -16, 0, 24)
-platformsRowBar.Position = UDim2.new(0, 8, 0, 44)
+platformsRowBar.Position = UDim2.new(0, 8, 0, 64)
 platformsRowBar.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
 platformsRowBar.BorderSizePixel = 0
 platformsRowBar.Parent = streamerHub
@@ -452,7 +452,7 @@ updatePlatformsRow()
 local separatedSubsBar = Instance.new("Frame")
 separatedSubsBar.Name = "SeparatedSubsBar"
 separatedSubsBar.Size = UDim2.new(1, -16, 0, 38)
-separatedSubsBar.Position = UDim2.new(0, 8, 0, 72)
+separatedSubsBar.Position = UDim2.new(0, 8, 0, 92)
 separatedSubsBar.BackgroundTransparency = 1
 separatedSubsBar.BorderSizePixel = 0
 separatedSubsBar.Parent = streamerHub
@@ -597,7 +597,7 @@ updatePlatformCounters()
 local setupBadge = Instance.new("Frame")
 setupBadge.Name = "SetupBadge"
 setupBadge.Size = UDim2.new(1, -16, 0, 22)
-setupBadge.Position = UDim2.new(0, 8, 0, 114)
+setupBadge.Position = UDim2.new(0, 8, 0, 134)
 setupBadge.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
 setupBadge.BorderSizePixel = 0
 setupBadge.Parent = streamerHub
@@ -688,8 +688,8 @@ updateEnergy()
 -- Row 5: Integrated Live Chat Panel
 local chatContainer = Instance.new("Frame")
 chatContainer.Name = "ChatContainer"
-chatContainer.Size = UDim2.new(1, -16, 1, -146)
-chatContainer.Position = UDim2.new(0, 8, 0, 140)
+chatContainer.Size = UDim2.new(1, -16, 1, -166)
+chatContainer.Position = UDim2.new(0, 8, 0, 160)
 chatContainer.BackgroundColor3 = Color3.fromRGB(16, 19, 27)
 chatContainer.BackgroundTransparency = 0.2
 chatContainer.BorderSizePixel = 0
@@ -745,6 +745,7 @@ rebirthBackdrop.Size = UDim2.new(1, 0, 1, 0)
 rebirthBackdrop.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 rebirthBackdrop.BackgroundTransparency = 0.6
 rebirthBackdrop.Visible = false
+rebirthBackdrop.Active = false
 rebirthBackdrop.ZIndex = 60
 rebirthBackdrop.Parent = screenGui
 
@@ -787,6 +788,7 @@ rwCloseBtn.Parent = rebirthWindow
 local rwcCorner = Instance.new("UICorner"); rwcCorner.CornerRadius = UDim.new(0, 8); rwcCorner.Parent = rwCloseBtn
 rwCloseBtn.MouseButton1Click:Connect(function()
     rebirthBackdrop.Visible = false
+    rebirthBackdrop.Active = false
 end)
 
 -- 1. Status Bar Card
@@ -976,7 +978,7 @@ local function updateRebirthModal()
     local nextLevel = currentRebirths + 1
     local nextReward = (StreamConfig :: any).GetRebirthReward(nextLevel)
 
-    rebirthHudBtn.Text = `🔄 REBIRTH (Lv. {currentRebirths})`
+    rebirthHudBtn.Text = `🔄 REBIRTH Lv.{currentRebirths}`
     statusLabel.Text = `⭐ Current: Rebirth Level {currentRebirths}  |  ⚡ Permanent Boost: +{currentRebirths * 50}%`
 
     local reqSubs, reqMoney = StreamConfig.GetRebirthRequirements(currentRebirths)
@@ -1009,11 +1011,13 @@ end
 rebirthHudBtn.MouseButton1Click:Connect(function()
     updateRebirthModal()
     rebirthBackdrop.Visible = true
+    rebirthBackdrop.Active = true
 end)
 
 rebirthActionBtn.MouseButton1Click:Connect(function()
     performRebirthRemote:FireServer()
     rebirthBackdrop.Visible = false
+    rebirthBackdrop.Active = false
 end)
 
 rebirthResultRemote.OnClientEvent:Connect(function(statusType: string, info: any)

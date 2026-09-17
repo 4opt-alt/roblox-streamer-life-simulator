@@ -17,6 +17,7 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "ShopGui"
 screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.DisplayOrder = 5
 screenGui.Parent = PlayerGui
 
 -- Floating Quick Shop Button on screen
@@ -29,6 +30,9 @@ openShopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 openShopBtn.Font = Enum.Font.GothamBold
 openShopBtn.TextSize = 15
 openShopBtn.Text = "🛒 Shop"
+openShopBtn.ZIndex = 10
+openShopBtn.AutoButtonColor = true
+openShopBtn.Active = true
 openShopBtn.Parent = screenGui
 
 local btnCorner = Instance.new("UICorner")
