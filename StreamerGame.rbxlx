@@ -5030,6 +5030,14 @@ if not promptPlatformSelectRemote then
     promptPlatformSelectRemote.Parent = remotesFolder
 end
 
+-- 11. Set Stream Category (Client -> Server)
+local setStreamCategoryRemote = remotesFolder:FindFirstChild("SetStreamCategory") :: RemoteEvent?
+if not setStreamCategoryRemote then
+    setStreamCategoryRemote = Instance.new("RemoteEvent")
+    setStreamCategoryRemote.Name = "SetStreamCategory"
+    setStreamCategoryRemote.Parent = remotesFolder
+end
+
 -- State tracking
 local isStreaming: { [Player]: boolean } = {}
 local activePlatforms: { [Player]: string } = {}
