@@ -1430,6 +1430,9 @@ performRebirthRemote.OnServerEvent:Connect(function(player: Player)
 
         -- Скидання параметрів поточної кар'єри
         hypeObj.Value = 0
+        player:SetAttribute("YouTubeSubs", 0)
+        player:SetAttribute("TwitchSubs", 0)
+        player:SetAttribute("TikTokSubs", 0)
         local starterBonus = newRebirths * StreamConfig.Rebirth.StarterCashBonusPerRebirth
         moneyObj.Value = StreamConfig.StarterMoney + starterBonus
 
