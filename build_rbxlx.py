@@ -848,5 +848,21 @@ def create_rbxlx():
         f.write(rbxlx_content)
     print(f"Copied to Desktop: {desktop_path} ({os.path.getsize(desktop_path)} bytes)")
 
+    # Auto-sync to Git & GitHub
+    try:
+        import subprocess, time
+        git_cmd = r"C:\Users\lyutu\.tools\git\cmd\git.exe"
+        if os.path.exists(git_cmd):
+            subprocess.run([git_cmd, "add", "-A"], cwd=base_dir, check=False)
+            now_str = time.strftime("%Y-%m-%d %H:%M:%S")
+            subprocess.run([git_cmd, "commit", "-m", f"Auto-sync build: {now_str}"], cwd=base_dir, check=False)
+            rem = subprocess.run([git_cmd, "remote"], cwd=base_dir, capture_output=True, text=True, check=False)
+            if rem.stdout.strip():
+                subprocess.run([git_cmd, "push", "origin", "main"], cwd=base_dir, check=False)
+                print("Auto-synced and pushed to GitHub!")
+    except Exception as e:
+        print(f"Git auto-sync notice: {e}")
+
 if __name__ == "__main__":
     create_rbxlx()
+
