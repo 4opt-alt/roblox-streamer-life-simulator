@@ -7969,7 +7969,7 @@ updatePlatformsRow()
 local separatedSubsBar = Instance.new("Frame")
 separatedSubsBar.Name = "SeparatedSubsBar"
 separatedSubsBar.Size = UDim2.new(1, -16, 0, 38)
-separatedSubsBar.Position = UDim2.new(0, 8, 0, 72)
+separatedSubsBar.Position = UDim2.new(0, 8, 0, 92)
 separatedSubsBar.BackgroundTransparency = 1
 separatedSubsBar.BorderSizePixel = 0
 separatedSubsBar.Parent = streamerHub
