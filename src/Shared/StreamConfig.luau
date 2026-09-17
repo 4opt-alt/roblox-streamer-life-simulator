@@ -154,6 +154,22 @@ local StreamConfig: ConfigType = {
         "Vortex99",
         "EchoStream",
     },
+
+    Rebirth = {
+        BaseRequiredSubs = 500,
+        BaseRequiredMoney = 250,
+        MultiplierPerRebirth = 0.50, -- +50% permanent boost per rebirth
+        StarterCashBonusPerRebirth = 50, -- +$50 extra starting money per rebirth
+        MaxEnergyBonusPerRebirth = 10,   -- +10 max energy capacity per rebirth
+    },
 }
+
+function StreamConfig.GetRebirthRequirements(currentRebirths: number): (number, number)
+    local r = currentRebirths or 0
+    local scale = math.pow(1.5, r)
+    local reqSubs = math.floor(StreamConfig.Rebirth.BaseRequiredSubs * scale)
+    local reqMoney = math.floor(StreamConfig.Rebirth.BaseRequiredMoney * scale)
+    return reqSubs, reqMoney
+end
 
 return StreamConfig
