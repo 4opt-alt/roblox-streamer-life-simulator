@@ -275,6 +275,11 @@ local function stopStream(player: Player)
 
     unequipPhone(player)
 
+    player:SetAttribute("ActiveStreamPlatforms", "")
+    player:SetAttribute("IsStreamingYouTube", false)
+    player:SetAttribute("IsStreamingTwitch", false)
+    player:SetAttribute("IsStreamingTikTok", false)
+
     if player.Character then
         updateOverhead(player.Character, player)
     end
@@ -308,22 +313,49 @@ local function triggerRandomStreamEvent(player: Player)
     end)
 end
 
-local function startStream(player: Player, platformKey: string)
-    if isStreaming[player] then return end
-
-    local platformInfo = StreamConfig.Platforms[platformKey] or StreamConfig.Platforms.YouTube
-    -- Validate MultiStream license if chosen
-    if platformInfo.RequiresLicense then
-        local hasLicense = player:GetAttribute("Owned_MultiStreamLicense") == true
-        if not hasLicense then
-            platformKey = "YouTube"
-            platformInfo = StreamConfig.Platforms.YouTube
+local function parsePlatformSelection(player: Player, platformKey: string): ({ string }, number, number)
+    local rawList = {}
+    for part in string.gmatch(platformKey, "[^+]+") do
+        local trimmed = string.match(part, "^%s*(.-)%s*$")
+        if trimmed and (trimmed == "YouTube" or trimmed == "Twitch" or trimmed == "TikTok") then
+            if not table.find(rawList, trimmed) then
+                table.insert(rawList, trimmed)
+            end
         end
     end
 
+    if #rawList == 0 then
+        table.insert(rawList, "YouTube")
+    end
+
+    local hasSplitLicense = player:GetAttribute("Owned_MultiStreamLicense") == true
+
+    -- Without Robux Split Pass: can ONLY stream to ONE platform!
+    if not hasSplitLicense or #rawList == 1 then
+        local singlePlat = rawList[1]
+        local info = StreamConfig.Platforms[singlePlat] or StreamConfig.Platforms.YouTube
+        return { singlePlat }, info.MoneyMultiplier, info.HypeMultiplier
+    else
+        -- With Robux Split Pass: stream to TWO platforms simultaneously!
+        local selectedTwo = { rawList[1], rawList[2] }
+        return selectedTwo, 1.85, 1.50
+    end
+end
+
+local function startStream(player: Player, platformKey: string)
+    if isStreaming[player] then return end
+
+    local validPlatforms, moneyMult, hypeMult = parsePlatformSelection(player, platformKey)
+    local displayPlatformStr = table.concat(validPlatforms, " + ")
+
     isStreaming[player] = true
-    activePlatforms[player] = platformKey
-    streamStateChangedRemote:FireClient(player, true, platformKey)
+    activePlatforms[player] = displayPlatformStr
+    streamStateChangedRemote:FireClient(player, true, displayPlatformStr)
+
+    player:SetAttribute("ActiveStreamPlatforms", displayPlatformStr)
+    player:SetAttribute("IsStreamingYouTube", table.find(validPlatforms, "YouTube") ~= nil)
+    player:SetAttribute("IsStreamingTwitch", table.find(validPlatforms, "Twitch") ~= nil)
+    player:SetAttribute("IsStreamingTikTok", table.find(validPlatforms, "TikTok") ~= nil)
 
     equipPhone(player)
     if player.Character then
@@ -395,9 +427,9 @@ local function startStream(player: Player, platformKey: string)
                         totalHype = math.floor(totalHype * 0.5)
                     end
 
-                    -- Множники платформи (YouTube, Twitch, TikTok, Multi-Stream)
-                    totalMoney = math.floor(totalMoney * platformInfo.MoneyMultiplier)
-                    totalHype = math.floor(totalHype * platformInfo.HypeMultiplier)
+                    -- Множники платформи (1 платформа або Split 2-Platforms з Robux)
+                    totalMoney = math.floor(totalMoney * moneyMult)
+                    totalHype = math.floor(totalHype * hypeMult)
 
                     -- VIP Pass (+50% грошей, +25% сабів)
                     if player:GetAttribute("IsVIP") == true then

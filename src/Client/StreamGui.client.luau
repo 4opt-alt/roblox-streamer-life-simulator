@@ -280,12 +280,117 @@ editBtnCorner.CornerRadius = UDim.new(0, 6)
 editBtnCorner.Parent = editChannelButton
 
 --------------------------------------------------------------------------------
--- 3. Live Chat Panel
+-- 3. Dedicated Platforms Status Bar (Окрема строка моніторингу для всіх платформ)
+--------------------------------------------------------------------------------
+local platformsRowBar = Instance.new("Frame")
+platformsRowBar.Name = "PlatformsRowBar"
+platformsRowBar.Size = UDim2.new(0, 320, 0, 26)
+platformsRowBar.Position = UDim2.new(0.02, 0, 0.672, 0)
+platformsRowBar.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
+platformsRowBar.BackgroundTransparency = 0.2
+platformsRowBar.BorderSizePixel = 0
+platformsRowBar.Parent = screenGui
+
+local prCorner = Instance.new("UICorner"); prCorner.CornerRadius = UDim.new(0, 6); prCorner.Parent = platformsRowBar
+local prStroke = Instance.new("UIStroke"); prStroke.Color = Color3.fromRGB(50, 60, 80); prStroke.Thickness = 1; prStroke.Parent = platformsRowBar
+
+local prLayout = Instance.new("UIListLayout")
+prLayout.FillDirection = Enum.FillDirection.Horizontal
+prLayout.Padding = UDim.new(0, 5)
+prLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+prLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+prLayout.Parent = platformsRowBar
+
+local ytPill = Instance.new("TextLabel")
+ytPill.Name = "YtPill"
+ytPill.Size = UDim2.new(0, 98, 0, 20)
+ytPill.BackgroundColor3 = Color3.fromRGB(26, 30, 42)
+ytPill.Font = Enum.Font.GothamBold
+ytPill.TextSize = 10
+ytPill.TextColor3 = Color3.fromRGB(140, 150, 170)
+ytPill.Text = "🔴 YT: ○ OFF"
+ytPill.Parent = platformsRowBar
+local ypCorner = Instance.new("UICorner"); ypCorner.CornerRadius = UDim.new(0, 5); ypCorner.Parent = ytPill
+
+local twitchPill = Instance.new("TextLabel")
+twitchPill.Name = "TwitchPill"
+twitchPill.Size = UDim2.new(0, 98, 0, 20)
+twitchPill.BackgroundColor3 = Color3.fromRGB(26, 30, 42)
+twitchPill.Font = Enum.Font.GothamBold
+twitchPill.TextSize = 10
+twitchPill.TextColor3 = Color3.fromRGB(140, 150, 170)
+twitchPill.Text = "🟣 Twitch: ○ OFF"
+twitchPill.Parent = platformsRowBar
+local tpCorner = Instance.new("UICorner"); tpCorner.CornerRadius = UDim.new(0, 5); tpCorner.Parent = twitchPill
+
+local tiktokPill = Instance.new("TextLabel")
+tiktokPill.Name = "TiktokPill"
+tiktokPill.Size = UDim2.new(0, 98, 0, 20)
+tiktokPill.BackgroundColor3 = Color3.fromRGB(26, 30, 42)
+tiktokPill.Font = Enum.Font.GothamBold
+tiktokPill.TextSize = 10
+tiktokPill.TextColor3 = Color3.fromRGB(140, 150, 170)
+tiktokPill.Text = "🎵 TikTok: ○ OFF"
+tiktokPill.Parent = platformsRowBar
+local tkCorner = Instance.new("UICorner"); tkCorner.CornerRadius = UDim.new(0, 5); tkCorner.Parent = tiktokPill
+
+local function updatePlatformsRow()
+    local isYT = LocalPlayer:GetAttribute("IsStreamingYouTube") == true
+    local isTwitch = LocalPlayer:GetAttribute("IsStreamingTwitch") == true
+    local isTikTok = LocalPlayer:GetAttribute("IsStreamingTikTok") == true
+
+    if isYT then
+        ytPill.BackgroundColor3 = Color3.fromRGB(180, 20, 20)
+        ytPill.TextColor3 = Color3.fromRGB(255, 255, 255)
+        ytPill.Text = "🔴 YT: ● LIVE"
+    else
+        ytPill.BackgroundColor3 = Color3.fromRGB(26, 30, 42)
+        ytPill.TextColor3 = Color3.fromRGB(140, 150, 170)
+        ytPill.Text = "🔴 YT: ○ OFF"
+    end
+
+    if isTwitch then
+        twitchPill.BackgroundColor3 = Color3.fromRGB(130, 40, 220)
+        twitchPill.TextColor3 = Color3.fromRGB(255, 255, 255)
+        twitchPill.Text = "🟣 Twitch: ● LIVE"
+    else
+        twitchPill.BackgroundColor3 = Color3.fromRGB(26, 30, 42)
+        twitchPill.TextColor3 = Color3.fromRGB(140, 150, 170)
+        twitchPill.Text = "🟣 Twitch: ○ OFF"
+    end
+
+    if isTikTok then
+        tiktokPill.BackgroundColor3 = Color3.fromRGB(0, 160, 180)
+        tiktokPill.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tiktokPill.Text = "🎵 TikTok: ● LIVE"
+    else
+        tiktokPill.BackgroundColor3 = Color3.fromRGB(26, 30, 42)
+        tiktokPill.TextColor3 = Color3.fromRGB(140, 150, 170)
+        tiktokPill.Text = "🎵 TikTok: ○ OFF"
+    end
+
+    local activeCount = (isYT and 1 or 0) + (isTwitch and 1 or 0) + (isTikTok and 1 or 0)
+    if activeCount >= 2 then
+        prStroke.Color = Color3.fromRGB(255, 215, 0)
+    elseif activeCount == 1 then
+        prStroke.Color = Color3.fromRGB(46, 204, 113)
+    else
+        prStroke.Color = Color3.fromRGB(50, 60, 80)
+    end
+end
+
+LocalPlayer:GetAttributeChangedSignal("IsStreamingYouTube"):Connect(updatePlatformsRow)
+LocalPlayer:GetAttributeChangedSignal("IsStreamingTwitch"):Connect(updatePlatformsRow)
+LocalPlayer:GetAttributeChangedSignal("IsStreamingTikTok"):Connect(updatePlatformsRow)
+updatePlatformsRow()
+
+--------------------------------------------------------------------------------
+-- 4. Live Chat Panel
 --------------------------------------------------------------------------------
 local chatContainer = Instance.new("Frame")
 chatContainer.Name = "ChatContainer"
-chatContainer.Size = UDim2.new(0, 320, 0, 220)
-chatContainer.Position = UDim2.new(0.02, 0, 0.66, 0)
+chatContainer.Size = UDim2.new(0, 320, 0, 195)
+chatContainer.Position = UDim2.new(0.02, 0, 0.705, 0)
 chatContainer.BackgroundColor3 = Color3.fromRGB(20, 22, 28)
 chatContainer.BackgroundTransparency = 0.25
 chatContainer.BorderSizePixel = 0

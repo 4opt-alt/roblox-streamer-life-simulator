@@ -1,4 +1,4 @@
---!strict
+﻿--!strict
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
@@ -10,13 +10,14 @@ local StreamConfig = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChi
 
 local remotesFolder = ReplicatedStorage:WaitForChild("Remotes") :: Folder
 local toggleStreamRemote = remotesFolder:WaitForChild("ToggleStream") :: RemoteEvent
-local buyItemRemote = remotesFolder:WaitForChild("BuyShopItem") :: RemoteEvent
+local promptRobuxRemote = remotesFolder:WaitForChild("PromptRobuxPurchase") :: RemoteEvent
 
--- Create PlatformSelect ScreenGui
+-- ScreenGui
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "PlatformSelectGui"
 screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.DisplayOrder = 20
 screenGui.Parent = PlayerGui
 
 -- Backdrop
@@ -32,49 +33,39 @@ backdrop.Parent = screenGui
 -- Window
 local window = Instance.new("Frame")
 window.Name = "PlatformWindow"
-window.Size = UDim2.new(0, 500, 0, 480)
-window.Position = UDim2.new(0.5, -250, 0.5, -240)
-window.BackgroundColor3 = Color3.fromRGB(22, 25, 34)
+window.Size = UDim2.new(0, 560, 0, 520)
+window.Position = UDim2.new(0.5, 0, 0.5, 0)
+window.AnchorPoint = Vector2.new(0.5, 0.5)
+window.BackgroundColor3 = Color3.fromRGB(18, 22, 32)
 window.BorderSizePixel = 0
 window.ZIndex = 31
 window.Parent = backdrop
 
 local winCorner = Instance.new("UICorner")
-winCorner.CornerRadius = UDim.new(0, 14)
+winCorner.CornerRadius = UDim.new(0, 16)
 winCorner.Parent = window
 
 local winStroke = Instance.new("UIStroke")
-winStroke.Color = Color3.fromRGB(255, 75, 75)
+winStroke.Color = Color3.fromRGB(52, 152, 219)
 winStroke.Thickness = 2
 winStroke.Parent = window
 
+-- Top Bar
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -60, 0, 36)
-title.Position = UDim2.new(0, 20, 0, 12)
+title.Size = UDim2.new(1, -70, 0, 32)
+title.Position = UDim2.new(0, 20, 0, 14)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.GothamBold
 title.TextSize = 20
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.TextXAlignment = Enum.TextXAlignment.Left
-title.Text = "📡 CHOOSE STREAM PLATFORM"
+title.Text = "📡 CHOOSE STREAM PLATFORMS"
 title.ZIndex = 32
 title.Parent = window
 
-local subtitle = Instance.new("TextLabel")
-subtitle.Size = UDim2.new(1, -60, 0, 20)
-subtitle.Position = UDim2.new(0, 20, 0, 44)
-subtitle.BackgroundTransparency = 1
-subtitle.Font = Enum.Font.Gotham
-subtitle.TextSize = 13
-subtitle.TextColor3 = Color3.fromRGB(170, 175, 190)
-subtitle.TextXAlignment = Enum.TextXAlignment.Left
-subtitle.Text = "Each platform offers unique viewer algorithms and revenue models!"
-subtitle.ZIndex = 32
-subtitle.Parent = window
-
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 32, 0, 32)
-closeBtn.Position = UDim2.new(1, -44, 0, 12)
+closeBtn.Position = UDim2.new(1, -46, 0, 14)
 closeBtn.BackgroundColor3 = Color3.fromRGB(231, 76, 60)
 closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeBtn.Font = Enum.Font.GothamBold
@@ -87,14 +78,108 @@ local closeCorner = Instance.new("UICorner")
 closeCorner.CornerRadius = UDim.new(0, 8)
 closeCorner.Parent = closeBtn
 
--- Cards Container
-local cardsContainer = Instance.new("ScrollingFrame")
-cardsContainer.Size = UDim2.new(1, -30, 0, 310)
-cardsContainer.Position = UDim2.new(0, 15, 0, 75)
+closeBtn.MouseButton1Click:Connect(function()
+    backdrop.Visible = false
+end)
+
+-- 1. Mode Banner (Single platform free vs Dual platform with Robux)
+local modeBanner = Instance.new("Frame")
+modeBanner.Name = "ModeBanner"
+modeBanner.Size = UDim2.new(1, -40, 0, 52)
+modeBanner.Position = UDim2.new(0, 20, 0, 52)
+modeBanner.BackgroundColor3 = Color3.fromRGB(28, 32, 48)
+modeBanner.BorderSizePixel = 0
+modeBanner.ZIndex = 32
+modeBanner.Parent = window
+
+local mbCorner = Instance.new("UICorner"); mbCorner.CornerRadius = UDim.new(0, 10); mbCorner.Parent = modeBanner
+local mbStroke = Instance.new("UIStroke"); mbStroke.Color = Color3.fromRGB(60, 75, 110); mbStroke.Thickness = 1.2; mbStroke.Parent = modeBanner
+
+local modeTitle = Instance.new("TextLabel")
+modeTitle.Size = UDim2.new(1, -170, 0, 22)
+modeTitle.Position = UDim2.new(0, 12, 0, 6)
+modeTitle.BackgroundTransparency = 1
+modeTitle.Font = Enum.Font.GothamBold
+modeTitle.TextSize = 13
+modeTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
+modeTitle.TextXAlignment = Enum.TextXAlignment.Left
+modeTitle.Text = "📡 Standard Mode: 1 Platform Only"
+modeTitle.ZIndex = 33
+modeTitle.Parent = modeBanner
+
+local modeDesc = Instance.new("TextLabel")
+modeDesc.Size = UDim2.new(1, -170, 0, 18)
+modeDesc.Position = UDim2.new(0, 12, 0, 28)
+modeDesc.BackgroundTransparency = 1
+modeDesc.Font = Enum.Font.Gotham
+modeDesc.TextSize = 11
+modeDesc.TextColor3 = Color3.fromRGB(170, 180, 205)
+modeDesc.TextXAlignment = Enum.TextXAlignment.Left
+modeDesc.Text = "Unlock Split Dual-Stream to broadcast to 2 platforms at once!"
+modeDesc.ZIndex = 33
+modeDesc.Parent = modeBanner
+
+local splitUnlockBtn = Instance.new("TextButton")
+splitUnlockBtn.Name = "SplitUnlockBtn"
+splitUnlockBtn.Size = UDim2.new(0, 150, 0, 36)
+splitUnlockBtn.Position = UDim2.new(1, -158, 0.5, -18)
+splitUnlockBtn.BackgroundColor3 = Color3.fromRGB(230, 140, 10)
+splitUnlockBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+splitUnlockBtn.Font = Enum.Font.GothamBold
+splitUnlockBtn.TextSize = 12
+splitUnlockBtn.Text = "💎 49 R$ (Split Pass)"
+splitUnlockBtn.ZIndex = 34
+splitUnlockBtn.Parent = modeBanner
+local suCorner = Instance.new("UICorner"); suCorner.CornerRadius = UDim.new(0, 8); suCorner.Parent = splitUnlockBtn
+local suStroke = Instance.new("UIStroke"); suStroke.Color = Color3.fromRGB(255, 215, 0); suStroke.Thickness = 1.2; suStroke.Parent = splitUnlockBtn
+
+splitUnlockBtn.MouseButton1Click:Connect(function()
+    promptRobuxRemote:FireServer("MultiStreamLicense")
+end)
+
+local function updateModeBanner()
+    local hasSplit = LocalPlayer:GetAttribute("Owned_MultiStreamLicense") == true
+    if hasSplit then
+        modeBanner.BackgroundColor3 = Color3.fromRGB(35, 25, 55)
+        mbStroke.Color = Color3.fromRGB(210, 80, 255)
+        modeTitle.TextColor3 = Color3.fromRGB(255, 120, 255)
+        modeTitle.Text = "⭐ SPLIT DUAL-STREAM ACTIVE (2 Platforms Max)"
+        modeDesc.Text = "You can stream to any 2 platforms simultaneously (+85% Cash & +50% Subs)!"
+        splitUnlockBtn.BackgroundColor3 = Color3.fromRGB(30, 70, 40)
+        splitUnlockBtn.Text = "✅ UNLOCKED"
+        splitUnlockBtn.TextColor3 = Color3.fromRGB(100, 240, 120)
+        suStroke.Color = Color3.fromRGB(46, 204, 113)
+        splitUnlockBtn.Active = false
+    else
+        modeBanner.BackgroundColor3 = Color3.fromRGB(28, 32, 48)
+        mbStroke.Color = Color3.fromRGB(60, 75, 110)
+        modeTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
+        modeTitle.Text = "📡 Standard Mode: 1 Platform Only"
+        modeDesc.Text = "Unlock Split Dual-Stream to broadcast to 2 platforms at once!"
+        splitUnlockBtn.BackgroundColor3 = Color3.fromRGB(230, 140, 10)
+        splitUnlockBtn.Text = "💎 49 R$ (Split Pass)"
+        splitUnlockBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        suStroke.Color = Color3.fromRGB(255, 215, 0)
+        splitUnlockBtn.Active = true
+    end
+end
+
+LocalPlayer:GetAttributeChangedSignal("Owned_MultiStreamLicense"):Connect(updateModeBanner)
+
+-- 2. Platform Selection State & Rows Container
+local selectedPlatforms = { YouTube = true }
+
+local platformsList = {
+    { Id = "YouTube", Name = "YouTube Live", ColorHex = "#FF0000", Icon = "🔴", MoneyMult = "1.0x", HypeMult = "1.0x", Desc = "Balanced audience and revenue growth. Reliable starting platform." },
+    { Id = "Twitch", Name = "Twitch", ColorHex = "#9146FF", Icon = "🟣", MoneyMult = "1.35x", HypeMult = "1.0x", Desc = "Generous live donation culture! +35% Money earnings per second." },
+    { Id = "TikTok", Name = "TikTok Live", ColorHex = "#00F2FE", Icon = "🎵", MoneyMult = "1.0x", HypeMult = "1.60x", Desc = "Viral reach & rapid viewer spikes! +60% Subscriber gain per second." },
+}
+
+local cardsContainer = Instance.new("Frame")
+cardsContainer.Name = "CardsContainer"
+cardsContainer.Size = UDim2.new(1, -40, 0, 260)
+cardsContainer.Position = UDim2.new(0, 20, 0, 114)
 cardsContainer.BackgroundTransparency = 1
-cardsContainer.BorderSizePixel = 0
-cardsContainer.ScrollBarThickness = 5
-cardsContainer.AutomaticCanvasSize = Enum.AutomaticSize.Y
 cardsContainer.ZIndex = 32
 cardsContainer.Parent = window
 
@@ -103,275 +188,267 @@ layout.SortOrder = Enum.SortOrder.LayoutOrder
 layout.Padding = UDim.new(0, 10)
 layout.Parent = cardsContainer
 
-local selectedPlatform = "YouTube"
-local platformCards: { [string]: Frame } = {}
+local platformRowCards: { [string]: Frame } = {}
+local platformSelectBtns: { [string]: TextButton } = {}
 
-local platformOrder = { "YouTube", "Twitch", "TikTok", "MultiStream" }
+-- 3. Dedicated Status Row for all platforms (Summary of current broadcast)
+local summaryRow = Instance.new("Frame")
+summaryRow.Name = "SummaryRow"
+summaryRow.Size = UDim2.new(1, -40, 0, 40)
+summaryRow.Position = UDim2.new(0, 20, 0, 385)
+summaryRow.BackgroundColor3 = Color3.fromRGB(24, 28, 40)
+summaryRow.BorderSizePixel = 0
+summaryRow.ZIndex = 32
+summaryRow.Parent = window
 
-local function updateSelectionVisuals()
-    for platKey, card in platformCards do
-        local stroke = card:FindFirstChildOfClass("UIStroke")
-        if stroke then
-            if platKey == selectedPlatform then
-                stroke.Color = Color3.fromRGB(46, 204, 113)
-                stroke.Thickness = 2.5
-                card.BackgroundColor3 = Color3.fromRGB(35, 42, 55)
-            else
-                stroke.Color = Color3.fromRGB(50, 55, 70)
-                stroke.Thickness = 1
-                card.BackgroundColor3 = Color3.fromRGB(26, 30, 40)
-            end
+local sumCorner = Instance.new("UICorner"); sumCorner.CornerRadius = UDim.new(0, 8); sumCorner.Parent = summaryRow
+local sumStroke = Instance.new("UIStroke"); sumStroke.Color = Color3.fromRGB(46, 204, 113); sumStroke.Thickness = 1.2; sumStroke.Parent = summaryRow
+
+local summaryLabel = Instance.new("TextLabel")
+summaryLabel.Name = "SummaryLabel"
+summaryLabel.Size = UDim2.new(1, -20, 1, 0)
+summaryLabel.Position = UDim2.new(0, 10, 0, 0)
+summaryLabel.BackgroundTransparency = 1
+summaryLabel.Font = Enum.Font.GothamBold
+summaryLabel.TextSize = 12
+summaryLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+summaryLabel.TextXAlignment = Enum.TextXAlignment.Left
+summaryLabel.ZIndex = 33
+summaryLabel.Parent = summaryRow
+
+local function getSelectedCount(): number
+    local count = 0
+    for _, isSel in selectedPlatforms do
+        if isSel then count += 1 end
+    end
+    return count
+end
+
+local function updateSummaryRow()
+    local names = {}
+    for _, p in platformsList do
+        if selectedPlatforms[p.Id] then
+            table.insert(names, `{p.Icon} {p.Name}`)
         end
+    end
+
+    local count = #names
+    if count == 0 then
+        summaryLabel.Text = "⚠️ No platform selected! Click a platform above to stream."
+        summaryLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+    elseif count == 1 then
+        summaryLabel.Text = `📊 Active Broadcast: {names[1]} (1 Platform | Standard Income)`
+        summaryLabel.TextColor3 = Color3.fromRGB(220, 240, 255)
+        sumStroke.Color = Color3.fromRGB(52, 152, 219)
+    else
+        summaryLabel.Text = `⭐ SPLIT STREAM: {table.concat(names, " + ")} (+85% Cash & +50% Subs!)`
+        summaryLabel.TextColor3 = Color3.fromRGB(255, 220, 100)
+        sumStroke.Color = Color3.fromRGB(255, 215, 0)
     end
 end
 
-for order, platKey in platformOrder do
-    local info = StreamConfig.Platforms[platKey]
-    if not info then continue end
+local function refreshPlatformRows()
+    for _, p in platformsList do
+        local card = platformRowCards[p.Id]
+        local btn = platformSelectBtns[p.Id]
+        if card and btn then
+            local isSel = selectedPlatforms[p.Id] == true
+            local stroke = card:FindFirstChildOfClass("UIStroke")
 
+            if isSel then
+                card.BackgroundColor3 = Color3.fromRGB(30, 42, 58)
+                if stroke then stroke.Color = Color3.fromRGB(46, 204, 113); stroke.Thickness = 2 end
+                btn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+                btn.Text = "✔ SELECTED"
+                btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            else
+                card.BackgroundColor3 = Color3.fromRGB(24, 28, 38)
+                if stroke then stroke.Color = Color3.fromRGB(50, 60, 80); stroke.Thickness = 1 end
+                btn.BackgroundColor3 = Color3.fromRGB(40, 50, 70)
+                btn.Text = "Select"
+                btn.TextColor3 = Color3.fromRGB(180, 195, 220)
+            end
+        end
+    end
+    updateSummaryRow()
+end
+
+local function togglePlatform(platId: string)
+    local hasSplit = LocalPlayer:GetAttribute("Owned_MultiStreamLicense") == true
+
+    if not hasSplit then
+        -- Without Robux Split Pass: strictly 1 platform only!
+        selectedPlatforms = { [platId] = true }
+    else
+        -- With Robux Split Pass: can pick up to 2 platforms!
+        if selectedPlatforms[platId] then
+            -- Can only unselect if there is another one selected
+            if getSelectedCount() > 1 then
+                selectedPlatforms[platId] = nil
+            end
+        else
+            if getSelectedCount() < 2 then
+                selectedPlatforms[platId] = true
+            else
+                -- Replace the first one to keep strictly 2
+                for k in selectedPlatforms do
+                    selectedPlatforms[k] = nil
+                    break
+                end
+                selectedPlatforms[platId] = true
+            end
+        end
+    end
+
+    refreshPlatformRows()
+end
+
+-- Render Individual Platform Rows
+for idx, p in platformsList do
     local card = Instance.new("Frame")
-    card.Name = `Card_{platKey}`
-    card.LayoutOrder = order
-    card.Size = UDim2.new(1, -10, 0, 68)
-    card.BackgroundColor3 = Color3.fromRGB(26, 30, 40)
+    card.Name = `Row_{p.Id}`
+    card.LayoutOrder = idx
+    card.Size = UDim2.new(1, 0, 0, 74)
+    card.BackgroundColor3 = Color3.fromRGB(24, 28, 38)
+    card.BorderSizePixel = 0
     card.ZIndex = 33
     card.Parent = cardsContainer
 
-    local cardCorner = Instance.new("UICorner")
-    cardCorner.CornerRadius = UDim.new(0, 10)
-    cardCorner.Parent = card
+    local cCorner = Instance.new("UICorner"); cCorner.CornerRadius = UDim.new(0, 10); cCorner.Parent = card
+    local cStroke = Instance.new("UIStroke"); cStroke.Color = Color3.fromRGB(50, 60, 80); cStroke.Thickness = 1; cStroke.Parent = card
 
-    local cardStroke = Instance.new("UIStroke")
-    cardStroke.Color = Color3.fromRGB(50, 55, 70)
-    cardStroke.Thickness = 1
-    cardStroke.Parent = card
+    -- Icon + Name Badge
+    local nameBadge = Instance.new("TextLabel")
+    nameBadge.Size = UDim2.new(0, 135, 0, 26)
+    nameBadge.Position = UDim2.new(0, 12, 0, 10)
+    nameBadge.BackgroundColor3 = Color3.fromHex(p.ColorHex)
+    nameBadge.Text = `{p.Icon} {p.Name}`
+    nameBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
+    nameBadge.Font = Enum.Font.GothamBold
+    nameBadge.TextSize = 12
+    nameBadge.ZIndex = 34
+    nameBadge.Parent = card
+    local nbCorner = Instance.new("UICorner"); nbCorner.CornerRadius = UDim.new(0, 6); nbCorner.Parent = nameBadge
 
-    -- Platform Icon / Tag
-    local tag = Instance.new("TextLabel")
-    tag.Size = UDim2.new(0, 120, 0, 26)
-    tag.Position = UDim2.new(0, 12, 0, 8)
-    tag.BackgroundColor3 = Color3.fromHex(info.ColorHex)
-    tag.TextColor3 = Color3.fromRGB(255, 255, 255)
-    tag.Font = Enum.Font.GothamBold
-    tag.TextSize = 13
-    tag.Text = info.Name
-    tag.ZIndex = 34
-    tag.Parent = card
-
-    local tagCorner = Instance.new("UICorner")
-    tagCorner.CornerRadius = UDim.new(0, 6)
-    tagCorner.Parent = tag
-
-    -- Multiplier stats
+    -- Stats label
     local stats = Instance.new("TextLabel")
-    stats.Size = UDim2.new(1, -260, 0, 26)
-    stats.Position = UDim2.new(0, 140, 0, 8)
+    stats.Size = UDim2.new(1, -275, 0, 26)
+    stats.Position = UDim2.new(0, 155, 0, 10)
     stats.BackgroundTransparency = 1
     stats.Font = Enum.Font.GothamBold
-    stats.TextSize = 13
+    stats.TextSize = 12
     stats.TextColor3 = Color3.fromRGB(255, 215, 0)
     stats.TextXAlignment = Enum.TextXAlignment.Left
-    stats.Text = `💵 {info.MoneyMultiplier}x Money | ⭐ {info.HypeMultiplier}x Hype`
+    stats.Text = `💵 {p.MoneyMult} Cash  |  ⭐ {p.HypeMult} Subs`
     stats.ZIndex = 34
     stats.Parent = card
 
+    -- Description
     local desc = Instance.new("TextLabel")
-    desc.Size = UDim2.new(1, -150, 0, 20)
-    desc.Position = UDim2.new(0, 12, 0, 38)
+    desc.Size = UDim2.new(1, -145, 0, 22)
+    desc.Position = UDim2.new(0, 12, 0, 42)
     desc.BackgroundTransparency = 1
     desc.Font = Enum.Font.Gotham
-    desc.TextSize = 12
-    desc.TextColor3 = Color3.fromRGB(160, 165, 180)
+    desc.TextSize = 11
+    desc.TextColor3 = Color3.fromRGB(165, 175, 195)
     desc.TextXAlignment = Enum.TextXAlignment.Left
-    desc.Text = info.Description
+    desc.Text = p.Desc
     desc.ZIndex = 34
     desc.Parent = card
 
-    local function selectThisPlatform()
-        if info.RequiresLicense then
-            local hasLicense = LocalPlayer:GetAttribute("Owned_MultiStreamLicense") == true
-            if not hasLicense then
-                -- Do not select, let user use purchase buttons
-                return
-            end
-        end
-        selectedPlatform = platKey
-        updateSelectionVisuals()
-    end
+    -- Select Toggle Button
+    local selBtn = Instance.new("TextButton")
+    selBtn.Name = "SelectBtn"
+    selBtn.Size = UDim2.new(0, 105, 0, 38)
+    selBtn.Position = UDim2.new(1, -115, 0.5, -19)
+    selBtn.BackgroundColor3 = Color3.fromRGB(40, 50, 70)
+    selBtn.TextColor3 = Color3.fromRGB(180, 195, 220)
+    selBtn.Font = Enum.Font.GothamBold
+    selBtn.TextSize = 12
+    selBtn.Text = "Select"
+    selBtn.ZIndex = 35
+    selBtn.Parent = card
+    local sbCorner = Instance.new("UICorner"); sbCorner.CornerRadius = UDim.new(0, 8); sbCorner.Parent = selBtn
 
-    -- For MultiStream: ONLY Robux purchase option (Split stream is Robux-exclusive)
-    if platKey == "MultiStream" then
-        card.Size = UDim2.new(1, -10, 0, 72)
+    selBtn.MouseButton1Click:Connect(function()
+        togglePlatform(p.Id)
+    end)
 
-        local actionContainer = Instance.new("Frame")
-        actionContainer.Name = "ActionContainer"
-        actionContainer.Size = UDim2.new(0, 160, 1, -12)
-        actionContainer.Position = UDim2.new(1, -170, 0, 6)
-        actionContainer.BackgroundTransparency = 1
-        actionContainer.ZIndex = 34
-        actionContainer.Parent = card
+    -- Also clicking card row toggles
+    local clickArea = Instance.new("TextButton")
+    clickArea.Size = UDim2.new(1, -120, 1, 0)
+    clickArea.BackgroundTransparency = 1
+    clickArea.Text = ""
+    clickArea.ZIndex = 34
+    clickArea.Parent = card
+    clickArea.MouseButton1Click:Connect(function()
+        togglePlatform(p.Id)
+    end)
 
-        local btnRobux = Instance.new("TextButton")
-        btnRobux.Name = "BtnRobux"
-        btnRobux.Size = UDim2.new(1, 0, 0, 38)
-        btnRobux.Position = UDim2.new(0, 0, 0.5, -19)
-        btnRobux.BackgroundColor3 = Color3.fromRGB(230, 140, 10)
-        btnRobux.TextColor3 = Color3.fromRGB(255, 255, 255)
-        btnRobux.Font = Enum.Font.GothamBold
-        btnRobux.TextSize = 13
-        btnRobux.Text = "💎 49 R$ (Robux Only)"
-        btnRobux.ZIndex = 35
-        btnRobux.AutoButtonColor = false
-        btnRobux.Parent = actionContainer
-
-        local rCorner = Instance.new("UICorner")
-        rCorner.CornerRadius = UDim.new(0, 8)
-        rCorner.Parent = btnRobux
-
-        local rStroke = Instance.new("UIStroke")
-        rStroke.Color = Color3.fromRGB(255, 215, 0)
-        rStroke.Thickness = 1.5
-        rStroke.Parent = btnRobux
-
-        btnRobux.MouseEnter:Connect(function()
-            TweenService:Create(btnRobux, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(255, 165, 20)}):Play()
-        end)
-        btnRobux.MouseLeave:Connect(function()
-            TweenService:Create(btnRobux, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(230, 140, 10)}):Play()
-        end)
-
-        local btnOwnedSelect = Instance.new("TextButton")
-        btnOwnedSelect.Name = "BtnOwnedSelect"
-        btnOwnedSelect.Size = UDim2.new(1, 0, 0, 38)
-        btnOwnedSelect.Position = UDim2.new(0, 0, 0.5, -19)
-        btnOwnedSelect.BackgroundColor3 = Color3.fromRGB(41, 128, 185)
-        btnOwnedSelect.TextColor3 = Color3.fromRGB(255, 255, 255)
-        btnOwnedSelect.Font = Enum.Font.GothamBold
-        btnOwnedSelect.TextSize = 13
-        btnOwnedSelect.Text = "✔ Select"
-        btnOwnedSelect.Visible = false
-        btnOwnedSelect.ZIndex = 35
-        btnOwnedSelect.Parent = actionContainer
-
-        local oCorner = Instance.new("UICorner")
-        oCorner.CornerRadius = UDim.new(0, 8)
-        oCorner.Parent = btnOwnedSelect
-
-        local function updateMultiStreamButtons()
-            local isOwned = LocalPlayer:GetAttribute("Owned_MultiStreamLicense") == true
-            if isOwned then
-                btnRobux.Visible = false
-                btnOwnedSelect.Visible = true
-            else
-                btnRobux.Visible = true
-                btnOwnedSelect.Visible = false
-            end
-        end
-
-        btnRobux.MouseButton1Click:Connect(function()
-            promptRobuxRemote:FireServer("MultiStreamLicense")
-        end)
-
-        btnOwnedSelect.MouseButton1Click:Connect(function()
-            selectedPlatform = "MultiStream"
-            updateSelectionVisuals()
-        end)
-
-        LocalPlayer:GetAttributeChangedSignal("Owned_MultiStreamLicense"):Connect(updateMultiStreamButtons)
-        updateMultiStreamButtons()
-    else
-        -- Regular platform cards (YouTube, Twitch, TikTok)
-        local selBtn = Instance.new("TextButton")
-        selBtn.Size = UDim2.new(0, 95, 0, 34)
-        selBtn.Position = UDim2.new(1, -105, 0.5, -17)
-        selBtn.BackgroundColor3 = Color3.fromRGB(41, 128, 185)
-        selBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        selBtn.Font = Enum.Font.GothamBold
-        selBtn.TextSize = 13
-        selBtn.Text = "Select"
-        selBtn.ZIndex = 34
-        selBtn.Parent = card
-
-        local selCorner = Instance.new("UICorner")
-        selCorner.CornerRadius = UDim.new(0, 6)
-        selCorner.Parent = selBtn
-
-        selBtn.MouseButton1Click:Connect(selectThisPlatform)
-
-        -- Make invisible click detector over whole card for easy tapping
-        local cardBtn = Instance.new("TextButton")
-        cardBtn.Size = UDim2.new(1, -110, 1, 0)
-        cardBtn.BackgroundTransparency = 1
-        cardBtn.Text = ""
-        cardBtn.ZIndex = 35
-        cardBtn.Parent = card
-        cardBtn.MouseButton1Click:Connect(selectThisPlatform)
-    end
-
-    platformCards[platKey] = card
+    platformRowCards[p.Id] = card
+    platformSelectBtns[p.Id] = selBtn
 end
 
--- Launch Stream Button
+-- 4. Big Launch Button
 local launchBtn = Instance.new("TextButton")
-launchBtn.Name = "LaunchStreamButton"
-launchBtn.Size = UDim2.new(1, -30, 0, 50)
-launchBtn.Position = UDim2.new(0, 15, 1, -65)
+launchBtn.Name = "LaunchStreamBtn"
+launchBtn.Size = UDim2.new(1, -40, 0, 48)
+launchBtn.Position = UDim2.new(0, 20, 1, -62)
 launchBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
 launchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-launchBtn.Font = Enum.Font.GothamBold
-launchBtn.TextSize = 18
+launchBtn.Font = Enum.Font.GothamBlack
+launchBtn.TextSize = 16
 launchBtn.Text = "🚀 LAUNCH STREAM NOW!"
 launchBtn.ZIndex = 32
 launchBtn.Parent = window
 
-local launchCorner = Instance.new("UICorner")
-launchCorner.CornerRadius = UDim.new(0, 10)
-launchCorner.Parent = launchBtn
+local lCorner = Instance.new("UICorner"); lCorner.CornerRadius = UDim.new(0, 10); lCorner.Parent = launchBtn
 
 launchBtn.MouseButton1Click:Connect(function()
+    local selectedList = {}
+    for _, p in platformsList do
+        if selectedPlatforms[p.Id] then
+            table.insert(selectedList, p.Id)
+        end
+    end
+
+    if #selectedList == 0 then
+        table.insert(selectedList, "YouTube")
+    end
+
     backdrop.Visible = false
-    toggleStreamRemote:FireServer(selectedPlatform)
+    local platformArg = table.concat(selectedList, "+")
+    toggleStreamRemote:FireServer(platformArg)
 end)
 
-closeBtn.MouseButton1Click:Connect(function()
-    backdrop.Visible = false
-end)
+updateModeBanner()
+refreshPlatformRows()
 
--- Global helper to open platform modal
-_G.OpenPlatformSelect = function()
-    updateSelectionVisuals()
-    backdrop.Visible = true
-end
-
--- Automatically open Platform Select when sitting in the Streamer Gaming Chair!
-local function bindSeated(char: Model)
-    local humanoid = char:WaitForChild("Humanoid") :: Humanoid
-    humanoid.Seated:Connect(function(active: boolean, seatPart: Instance?)
-        if active and seatPart and seatPart.Name == "GamingChairSeat" then
-            local isStreaming = LocalPlayer:GetAttribute("IsStreaming") == true
-            if not isStreaming then
-                _G.OpenPlatformSelect()
-            end
+LocalPlayer:GetAttributeChangedSignal("Owned_MultiStreamLicense"):Connect(function()
+    updateModeBanner()
+    -- If lost license somehow, ensure only 1 selected
+    local hasSplit = LocalPlayer:GetAttribute("Owned_MultiStreamLicense") == true
+    if not hasSplit and getSelectedCount() > 1 then
+        for k in selectedPlatforms do
+            selectedPlatforms = { [k] = true }
+            break
         end
-    end)
-end
-
-if LocalPlayer.Character then
-    bindSeated(LocalPlayer.Character)
-end
-LocalPlayer.CharacterAdded:Connect(bindSeated)
-
--- ProximityPrompt in-world trigger for Desk and Chair
-local ProximityPromptService = game:GetService("ProximityPromptService")
-ProximityPromptService.PromptTriggered:Connect(function(prompt: ProximityPrompt, player: Player)
-    if player == LocalPlayer then
-        if prompt.Name == "SitPrompt" or prompt.Name == "DeskPrompt" then
-            local isStreaming = LocalPlayer:GetAttribute("IsStreaming") == true
-            if not isStreaming then
-                _G.OpenPlatformSelect()
-            end
-        end
+        refreshPlatformRows()
     end
 end)
 
+--------------------------------------------------------------------------------
+-- Event Listener for Open Menu Requests
+--------------------------------------------------------------------------------
+local openSelectRemote = remotesFolder:FindFirstChild("OpenPlatformSelect") :: RemoteEvent?
+if not openSelectRemote then
+    openSelectRemote = Instance.new("RemoteEvent")
+    openSelectRemote.Name = "OpenPlatformSelect"
+    openSelectRemote.Parent = remotesFolder
+end
 
+openSelectRemote.OnClientEvent:Connect(function()
+    updateModeBanner()
+    refreshPlatformRows()
+    backdrop.Visible = true
+end)
