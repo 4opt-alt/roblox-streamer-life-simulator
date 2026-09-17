@@ -3838,9 +3838,9 @@
 				</Vector3>
 				<CoordinateFrame name="CFrame">
 					<X>14</X><Y>1.4</Y><Z>-44.0</Z>
-					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
+					<R00>0.0000</R00><R01>-0.0000</R01><R02>1.0000</R02>
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
-					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
+					<R20>-1.0000</R20><R21>0.0000</R21><R22>0.0000</R22>
 				</CoordinateFrame>
 				<Color3uint8 name="Color3uint8">4278979598</Color3uint8>
 				<token name="Material">256</token>
@@ -3858,9 +3858,9 @@
 				</Vector3>
 				<CoordinateFrame name="CFrame">
 					<X>14</X><Y>1.4</Y><Z>-40.0</Z>
-					<R00>1.0000</R00><R01>-0.0000</R01><R02>0.0000</R02>
+					<R00>0.0000</R00><R01>-0.0000</R01><R02>1.0000</R02>
 					<R10>0.0000</R10><R11>1.0000</R11><R12>-0.0000</R12>
-					<R20>0.0000</R20><R21>0.0000</R21><R22>1.0000</R22>
+					<R20>-1.0000</R20><R21>0.0000</R21><R22>0.0000</R22>
 				</CoordinateFrame>
 				<Color3uint8 name="Color3uint8">4278979598</Color3uint8>
 				<token name="Material">256</token>
@@ -7442,16 +7442,22 @@ local function setupHoverboard()
         end
 
         if throttle ~= 0 or steer ~= 0 or next(riders) ~= nil then
+            -- Персонаж стоїть боком (розвернутий на 90° від LookVector дошки),
+            -- тож "вперед" — це туди, куди дивиться обличчя: вздовж -RightVector,
+            -- а не вздовж LookVector (інакше дошка їхала б "як машина" боком).
+            local travelVector = -deck.CFrame.RightVector
+
             bv.MaxForce = Vector3.new(2.2e5, 0, 2.2e5)
-            bv.Velocity = deck.CFrame.LookVector * (throttle * HOVER_SPEED)
+            bv.Velocity = travelVector * (throttle * HOVER_SPEED)
 
             bav.MaxTorque = Vector3.new(0, 2.2e5, 0)
             bav.AngularVelocity = Vector3.new(0, -steer * TURN_SPEED, 0)
 
             -- Невеликий нахил дошки (і персонажа, бо він до неї приварений) вперед
             -- при русі вперед і назад при русі назад — як на реальному гіроскутері.
-            local tiltAngle = -throttle * MAX_TILT_RADIANS
-            bg.CFrame = CFrame.new(deck.Position, deck.Position + deck.CFrame.LookVector) * CFrame.Angles(tiltAngle, 0, 0)
+            -- Нахил тепер навколо іншої осі (Z), бо рух іде вздовж X, а не вздовж Z.
+            local tiltAngle = throttle * MAX_TILT_RADIANS
+            bg.CFrame = CFrame.new(deck.Position, deck.Position + deck.CFrame.LookVector) * CFrame.Angles(0, 0, tiltAngle)
         else
             bv.MaxForce = Vector3.new(2.2e5, 0, 2.2e5)
             bv.Velocity = Vector3.zero

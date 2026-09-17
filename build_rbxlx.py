@@ -352,8 +352,10 @@ def create_rbxlx(auto_push=True):
                                light=("PointLight", (0.3, 0.65, 1), 2.0, 16)))
 
     # Wheels (cylinders, can_collide=True for ground contact)
-    hoverboard_parts.append(make_part("WheelFront", (0.4, 1.0, 1.0), (14, 1.4, -44.0), color=HOVER_WHEEL_BLACK, material=256, anchored=True, can_collide=True, shape=2))
-    hoverboard_parts.append(make_part("WheelBack", (0.4, 1.0, 1.0), (14, 1.4, -40.0), color=HOVER_WHEEL_BLACK, material=256, anchored=True, can_collide=True, shape=2))
+    # rot=(0,90,0): вісь колеса розвернута так, щоб воно котилось УБІК (вздовж X,
+    # куди тепер дивиться персонаж), а не вперед-назад як у машини (вздовж Z).
+    hoverboard_parts.append(make_part("WheelFront", (0.4, 1.0, 1.0), (14, 1.4, -44.0), rot=(0, 90, 0), color=HOVER_WHEEL_BLACK, material=256, anchored=True, can_collide=True, shape=2))
+    hoverboard_parts.append(make_part("WheelBack", (0.4, 1.0, 1.0), (14, 1.4, -40.0), rot=(0, 90, 0), color=HOVER_WHEEL_BLACK, material=256, anchored=True, can_collide=True, shape=2))
 
     hoverboard_model_xml = f'''
 		<Item class="Model" referent="RBX_Hoverboard">
