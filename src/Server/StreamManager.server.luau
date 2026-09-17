@@ -1002,10 +1002,12 @@ local function startStream(player: Player, platformKey: string)
                     -- Бонуси від купленого заліза та ігор (CyberByte Tech Store)
                     local equipMoneyBonus = (player:GetAttribute("StreamMoneyBonus") :: number?) or 0
                     local equipHypeBonus = (player:GetAttribute("StreamHypeBonus") :: number?) or 0
-                    local audienceBonus = math.floor(hypeObj.Value * 0.003) -- Дуже плавний приріст від постійної аудиторії (0.3%)
+                    local audienceCashBonus = math.floor(hypeObj.Value * 0.003)
+                    -- Експоненційний ріст аудиторії: чим більше підписників, тим потужніша вірусність!
+                    local audienceHypeBonus = math.floor(hypeObj.Value * 0.004)
 
-                    local totalMoney = baseMoney + equipMoneyBonus + audienceBonus
-                    local totalHype = baseHype + equipHypeBonus
+                    local totalMoney = baseMoney + equipMoneyBonus + audienceCashBonus
+                    local totalHype = baseHype + equipHypeBonus + audienceHypeBonus
 
                     -- Штраф втоми (якщо енергія < 25% — дохід падає на 50%)
                     if currentEnergy < 25 and not hasInfiniteEnergy then
