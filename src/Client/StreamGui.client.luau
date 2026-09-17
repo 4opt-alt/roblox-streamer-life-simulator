@@ -87,6 +87,115 @@ task.spawn(function()
 end)
 
 --------------------------------------------------------------------------------
+-- 0.5. Stream Category Selector (📱 IRL on Phone vs 🎮 Gaming / 🎙️ Talk on PC)
+--------------------------------------------------------------------------------
+local categoryHintLabel = Instance.new("TextLabel")
+categoryHintLabel.Name = "CategoryHintLabel"
+categoryHintLabel.Size = UDim2.new(0, 420, 0, 18)
+categoryHintLabel.Position = UDim2.new(0.5, -210, 0.785, 0)
+categoryHintLabel.BackgroundTransparency = 1
+categoryHintLabel.Font = Enum.Font.GothamMedium
+categoryHintLabel.TextSize = 11
+categoryHintLabel.TextColor3 = Color3.fromRGB(200, 215, 240)
+categoryHintLabel.Text = "🎮 PC Gaming: Stream at your Computer Battlestation! (+Steam Games Bonus)"
+categoryHintLabel.Parent = screenGui
+
+local categoryBar = Instance.new("Frame")
+categoryBar.Name = "CategoryBar"
+categoryBar.Size = UDim2.new(0, 400, 0, 34)
+categoryBar.Position = UDim2.new(0.5, -200, 0.818, 0)
+categoryBar.BackgroundTransparency = 1
+categoryBar.Parent = screenGui
+
+local catLayout = Instance.new("UIListLayout")
+catLayout.FillDirection = Enum.FillDirection.Horizontal
+catLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+catLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+catLayout.Padding = UDim.new(0, 8)
+catLayout.Parent = categoryBar
+
+local function createCategoryBtn(id: string, text: string)
+    local btn = Instance.new("TextButton")
+    btn.Name = `CatBtn_{id}`
+    btn.Size = UDim2.new(0, 124, 0, 32)
+    btn.BackgroundColor3 = Color3.fromRGB(25, 28, 38)
+    btn.TextColor3 = Color3.fromRGB(180, 195, 220)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 12
+    btn.Text = text
+    btn.Parent = categoryBar
+
+    local cCorner = Instance.new("UICorner"); cCorner.CornerRadius = UDim.new(0, 8); cCorner.Parent = btn
+    local cStroke = Instance.new("UIStroke"); cStroke.Color = Color3.fromRGB(50, 60, 80); cStroke.Thickness = 1.2; cStroke.Parent = btn
+
+    return btn, cStroke
+end
+
+local btnIRL, strokeIRL = createCategoryBtn("IRL", "📱 IRL (Phone)")
+local btnGaming, strokeGaming = createCategoryBtn("Gaming", "🎮 Gaming (PC)")
+local btnChatting, strokeChatting = createCategoryBtn("JustChatting", "🎙️ Chatting (PC)")
+
+local currentCategory = "Gaming"
+
+local function updateCategoryUI()
+    local cat = (LocalPlayer:GetAttribute("StreamCategory") :: string?) or currentCategory
+    currentCategory = cat
+
+    -- Reset all
+    btnIRL.BackgroundColor3 = Color3.fromRGB(22, 26, 36)
+    btnIRL.TextColor3 = Color3.fromRGB(160, 175, 200)
+    strokeIRL.Color = Color3.fromRGB(45, 55, 75)
+    strokeIRL.Thickness = 1
+
+    btnGaming.BackgroundColor3 = Color3.fromRGB(22, 26, 36)
+    btnGaming.TextColor3 = Color3.fromRGB(160, 175, 200)
+    strokeGaming.Color = Color3.fromRGB(45, 55, 75)
+    strokeGaming.Thickness = 1
+
+    btnChatting.BackgroundColor3 = Color3.fromRGB(22, 26, 36)
+    btnChatting.TextColor3 = Color3.fromRGB(160, 175, 200)
+    strokeChatting.Color = Color3.fromRGB(45, 55, 75)
+    strokeChatting.Thickness = 1
+
+    if cat == "IRL" then
+        btnIRL.BackgroundColor3 = Color3.fromRGB(0, 80, 100)
+        btnIRL.TextColor3 = Color3.fromRGB(0, 242, 254)
+        strokeIRL.Color = Color3.fromRGB(0, 242, 254)
+        strokeIRL.Thickness = 2
+        categoryHintLabel.Text = "📱 IRL Mode: Mobile stream on phone anywhere! Walk, drive, explore shops."
+        categoryHintLabel.TextColor3 = Color3.fromRGB(0, 242, 254)
+    elseif cat == "JustChatting" then
+        btnChatting.BackgroundColor3 = Color3.fromRGB(70, 45, 10)
+        btnChatting.TextColor3 = Color3.fromRGB(255, 180, 50)
+        strokeChatting.Color = Color3.fromRGB(255, 160, 20)
+        strokeChatting.Thickness = 2
+        categoryHintLabel.Text = "🎙️ Just Chatting: Studio talk show on PC! High chat donations & superchats."
+        categoryHintLabel.TextColor3 = Color3.fromRGB(255, 200, 80)
+    else
+        btnGaming.BackgroundColor3 = Color3.fromRGB(55, 25, 80)
+        btnGaming.TextColor3 = Color3.fromRGB(210, 140, 255)
+        strokeGaming.Color = Color3.fromRGB(180, 90, 255)
+        strokeGaming.Thickness = 2
+        categoryHintLabel.Text = "🎮 PC Gaming: Stream at your Computer Battlestation! +Bonus from Steam games."
+        categoryHintLabel.TextColor3 = Color3.fromRGB(210, 160, 255)
+    end
+end
+
+local function onCategoryClick(catKey: string)
+    currentCategory = catKey
+    LocalPlayer:SetAttribute("StreamCategory", catKey)
+    setStreamCategoryRemote:FireServer(catKey)
+    updateCategoryUI()
+end
+
+btnIRL.MouseButton1Click:Connect(function() onCategoryClick("IRL") end)
+btnGaming.MouseButton1Click:Connect(function() onCategoryClick("Gaming") end)
+btnChatting.MouseButton1Click:Connect(function() onCategoryClick("JustChatting") end)
+
+LocalPlayer:GetAttributeChangedSignal("StreamCategory"):Connect(updateCategoryUI)
+updateCategoryUI()
+
+--------------------------------------------------------------------------------
 -- 1. Stream Control Button
 --------------------------------------------------------------------------------
 local streamButton = Instance.new("TextButton")
