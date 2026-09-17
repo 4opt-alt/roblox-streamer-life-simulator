@@ -5680,12 +5680,12 @@ local function startStream(player: Player, platformKey: string)
             end
         end
         unequipPhone(player)
-        updateMonitorDisplay(true, categoryKey, displayPlatformStr)
+        updateMonitorDisplay(true, categoryKey, displayPlatformStr, player)
         player:SetAttribute("IsPCStream", true)
         player:SetAttribute("IsPhoneStream", false)
     else
         equipPhone(player)
-        updateMonitorDisplay(false)
+        updateMonitorDisplay(false, nil, nil, player)
         player:SetAttribute("IsPCStream", false)
         player:SetAttribute("IsPhoneStream", true)
     end
