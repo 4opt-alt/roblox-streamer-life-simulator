@@ -292,8 +292,8 @@ channelTitleLabel.Parent = channelBar
 
 local editChannelButton = Instance.new("TextButton")
 editChannelButton.Name = "EditChannelButton"
-editChannelButton.Size = UDim2.new(0, 24, 0, 24)
-editChannelButton.Position = UDim2.new(1, -120, 0.5, -12)
+editChannelButton.Size = UDim2.new(0, 26, 0, 22)
+editChannelButton.Position = UDim2.new(1, -135, 0.5, -11)
 editChannelButton.BackgroundColor3 = Color3.fromRGB(35, 45, 65)
 editChannelButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 editChannelButton.Font = Enum.Font.GothamBold
@@ -304,16 +304,18 @@ local ecCorner = Instance.new("UICorner"); ecCorner.CornerRadius = UDim.new(0, 6
 
 local rebirthHudBtn = Instance.new("TextButton")
 rebirthHudBtn.Name = "RebirthHudBtn"
-rebirthHudBtn.Size = UDim2.new(0, 90, 0, 24)
-rebirthHudBtn.Position = UDim2.new(1, -92, 0.5, -12)
+rebirthHudBtn.Size = UDim2.new(0, 125, 0, 22)
+rebirthHudBtn.Position = UDim2.new(1, -127, 0.5, -11)
 rebirthHudBtn.BackgroundColor3 = Color3.fromRGB(95, 40, 150)
 rebirthHudBtn.TextColor3 = Color3.fromRGB(255, 235, 120)
 rebirthHudBtn.Font = Enum.Font.GothamBold
 rebirthHudBtn.TextSize = 11
-rebirthHudBtn.Text = "🔄 REBIRTH (Lv. 0)"
+rebirthHudBtn.TextScaled = false
+rebirthHudBtn.ClipsDescendants = false
+rebirthHudBtn.Text = "🔄 REBIRTH Lv.0"
 rebirthHudBtn.Parent = channelBar
 local rhbCorner = Instance.new("UICorner"); rhbCorner.CornerRadius = UDim.new(0, 6); rhbCorner.Parent = rebirthHudBtn
-local rhbStroke = Instance.new("UIStroke"); rhbStroke.Color = Color3.fromRGB(255, 215, 0); rhbStroke.Thickness = 1.2; rhbStroke.Parent = rebirthHudBtn
+local rhbStroke = Instance.new("UIStroke"); rhbStroke.Color = Color3.fromRGB(255, 215, 0); rhbStroke.Thickness = 1.5; rhbStroke.Parent = rebirthHudBtn
 
 -- Row 2: Contract Badge & Live Platform Indicators
 local platformsRowBar = Instance.new("Frame")
