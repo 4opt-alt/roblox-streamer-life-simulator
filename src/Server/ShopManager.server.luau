@@ -178,21 +178,24 @@ promptRobuxRemote.OnServerEvent:Connect(function(player: Player, productId: any)
 
     if prod.Type == "GamePass" then
         local passId = (productId == "Pass_VIP") and VIP_GAMEPASS_ID or MULTISTREAM_GAMEPASS_ID
-        local success = pcall(function()
-            MarketplaceService:PromptGamePassPurchase(player, passId)
-        end)
-        -- Fallback for local Studio testing where pass is unlisted
-        if not success or passId == 99999999 or passId == 88888888 then
+        -- Only prompt Roblox CoreGui if a real valid Gamepass ID (> 1000) has been configured
+        if passId and passId > 1000 and passId ~= 99999999 and passId ~= 88888888 then
+            pcall(function()
+                MarketplaceService:PromptGamePassPurchase(player, passId)
+            end)
+        else
+            -- Dev / Studio testing: unlock directly without showing 'This item is not currently for sale'
             grantRobuxProduct(player, productId)
         end
     else
         -- Developer Product purchase
-        local mockProductId = 12345678
-        local success = pcall(function()
-            MarketplaceService:PromptProductPurchase(player, mockProductId)
-        end)
-        -- Fallback for local Studio testing
-        if not success or mockProductId == 12345678 then
+        local devProductId = (prod :: any).DevProductId
+        if devProductId and devProductId > 1000 and devProductId ~= 12345678 then
+            pcall(function()
+                MarketplaceService:PromptProductPurchase(player, devProductId)
+            end)
+        else
+            -- Dev / Studio testing: unlock directly
             grantRobuxProduct(player, productId)
         end
     end
