@@ -1,0 +1,516 @@
+--!strict
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui") :: PlayerGui
+
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "StreamGui"
+screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.Parent = PlayerGui
+
+--------------------------------------------------------------------------------
+-- 0. Hourly Boost Event Banner (Top-Center HUD)
+--------------------------------------------------------------------------------
+local eventBanner = Instance.new("Frame")
+eventBanner.Name = "EventBanner"
+eventBanner.Size = UDim2.new(0, 310, 0, 36)
+eventBanner.Position = UDim2.new(0.5, -155, 0.02, 0)
+eventBanner.BackgroundColor3 = Color3.fromRGB(20, 24, 32)
+eventBanner.BackgroundTransparency = 0.25
+eventBanner.BorderSizePixel = 0
+eventBanner.Parent = screenGui
+
+local bannerCorner = Instance.new("UICorner")
+bannerCorner.CornerRadius = UDim.new(0, 18)
+bannerCorner.Parent = eventBanner
+
+local bannerStroke = Instance.new("UIStroke")
+bannerStroke.Name = "BannerStroke"
+bannerStroke.Color = Color3.fromRGB(52, 152, 219)
+bannerStroke.Thickness = 1.5
+bannerStroke.Parent = eventBanner
+
+local bannerText = Instance.new("TextLabel")
+bannerText.Name = "BannerText"
+bannerText.Size = UDim2.new(1, 0, 1, 0)
+bannerText.BackgroundTransparency = 1
+bannerText.Font = Enum.Font.GothamBold
+bannerText.TextSize = 13
+bannerText.TextColor3 = Color3.fromRGB(240, 245, 255)
+bannerText.Text = "⏰ Hourly Boost: Loading..."
+bannerText.Parent = eventBanner
+
+-- Listen to Event State
+task.spawn(function()
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local eventFolder = ReplicatedStorage:WaitForChild("EventState", 15) :: Folder?
+    if not eventFolder then return end
+
+    local isBoostActiveObj = eventFolder:WaitForChild("IsBoostActive") :: BoolValue
+    local remainingSecObj = eventFolder:WaitForChild("RemainingSeconds") :: IntValue
+
+    local function updateBanner()
+        local isActive = isBoostActiveObj.Value
+        local sec = remainingSecObj.Value
+        local mins = math.floor(sec / 60)
+        local secs = sec % 60
+        local timeFormatted = string.format("%02d:%02d", mins, secs)
+
+        if isActive then
+            bannerStroke.Color = Color3.fromRGB(255, 170, 0)
+            eventBanner.BackgroundColor3 = Color3.fromRGB(45, 25, 15)
+            bannerText.TextColor3 = Color3.fromRGB(255, 220, 100)
+            bannerText.Text = `🔥 1.5x BOOST ACTIVE! ({timeFormatted})`
+        else
+            bannerStroke.Color = Color3.fromRGB(52, 152, 219)
+            eventBanner.BackgroundColor3 = Color3.fromRGB(20, 24, 32)
+            bannerText.TextColor3 = Color3.fromRGB(220, 225, 235)
+            bannerText.Text = `⏰ Next 1.5x Boost in: {timeFormatted}`
+        end
+    end
+
+    isBoostActiveObj.Changed:Connect(updateBanner)
+    remainingSecObj.Changed:Connect(updateBanner)
+    updateBanner()
+end)
+
+--------------------------------------------------------------------------------
+-- 1. Stream Control Button
+--------------------------------------------------------------------------------
+local streamButton = Instance.new("TextButton")
+streamButton.Name = "StreamButton"
+streamButton.Size = UDim2.new(0, 200, 0, 50)
+streamButton.Position = UDim2.new(0.5, -100, 0.88, 0)
+streamButton.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+streamButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+streamButton.Font = Enum.Font.GothamBold
+streamButton.TextSize = 18
+streamButton.Text = "▶ Start Stream"
+streamButton.AutoButtonColor = false
+streamButton.Parent = screenGui
+
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 12)
+buttonCorner.Parent = streamButton
+
+local buttonStroke = Instance.new("UIStroke")
+buttonStroke.Color = Color3.fromRGB(255, 255, 255)
+buttonStroke.Transparency = 0.8
+buttonStroke.Thickness = 1.5
+buttonStroke.Parent = streamButton
+
+-- Click animation
+streamButton.MouseButton1Down:Connect(function()
+    TweenService:Create(streamButton, TweenInfo.new(0.1), {
+        Size = UDim2.new(0, 190, 0, 46),
+        Position = UDim2.new(0.5, -95, 0.88, 2),
+    }):Play()
+end)
+
+streamButton.MouseButton1Up:Connect(function()
+    TweenService:Create(streamButton, TweenInfo.new(0.1), {
+        Size = UDim2.new(0, 200, 0, 50),
+        Position = UDim2.new(0.5, -100, 0.88, 0),
+    }):Play()
+end)
+
+--------------------------------------------------------------------------------
+-- 2. Channel Info Bar & Survival Stats
+--------------------------------------------------------------------------------
+-- Setup Quality Rating Badge
+local setupBadge = Instance.new("Frame")
+setupBadge.Name = "SetupBadge"
+setupBadge.Size = UDim2.new(0, 320, 0, 26)
+setupBadge.Position = UDim2.new(0.02, 0, 0.545, 0)
+setupBadge.BackgroundColor3 = Color3.fromRGB(20, 24, 32)
+setupBadge.BackgroundTransparency = 0.25
+setupBadge.BorderSizePixel = 0
+setupBadge.Parent = screenGui
+
+local sCorner = Instance.new("UICorner")
+sCorner.CornerRadius = UDim.new(0, 6)
+sCorner.Parent = setupBadge
+
+local sStroke = Instance.new("UIStroke")
+sStroke.Color = Color3.fromRGB(255, 170, 0)
+sStroke.Transparency = 0.5
+sStroke.Thickness = 1
+sStroke.Parent = setupBadge
+
+local setupLabel = Instance.new("TextLabel")
+setupLabel.Name = "SetupLabel"
+setupLabel.Size = UDim2.new(1, -16, 1, 0)
+setupLabel.Position = UDim2.new(0, 8, 0, 0)
+setupLabel.BackgroundTransparency = 1
+setupLabel.Font = Enum.Font.GothamBold
+setupLabel.TextSize = 11
+setupLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+setupLabel.TextXAlignment = Enum.TextXAlignment.Left
+setupLabel.Text = "⭐ Setup: Potato Setup (0 games, 0 gear)"
+setupLabel.Parent = setupBadge
+
+local function updateSetupBadge()
+    local rank = LocalPlayer:GetAttribute("StreamRankTitle") or "Potato Setup"
+    local games = LocalPlayer:GetAttribute("GamesOwnedCount") or 0
+    local gear = LocalPlayer:GetAttribute("GearOwnedCount") or 0
+    setupLabel.Text = `⭐ Setup: {rank} ({games} games, {gear} gear)`
+end
+
+LocalPlayer:GetAttributeChangedSignal("StreamRankTitle"):Connect(updateSetupBadge)
+LocalPlayer:GetAttributeChangedSignal("GamesOwnedCount"):Connect(updateSetupBadge)
+LocalPlayer:GetAttributeChangedSignal("GearOwnedCount"):Connect(updateSetupBadge)
+updateSetupBadge()
+
+local channelBar = Instance.new("Frame")
+channelBar.Name = "ChannelBar"
+channelBar.Size = UDim2.new(0, 320, 0, 36)
+channelBar.Position = UDim2.new(0.02, 0, 0.585, 0)
+channelBar.BackgroundColor3 = Color3.fromRGB(25, 28, 36)
+channelBar.BackgroundTransparency = 0.25
+channelBar.BorderSizePixel = 0
+channelBar.Parent = screenGui
+
+local barCorner = Instance.new("UICorner")
+barCorner.CornerRadius = UDim.new(0, 8)
+barCorner.Parent = channelBar
+
+local barStroke = Instance.new("UIStroke")
+barStroke.Color = Color3.fromRGB(52, 152, 219)
+barStroke.Transparency = 0.6
+barStroke.Thickness = 1
+barStroke.Parent = channelBar
+
+-- Energy / Stamina Bar (Survival System)
+local energyBar = Instance.new("Frame")
+energyBar.Name = "EnergyBar"
+energyBar.Size = UDim2.new(0, 320, 0, 24)
+energyBar.Position = UDim2.new(0.02, 0, 0.635, 0)
+energyBar.BackgroundColor3 = Color3.fromRGB(20, 24, 32)
+energyBar.BackgroundTransparency = 0.25
+energyBar.BorderSizePixel = 0
+energyBar.Parent = screenGui
+
+local eCorner = Instance.new("UICorner")
+eCorner.CornerRadius = UDim.new(0, 6)
+eCorner.Parent = energyBar
+
+local eStroke = Instance.new("UIStroke")
+eStroke.Color = Color3.fromRGB(46, 204, 113)
+eStroke.Thickness = 1
+eStroke.Parent = energyBar
+
+local energyFill = Instance.new("Frame")
+energyFill.Name = "EnergyFill"
+energyFill.Size = UDim2.new(1, 0, 1, 0)
+energyFill.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+energyFill.BorderSizePixel = 0
+energyFill.Parent = energyBar
+
+local efCorner = Instance.new("UICorner")
+efCorner.CornerRadius = UDim.new(0, 6)
+efCorner.Parent = energyFill
+
+local energyLabel = Instance.new("TextLabel")
+energyLabel.Name = "EnergyLabel"
+energyLabel.Size = UDim2.new(1, 0, 1, 0)
+energyLabel.BackgroundTransparency = 1
+energyLabel.Font = Enum.Font.GothamBold
+energyLabel.TextSize = 11
+energyLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+energyLabel.Text = "⚡ Energy: 100%"
+energyLabel.ZIndex = 2
+energyLabel.Parent = energyBar
+
+local function updateEnergy()
+    local energy = (LocalPlayer:GetAttribute("Energy") :: number?) or 100
+    local pct = math.clamp(energy / 100, 0, 1)
+
+    TweenService:Create(energyFill, TweenInfo.new(0.3), {
+        Size = UDim2.new(pct, 0, 1, 0),
+    }):Play()
+
+    if energy > 50 then
+        energyFill.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+        eStroke.Color = Color3.fromRGB(46, 204, 113)
+        energyLabel.Text = `⚡ Energy: {energy}%`
+    elseif energy >= 25 then
+        energyFill.BackgroundColor3 = Color3.fromRGB(243, 156, 18)
+        eStroke.Color = Color3.fromRGB(243, 156, 18)
+        energyLabel.Text = `⚡ Energy: {energy}% (Getting Tired)`
+    else
+        energyFill.BackgroundColor3 = Color3.fromRGB(231, 76, 60)
+        eStroke.Color = Color3.fromRGB(231, 76, 60)
+        energyLabel.Text = `⚡ Energy: {energy}% (Starving! Go to Burger Mart)`
+    end
+end
+
+LocalPlayer:GetAttributeChangedSignal("Energy"):Connect(updateEnergy)
+updateEnergy()
+
+local channelTitleLabel = Instance.new("TextLabel")
+channelTitleLabel.Name = "ChannelTitleLabel"
+channelTitleLabel.Size = UDim2.new(1, -95, 1, 0)
+channelTitleLabel.Position = UDim2.new(0, 10, 0, 0)
+channelTitleLabel.BackgroundTransparency = 1
+channelTitleLabel.Font = Enum.Font.GothamBold
+channelTitleLabel.TextSize = 13
+channelTitleLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+channelTitleLabel.Text = "📺 Channel: Loading..."
+channelTitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+channelTitleLabel.TextTruncate = Enum.TextTruncate.AtEnd
+channelTitleLabel.Parent = channelBar
+
+local editChannelButton = Instance.new("TextButton")
+editChannelButton.Name = "EditChannelButton"
+editChannelButton.Size = UDim2.new(0, 80, 0, 26)
+editChannelButton.Position = UDim2.new(1, -85, 0.5, -13)
+editChannelButton.BackgroundColor3 = Color3.fromRGB(41, 128, 185)
+editChannelButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+editChannelButton.Font = Enum.Font.GothamMedium
+editChannelButton.TextSize = 12
+editChannelButton.Text = "✏️ Edit"
+editChannelButton.Parent = channelBar
+
+local editBtnCorner = Instance.new("UICorner")
+editBtnCorner.CornerRadius = UDim.new(0, 6)
+editBtnCorner.Parent = editChannelButton
+
+--------------------------------------------------------------------------------
+-- 3. Live Chat Panel
+--------------------------------------------------------------------------------
+local chatContainer = Instance.new("Frame")
+chatContainer.Name = "ChatContainer"
+chatContainer.Size = UDim2.new(0, 320, 0, 220)
+chatContainer.Position = UDim2.new(0.02, 0, 0.66, 0)
+chatContainer.BackgroundColor3 = Color3.fromRGB(20, 22, 28)
+chatContainer.BackgroundTransparency = 0.25
+chatContainer.BorderSizePixel = 0
+chatContainer.Parent = screenGui
+
+local containerCorner = Instance.new("UICorner")
+containerCorner.CornerRadius = UDim.new(0, 10)
+containerCorner.Parent = chatContainer
+
+local containerStroke = Instance.new("UIStroke")
+containerStroke.Color = Color3.fromRGB(60, 65, 80)
+containerStroke.Transparency = 0.5
+containerStroke.Thickness = 1
+containerStroke.Parent = chatContainer
+
+local chatHeader = Instance.new("TextLabel")
+chatHeader.Name = "ChatHeader"
+chatHeader.Size = UDim2.new(1, 0, 0, 30)
+chatHeader.Position = UDim2.new(0, 0, 0, 0)
+chatHeader.BackgroundColor3 = Color3.fromRGB(30, 33, 42)
+chatHeader.BackgroundTransparency = 0.3
+chatHeader.TextColor3 = Color3.fromRGB(220, 225, 235)
+chatHeader.Font = Enum.Font.GothamBold
+chatHeader.TextSize = 13
+chatHeader.Text = "  💬 Live Chat (Offline)"
+chatHeader.TextXAlignment = Enum.TextXAlignment.Left
+chatHeader.Parent = chatContainer
+
+local headerCorner = Instance.new("UICorner")
+headerCorner.CornerRadius = UDim.new(0, 10)
+headerCorner.Parent = chatHeader
+
+local scrollingFrame = Instance.new("ScrollingFrame")
+scrollingFrame.Name = "ChatScrollingFrame"
+scrollingFrame.Size = UDim2.new(1, -12, 1, -40)
+scrollingFrame.Position = UDim2.new(0, 6, 0, 34)
+scrollingFrame.BackgroundTransparency = 1
+scrollingFrame.BorderSizePixel = 0
+scrollingFrame.ScrollBarThickness = 5
+scrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 110, 130)
+scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+scrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scrollingFrame.Parent = chatContainer
+
+local listLayout = Instance.new("UIListLayout")
+listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+listLayout.Padding = UDim.new(0, 5)
+listLayout.Parent = scrollingFrame
+
+local padding = Instance.new("UIPadding")
+padding.PaddingLeft = UDim.new(0, 4)
+padding.PaddingRight = UDim.new(0, 4)
+padding.PaddingTop = UDim.new(0, 4)
+padding.PaddingBottom = UDim.new(0, 4)
+padding.Parent = scrollingFrame
+
+--------------------------------------------------------------------------------
+-- 4. Channel Naming Modal Window
+--------------------------------------------------------------------------------
+local modalBackdrop = Instance.new("Frame")
+modalBackdrop.Name = "ChannelModalBackdrop"
+modalBackdrop.Size = UDim2.new(1, 0, 1, 0)
+modalBackdrop.Position = UDim2.new(0, 0, 0, 0)
+modalBackdrop.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+modalBackdrop.BackgroundTransparency = 0.5
+modalBackdrop.Visible = false
+modalBackdrop.ZIndex = 10
+modalBackdrop.Parent = screenGui
+
+local modalBox = Instance.new("Frame")
+modalBox.Name = "ModalBox"
+modalBox.Size = UDim2.new(0, 380, 0, 230)
+modalBox.Position = UDim2.new(0.5, -190, 0.5, -115)
+modalBox.BackgroundColor3 = Color3.fromRGB(26, 29, 38)
+modalBox.BorderSizePixel = 0
+modalBox.ZIndex = 11
+modalBox.Parent = modalBackdrop
+
+local modalCorner = Instance.new("UICorner")
+modalCorner.CornerRadius = UDim.new(0, 14)
+modalCorner.Parent = modalBox
+
+local modalStroke = Instance.new("UIStroke")
+modalStroke.Color = Color3.fromRGB(52, 152, 219)
+modalStroke.Thickness = 1.5
+modalStroke.Parent = modalBox
+
+local modalTitle = Instance.new("TextLabel")
+modalTitle.Name = "ModalTitle"
+modalTitle.Size = UDim2.new(1, 0, 0, 40)
+modalTitle.Position = UDim2.new(0, 0, 0, 10)
+modalTitle.BackgroundTransparency = 1
+modalTitle.Font = Enum.Font.GothamBold
+modalTitle.TextSize = 18
+modalTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+modalTitle.Text = "📺 Name Your Stream Channel!"
+modalTitle.ZIndex = 12
+modalTitle.Parent = modalBox
+
+local modalSubtitle = Instance.new("TextLabel")
+modalSubtitle.Name = "ModalSubtitle"
+modalSubtitle.Size = UDim2.new(1, -40, 0, 30)
+modalSubtitle.Position = UDim2.new(0, 20, 0, 50)
+modalSubtitle.BackgroundTransparency = 1
+modalSubtitle.Font = Enum.Font.Gotham
+modalSubtitle.TextSize = 13
+modalSubtitle.TextColor3 = Color3.fromRGB(180, 185, 200)
+modalSubtitle.Text = "Enter a cool name for your streams (3–20 characters):"
+modalSubtitle.TextWrapped = true
+modalSubtitle.ZIndex = 12
+modalSubtitle.Parent = modalBox
+
+local channelInputBox = Instance.new("TextBox")
+channelInputBox.Name = "ChannelInputBox"
+channelInputBox.Size = UDim2.new(1, -50, 0, 44)
+channelInputBox.Position = UDim2.new(0, 25, 0, 95)
+channelInputBox.BackgroundColor3 = Color3.fromRGB(18, 20, 26)
+channelInputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+channelInputBox.PlaceholderColor3 = Color3.fromRGB(110, 115, 130)
+channelInputBox.PlaceholderText = "e.g. ProGamer_TV"
+channelInputBox.Font = Enum.Font.GothamMedium
+channelInputBox.TextSize = 15
+channelInputBox.ClearTextOnFocus = false
+channelInputBox.ZIndex = 12
+channelInputBox.Parent = modalBox
+
+local inputCorner = Instance.new("UICorner")
+inputCorner.CornerRadius = UDim.new(0, 8)
+inputCorner.Parent = channelInputBox
+
+local inputStroke = Instance.new("UIStroke")
+inputStroke.Color = Color3.fromRGB(60, 65, 80)
+inputStroke.Thickness = 1
+inputStroke.Parent = channelInputBox
+
+-- Save button
+local saveButton = Instance.new("TextButton")
+saveButton.Name = "SaveChannelButton"
+saveButton.Size = UDim2.new(0, 150, 0, 40)
+saveButton.Position = UDim2.new(0.5, -160, 0, 160)
+saveButton.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+saveButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+saveButton.Font = Enum.Font.GothamBold
+saveButton.TextSize = 14
+saveButton.Text = "✅ Save"
+saveButton.ZIndex = 12
+saveButton.Parent = modalBox
+
+local saveCorner = Instance.new("UICorner")
+saveCorner.CornerRadius = UDim.new(0, 8)
+saveCorner.Parent = saveButton
+
+-- Close button
+local closeButton = Instance.new("TextButton")
+closeButton.Name = "CloseModalButton"
+closeButton.Size = UDim2.new(0, 150, 0, 40)
+closeButton.Position = UDim2.new(0.5, 10, 0, 160)
+closeButton.BackgroundColor3 = Color3.fromRGB(231, 76, 60)
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextSize = 14
+closeButton.Text = "✖ Close"
+closeButton.ZIndex = 12
+closeButton.Parent = modalBox
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 8)
+closeCorner.Parent = closeButton
+
+--------------------------------------------------------------------------------
+-- 5. Quick Welcome Guide Banner (Fades after 12s or click)
+--------------------------------------------------------------------------------
+local welcomeBanner = Instance.new("Frame")
+welcomeBanner.Name = "WelcomeGuide"
+welcomeBanner.Size = UDim2.new(0, 480, 0, 80)
+welcomeBanner.Position = UDim2.new(0.5, -240, 0.08, 0)
+welcomeBanner.BackgroundColor3 = Color3.fromRGB(16, 20, 28)
+welcomeBanner.BackgroundTransparency = 0.15
+welcomeBanner.BorderSizePixel = 0
+welcomeBanner.ZIndex = 50
+welcomeBanner.Parent = screenGui
+
+local wbCorner = Instance.new("UICorner")
+wbCorner.CornerRadius = UDim.new(0, 12)
+wbCorner.Parent = welcomeBanner
+
+local wbStroke = Instance.new("UIStroke")
+wbStroke.Color = Color3.fromRGB(255, 170, 0)
+wbStroke.Thickness = 2
+wbStroke.Parent = welcomeBanner
+
+local wbTitle = Instance.new("TextLabel")
+wbTitle.Size = UDim2.new(1, -20, 0, 24)
+wbTitle.Position = UDim2.new(0, 10, 0, 6)
+wbTitle.BackgroundTransparency = 1
+wbTitle.Font = Enum.Font.GothamBold
+wbTitle.TextSize = 14
+wbTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
+wbTitle.TextXAlignment = Enum.TextXAlignment.Left
+wbTitle.Text = "🎮 STREAMER LIFE SIMULATOR — QUICK GUIDE"
+wbTitle.ZIndex = 51
+wbTitle.Parent = welcomeBanner
+
+local wbDesc = Instance.new("TextLabel")
+wbDesc.Size = UDim2.new(1, -20, 0, 44)
+wbDesc.Position = UDim2.new(0, 10, 0, 30)
+wbDesc.BackgroundTransparency = 1
+wbDesc.Font = Enum.Font.Gotham
+wbDesc.TextSize = 11
+wbDesc.TextColor3 = Color3.fromRGB(230, 235, 245)
+wbDesc.TextXAlignment = Enum.TextXAlignment.Left
+wbDesc.TextYAlignment = Enum.TextYAlignment.Top
+wbDesc.TextWrapped = true
+wbDesc.Text = "• Sit at your Desk or click '▶ Start Stream' to pick YouTube, Twitch, TikTok, or Multi-Stream!\n• Drive your Starter Sedan down the avenue to CyberByte Tech or Burger Mart!\n• Make smart event choices every 30s to skyrocket your Subscribers!"
+wbDesc.ZIndex = 51
+wbDesc.Parent = welcomeBanner
+
+task.delay(14, function()
+    if welcomeBanner and welcomeBanner.Parent then
+        TweenService:Create(welcomeBanner, TweenInfo.new(0.8), {
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0.5, -240, 0.02, 0),
+        }):Play()
+        task.wait(0.9)
+        welcomeBanner:Destroy()
+    end
+end)
+

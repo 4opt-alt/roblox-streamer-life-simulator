@@ -1,0 +1,37 @@
+--!strict
+local Players = game:GetService("Players")
+
+local function setupLeaderstats(player: Player)
+    -- Якщо leaderstats вже існує, не дублюємо
+    if player:FindFirstChild("leaderstats") then
+        return
+    end
+
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local StreamConfig = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("StreamConfig") :: ModuleScript)
+
+    local leaderstats = Instance.new("Folder")
+    leaderstats.Name = "leaderstats"
+
+    -- Змінна Money (Гроші) - $15 на старті для виживання
+    local money = Instance.new("IntValue")
+    money.Name = "Money"
+    money.Value = StreamConfig.StarterMoney
+    money.Parent = leaderstats
+
+    -- Змінна Hype (Підписники / Хайп)
+    local hype = Instance.new("IntValue")
+    hype.Name = "Hype"
+    hype.Value = 0 -- Стартовий хайп
+    hype.Parent = leaderstats
+
+    leaderstats.Parent = player
+end
+
+-- Обробка нових гравців
+Players.PlayerAdded:Connect(setupLeaderstats)
+
+-- Для гравців, які вже підключилися (актуально під час тестування в Studio)
+for _, player in Players:GetPlayers() do
+    task.spawn(setupLeaderstats, player)
+end
