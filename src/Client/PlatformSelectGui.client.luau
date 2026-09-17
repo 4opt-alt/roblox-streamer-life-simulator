@@ -392,7 +392,7 @@ for idx, p in platformsList do
     platformSelectBtns[p.Id] = selBtn
 end
 
--- 4. Big Launch Button
+-- 4. Confirm & Lock Button
 local launchBtn = Instance.new("TextButton")
 launchBtn.Name = "LaunchStreamBtn"
 launchBtn.Size = UDim2.new(1, -40, 0, 48)
@@ -400,14 +400,33 @@ launchBtn.Position = UDim2.new(0, 20, 1, -62)
 launchBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
 launchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 launchBtn.Font = Enum.Font.GothamBlack
-launchBtn.TextSize = 16
-launchBtn.Text = "🚀 LAUNCH STREAM NOW!"
+launchBtn.TextSize = 15
+launchBtn.Text = "🔒 CONFIRM & LOCK PLATFORM (UNTIL REBIRTH)"
 launchBtn.ZIndex = 32
 launchBtn.Parent = window
 
 local lCorner = Instance.new("UICorner"); lCorner.CornerRadius = UDim.new(0, 10); lCorner.Parent = launchBtn
 
+local function updateLockState()
+    local locked = LocalPlayer:GetAttribute("LockedPlatform")
+    if locked and locked ~= "" then
+        launchBtn.BackgroundColor3 = Color3.fromRGB(80, 90, 110)
+        launchBtn.Text = `🔒 CONTRACT ACTIVE: {locked:gsub("+", " + ")} (REBIRTH TO SWITCH)`
+        launchBtn.AutoButtonColor = false
+    else
+        launchBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+        launchBtn.Text = "🔒 CONFIRM & LOCK PLATFORM (UNTIL REBIRTH)"
+        launchBtn.AutoButtonColor = true
+    end
+end
+
 launchBtn.MouseButton1Click:Connect(function()
+    local existingLock = LocalPlayer:GetAttribute("LockedPlatform")
+    if existingLock and existingLock ~= "" then
+        backdrop.Visible = false
+        return
+    end
+
     local selectedList = {}
     for _, p in platformsList do
         if selectedPlatforms[p.Id] then
@@ -419,17 +438,22 @@ launchBtn.MouseButton1Click:Connect(function()
         table.insert(selectedList, "YouTube")
     end
 
-    backdrop.Visible = false
     local platformArg = table.concat(selectedList, "+")
-    toggleStreamRemote:FireServer(platformArg)
+    lockPlatformRemote:FireServer(platformArg)
+    backdrop.Visible = false
+end)
+
+LocalPlayer:GetAttributeChangedSignal("LockedPlatform"):Connect(function()
+    updateLockState()
+    updateSummaryRow()
 end)
 
 updateModeBanner()
 refreshPlatformRows()
+updateLockState()
 
 LocalPlayer:GetAttributeChangedSignal("Owned_MultiStreamLicense"):Connect(function()
     updateModeBanner()
-    -- If lost license somehow, ensure only 1 selected
     local hasSplit = LocalPlayer:GetAttribute("Owned_MultiStreamLicense") == true
     if not hasSplit and getSelectedCount() > 1 then
         for k in selectedPlatforms do
@@ -441,17 +465,29 @@ LocalPlayer:GetAttributeChangedSignal("Owned_MultiStreamLicense"):Connect(functi
 end)
 
 --------------------------------------------------------------------------------
--- Event Listener for Open Menu Requests
+-- Open Menu Listener & Global Function
 --------------------------------------------------------------------------------
-local openSelectRemote = remotesFolder:FindFirstChild("OpenPlatformSelect") :: RemoteEvent?
-if not openSelectRemote then
-    openSelectRemote = Instance.new("RemoteEvent")
-    openSelectRemote.Name = "OpenPlatformSelect"
-    openSelectRemote.Parent = remotesFolder
-end
-
-openSelectRemote.OnClientEvent:Connect(function()
+local function openMenu(isRebirth: boolean?)
     updateModeBanner()
     refreshPlatformRows()
+    updateLockState()
+    if isRebirth then
+        modeTitle.Text = "🎉 REBIRTH COMPLETE! CHOOSE NEW CONTRACT"
+        modeTitle.TextColor3 = Color3.fromRGB(46, 204, 113)
+        modeDesc.Text = "Pick your streaming platform for your new rebirth era (+50% permanent boost active)!"
+    end
     backdrop.Visible = true
+end
+
+_G.OpenPlatformSelect = openMenu
+
+promptPlatformSelectRemote.OnClientEvent:Connect(function(isRebirth: boolean?)
+    openMenu(isRebirth)
 end)
+
+local openSelectRemote = remotesFolder:FindFirstChild("OpenPlatformSelect") :: RemoteEvent?
+if openSelectRemote then
+    openSelectRemote.OnClientEvent:Connect(function()
+        openMenu(false)
+    end)
+end
