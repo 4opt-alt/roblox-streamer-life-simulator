@@ -8215,14 +8215,37 @@ splitUnlockBtn.MouseButton1Click:Connect(function()
     promptRobuxRemote:FireServer("MultiStreamLicense")
 end)
 
+local function syncWithLock(): boolean
+    local locked = LocalPlayer:GetAttribute("LockedPlatform")
+    if locked and locked ~= "" then
+        selectedPlatforms = {}
+        for plat in string.gmatch(locked, "[^+]+") do
+            selectedPlatforms[plat] = true
+        end
+        return true
+    end
+    return false
+end
+
 local function updateModeBanner()
+    local locked = LocalPlayer:GetAttribute("LockedPlatform")
+    local isLocked = locked and locked ~= ""
     local hasSplit = LocalPlayer:GetAttribute("Owned_MultiStreamLicense") == true
-    if hasSplit then
+
+    if isLocked then
+        modeBanner.BackgroundColor3 = Color3.fromRGB(24, 30, 44)
+        mbStroke.Color = Color3.fromRGB(52, 152, 219)
+        modeTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
+        modeTitle.Text = `🔒 CONTRACT LOCKED: {locked:gsub("+", " + ")}`
+        modeDesc.Text = "Platform choice is LOCKED until Rebirth! Swapping platforms is disabled in this life."
+        splitUnlockBtn.Visible = false
+    elseif hasSplit then
         modeBanner.BackgroundColor3 = Color3.fromRGB(35, 25, 55)
         mbStroke.Color = Color3.fromRGB(210, 80, 255)
         modeTitle.TextColor3 = Color3.fromRGB(255, 120, 255)
         modeTitle.Text = "⭐ SPLIT DUAL-STREAM ACTIVE (2 Platforms Max)"
         modeDesc.Text = "You can stream to any 2 platforms simultaneously (+85% Cash & +50% Subs)!"
+        splitUnlockBtn.Visible = true
         splitUnlockBtn.BackgroundColor3 = Color3.fromRGB(30, 70, 40)
         splitUnlockBtn.Text = "✅ UNLOCKED"
         splitUnlockBtn.TextColor3 = Color3.fromRGB(100, 240, 120)
@@ -8234,6 +8257,7 @@ local function updateModeBanner()
         modeTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
         modeTitle.Text = "📡 Standard Mode: 1 Platform Only"
         modeDesc.Text = "Unlock Split Dual-Stream to broadcast to 2 platforms at once!"
+        splitUnlockBtn.Visible = true
         splitUnlockBtn.BackgroundColor3 = Color3.fromRGB(230, 140, 10)
         splitUnlockBtn.Text = "💎 49 R$ (Split Pass)"
         splitUnlockBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -8268,6 +8292,7 @@ layout.Parent = cardsContainer
 
 local platformRowCards: { [string]: Frame } = {}
 local platformSelectBtns: { [string]: TextButton } = {}
+local platformClickAreas: { [string]: TextButton } = {}
 
 -- 3. Dedicated Status Row for all platforms (Summary of current broadcast)
 local summaryRow = Instance.new("Frame")
@@ -8303,6 +8328,9 @@ local function getSelectedCount(): number
 end
 
 local function updateSummaryRow()
+    local locked = LocalPlayer:GetAttribute("LockedPlatform")
+    local isLocked = locked and locked ~= ""
+
     local names = {}
     for _, p in platformsList do
         if selectedPlatforms[p.Id] then
@@ -8311,40 +8339,76 @@ local function updateSummaryRow()
     end
 
     local count = #names
-    if count == 0 then
+    if isLocked then
+        summaryLabel.Text = `🔒 Locked Contract: {table.concat(names, " + ")} (Perform Rebirth to choose another!)`
+        summaryLabel.TextColor3 = Color3.fromRGB(130, 215, 255)
+        sumStroke.Color = Color3.fromRGB(52, 152, 219)
+    elseif count == 0 then
         summaryLabel.Text = "⚠️ No platform selected! Click a platform above to stream."
         summaryLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+        sumStroke.Color = Color3.fromRGB(231, 76, 60)
     elseif count == 1 then
-        summaryLabel.Text = `📊 Active Broadcast: {names[1]} (1 Platform | Standard Income)`
+        summaryLabel.Text = `📊 Selected Platform: {names[1]} (Click Confirm & Lock below)`
         summaryLabel.TextColor3 = Color3.fromRGB(220, 240, 255)
         sumStroke.Color = Color3.fromRGB(52, 152, 219)
     else
-        summaryLabel.Text = `⭐ SPLIT STREAM: {table.concat(names, " + ")} (+85% Cash & +50% Subs!)`
+        summaryLabel.Text = `⭐ SPLIT DUAL: {table.concat(names, " + ")} (+85% Cash & +50% Subs!)`
         summaryLabel.TextColor3 = Color3.fromRGB(255, 220, 100)
         sumStroke.Color = Color3.fromRGB(255, 215, 0)
     end
 end
 
 local function refreshPlatformRows()
+    local locked = LocalPlayer:GetAttribute("LockedPlatform")
+    local isLocked = locked and locked ~= ""
+    if isLocked then
+        syncWithLock()
+    end
+
     for _, p in platformsList do
         local card = platformRowCards[p.Id]
         local btn = platformSelectBtns[p.Id]
+        local clickArea = platformClickAreas[p.Id]
         if card and btn then
             local isSel = selectedPlatforms[p.Id] == true
             local stroke = card:FindFirstChildOfClass("UIStroke")
 
-            if isSel then
-                card.BackgroundColor3 = Color3.fromRGB(30, 42, 58)
-                if stroke then stroke.Color = Color3.fromRGB(46, 204, 113); stroke.Thickness = 2 end
-                btn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
-                btn.Text = "✔ SELECTED"
-                btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            if isLocked then
+                if clickArea then clickArea.Active = false end
+                btn.Active = false
+                btn.AutoButtonColor = false
+
+                if isSel then
+                    card.BackgroundColor3 = Color3.fromRGB(25, 38, 48)
+                    if stroke then stroke.Color = Color3.fromRGB(46, 204, 113); stroke.Thickness = 2 end
+                    btn.BackgroundColor3 = Color3.fromRGB(35, 75, 55)
+                    btn.Text = "✔ ACTIVE CONTRACT"
+                    btn.TextColor3 = Color3.fromRGB(100, 240, 130)
+                else
+                    card.BackgroundColor3 = Color3.fromRGB(18, 20, 26)
+                    if stroke then stroke.Color = Color3.fromRGB(35, 40, 50); stroke.Thickness = 1 end
+                    btn.BackgroundColor3 = Color3.fromRGB(28, 30, 38)
+                    btn.Text = "🔒 Locked"
+                    btn.TextColor3 = Color3.fromRGB(100, 110, 125)
+                end
             else
-                card.BackgroundColor3 = Color3.fromRGB(24, 28, 38)
-                if stroke then stroke.Color = Color3.fromRGB(50, 60, 80); stroke.Thickness = 1 end
-                btn.BackgroundColor3 = Color3.fromRGB(40, 50, 70)
-                btn.Text = "Select"
-                btn.TextColor3 = Color3.fromRGB(180, 195, 220)
+                if clickArea then clickArea.Active = true end
+                btn.Active = true
+                btn.AutoButtonColor = true
+
+                if isSel then
+                    card.BackgroundColor3 = Color3.fromRGB(30, 42, 58)
+                    if stroke then stroke.Color = Color3.fromRGB(46, 204, 113); stroke.Thickness = 2 end
+                    btn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+                    btn.Text = "✔ SELECTED"
+                    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                else
+                    card.BackgroundColor3 = Color3.fromRGB(24, 28, 38)
+                    if stroke then stroke.Color = Color3.fromRGB(50, 60, 80); stroke.Thickness = 1 end
+                    btn.BackgroundColor3 = Color3.fromRGB(40, 50, 70)
+                    btn.Text = "Select"
+                    btn.TextColor3 = Color3.fromRGB(180, 195, 220)
+                end
             end
         end
     end
@@ -8352,6 +8416,12 @@ local function refreshPlatformRows()
 end
 
 local function togglePlatform(platId: string)
+    local locked = LocalPlayer:GetAttribute("LockedPlatform")
+    if locked and locked ~= "" then
+        -- Platform choice is locked until Rebirth! Swapping is blocked.
+        return
+    end
+
     local hasSplit = LocalPlayer:GetAttribute("Owned_MultiStreamLicense") == true
 
     if not hasSplit then
