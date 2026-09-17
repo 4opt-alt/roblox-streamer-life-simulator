@@ -11,6 +11,18 @@ export type PlatformInfo = {
     LicensePrice: number,
 }
 
+export type CategoryInfo = {
+    Id: string,
+    Name: string,
+    Device: string,
+    Description: string,
+    Icon: string,
+    ColorHex: string,
+    MoneyMultiplier: number,
+    HypeMultiplier: number,
+    RequiresPC: boolean,
+}
+
 export type ConfigType = {
     IncomeIntervalSeconds: number,
     StarterMoney: number,
@@ -19,6 +31,8 @@ export type ConfigType = {
     BaseSubChance: number,
     MaxEnergy: number,
     EnergyDrainSeconds: number,
+    EnergyDrainPerSecond: number?,
+    EnergyRestRecoverySeconds: number?,
     EventCycleDurationSeconds: number,
     EventBoostDurationSeconds: number,
     EventMoneyMultiplier: number,
@@ -28,11 +42,16 @@ export type ConfigType = {
     MinChannelNameLength: number,
     MaxChannelNameLength: number,
     Platforms: { [string]: PlatformInfo },
+    Categories: { [string]: CategoryInfo },
     ViewerComments: { string },
+    IRLComments: { string }?,
+    GamingComments: { string }?,
+    JustChattingComments: { string }?,
     LowEnergyComments: { string },
     NoGameComments: { string },
     ProComments: { string },
     ViewerNames: { string },
+    Rebirth: any?,
 }
 
 local StreamConfig: ConfigType = {
