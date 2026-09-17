@@ -5955,8 +5955,9 @@ if not broadcastSuperChatRemote then
 end
 
 local MarketplaceService = game:GetService("MarketplaceService")
-local MULTISTREAM_GAMEPASS_ID = 99999999 -- Placeholder Gamepass ID
-local VIP_GAMEPASS_ID = 88888888 -- Placeholder VIP Gamepass ID
+-- Replace with your real Gamepass IDs from Roblox Creator Hub when publishing
+local MULTISTREAM_GAMEPASS_ID = 0 -- Set to real Gamepass ID on publish
+local VIP_GAMEPASS_ID = 0         -- Set to real VIP Gamepass ID on publish
 
 
 local function recalculateBonuses(player: Player)
