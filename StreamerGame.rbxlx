@@ -7949,11 +7949,156 @@ LocalPlayer:GetAttributeChangedSignal("IsStreamingTwitch"):Connect(updatePlatfor
 LocalPlayer:GetAttributeChangedSignal("IsStreamingTikTok"):Connect(updatePlatformsRow)
 updatePlatformsRow()
 
--- Row 3: Setup Quality Rank + Compact Energy Meter
+-- Row 3: Separated Platform Subscribers Bar (YouTube, Twitch, TikTok)
+local separatedSubsBar = Instance.new("Frame")
+separatedSubsBar.Name = "SeparatedSubsBar"
+separatedSubsBar.Size = UDim2.new(1, -16, 0, 38)
+separatedSubsBar.Position = UDim2.new(0, 8, 0, 72)
+separatedSubsBar.BackgroundTransparency = 1
+separatedSubsBar.BorderSizePixel = 0
+separatedSubsBar.Parent = streamerHub
+
+local subsLayout = Instance.new("UIListLayout")
+subsLayout.FillDirection = Enum.FillDirection.Horizontal
+subsLayout.Padding = UDim.new(0, 5)
+subsLayout.SortOrder = Enum.SortOrder.LayoutOrder
+subsLayout.Parent = separatedSubsBar
+
+-- Card 1: YouTube
+local ytCard = Instance.new("Frame")
+ytCard.Name = "YtCard"
+ytCard.LayoutOrder = 1
+ytCard.Size = UDim2.new(0.32, -2, 1, 0)
+ytCard.BackgroundColor3 = Color3.fromRGB(30, 16, 20)
+ytCard.BorderSizePixel = 0
+ytCard.Parent = separatedSubsBar
+local ytcCorner = Instance.new("UICorner"); ytcCorner.CornerRadius = UDim.new(0, 6); ytcCorner.Parent = ytCard
+local ytcStroke = Instance.new("UIStroke"); ytcStroke.Color = Color3.fromRGB(180, 45, 55); ytcStroke.Thickness = 1; ytcStroke.Parent = ytCard
+
+local ytHeader = Instance.new("TextLabel")
+ytHeader.Size = UDim2.new(1, 0, 0, 14)
+ytHeader.Position = UDim2.new(0, 0, 0, 3)
+ytHeader.BackgroundTransparency = 1
+ytHeader.Font = Enum.Font.GothamBold
+ytHeader.TextSize = 9
+ytHeader.TextColor3 = Color3.fromRGB(255, 120, 120)
+ytHeader.Text = "🔴 YouTube"
+ytHeader.Parent = ytCard
+
+local ytCountLabel = Instance.new("TextLabel")
+ytCountLabel.Name = "YtCountLabel"
+ytCountLabel.Size = UDim2.new(1, 0, 0, 18)
+ytCountLabel.Position = UDim2.new(0, 0, 0, 17)
+ytCountLabel.BackgroundTransparency = 1
+ytCountLabel.Font = Enum.Font.GothamBold
+ytCountLabel.TextSize = 11
+ytCountLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+ytCountLabel.Text = "0 Subs"
+ytCountLabel.Parent = ytCard
+
+-- Card 2: Twitch
+local twCard = Instance.new("Frame")
+twCard.Name = "TwCard"
+twCard.LayoutOrder = 2
+twCard.Size = UDim2.new(0.32, -2, 1, 0)
+twCard.BackgroundColor3 = Color3.fromRGB(26, 16, 36)
+twCard.BorderSizePixel = 0
+twCard.Parent = separatedSubsBar
+local twcCorner = Instance.new("UICorner"); twcCorner.CornerRadius = UDim.new(0, 6); twcCorner.Parent = twCard
+local twcStroke = Instance.new("UIStroke"); twcStroke.Color = Color3.fromRGB(140, 50, 220); twcStroke.Thickness = 1; twcStroke.Parent = twCard
+
+local twHeader = Instance.new("TextLabel")
+twHeader.Size = UDim2.new(1, 0, 0, 14)
+twHeader.Position = UDim2.new(0, 0, 0, 3)
+twHeader.BackgroundTransparency = 1
+twHeader.Font = Enum.Font.GothamBold
+twHeader.TextSize = 9
+twHeader.TextColor3 = Color3.fromRGB(210, 140, 255)
+twHeader.Text = "🟣 Twitch"
+twHeader.Parent = twCard
+
+local twCountLabel = Instance.new("TextLabel")
+twCountLabel.Name = "TwCountLabel"
+twCountLabel.Size = UDim2.new(1, 0, 0, 18)
+twCountLabel.Position = UDim2.new(0, 0, 0, 17)
+twCountLabel.BackgroundTransparency = 1
+twCountLabel.Font = Enum.Font.GothamBold
+twCountLabel.TextSize = 11
+twCountLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+twCountLabel.Text = "0 Subs"
+twCountLabel.Parent = twCard
+
+-- Card 3: TikTok
+local ttCard = Instance.new("Frame")
+ttCard.Name = "TtCard"
+ttCard.LayoutOrder = 3
+ttCard.Size = UDim2.new(0.32, -2, 1, 0)
+ttCard.BackgroundColor3 = Color3.fromRGB(12, 26, 32)
+ttCard.BorderSizePixel = 0
+ttCard.Parent = separatedSubsBar
+local ttcCorner = Instance.new("UICorner"); ttcCorner.CornerRadius = UDim.new(0, 6); ttcCorner.Parent = ttCard
+local ttcStroke = Instance.new("UIStroke"); ttcStroke.Color = Color3.fromRGB(0, 175, 200); ttcStroke.Thickness = 1; ttcStroke.Parent = ttCard
+
+local ttHeader = Instance.new("TextLabel")
+ttHeader.Size = UDim2.new(1, 0, 0, 14)
+ttHeader.Position = UDim2.new(0, 0, 0, 3)
+ttHeader.BackgroundTransparency = 1
+ttHeader.Font = Enum.Font.GothamBold
+ttHeader.TextSize = 9
+ttHeader.TextColor3 = Color3.fromRGB(80, 225, 245)
+ttHeader.Text = "🎵 TikTok"
+ttHeader.Parent = ttCard
+
+local ttCountLabel = Instance.new("TextLabel")
+ttCountLabel.Name = "TtCountLabel"
+ttCountLabel.Size = UDim2.new(1, 0, 0, 18)
+ttCountLabel.Position = UDim2.new(0, 0, 0, 17)
+ttCountLabel.BackgroundTransparency = 1
+ttCountLabel.Font = Enum.Font.GothamBold
+ttCountLabel.TextSize = 11
+ttCountLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+ttCountLabel.Text = "0 Fans"
+ttCountLabel.Parent = ttCard
+
+local function updatePlatformCounters()
+    local yt = (LocalPlayer:GetAttribute("YouTubeSubs") :: number?) or 0
+    local tw = (LocalPlayer:GetAttribute("TwitchSubs") :: number?) or 0
+    local tt = (LocalPlayer:GetAttribute("TikTokSubs") :: number?) or 0
+
+    ytCountLabel.Text = `{formatCompact(yt)} Subs`
+    twCountLabel.Text = `{formatCompact(tw)} Subs`
+    ttCountLabel.Text = `{formatCompact(tt)} Fans`
+
+    local isYT = LocalPlayer:GetAttribute("IsStreamingYouTube") == true
+    local isTwitch = LocalPlayer:GetAttribute("IsStreamingTwitch") == true
+    local isTikTok = LocalPlayer:GetAttribute("IsStreamingTikTok") == true
+
+    ytcStroke.Color = if isYT then Color3.fromRGB(255, 60, 60) else Color3.fromRGB(180, 45, 55)
+    ytcStroke.Thickness = if isYT then 1.8 else 1
+    ytCard.BackgroundColor3 = if isYT then Color3.fromRGB(48, 16, 22) else Color3.fromRGB(30, 16, 20)
+
+    twcStroke.Color = if isTwitch then Color3.fromRGB(185, 80, 255) else Color3.fromRGB(140, 50, 220)
+    twcStroke.Thickness = if isTwitch then 1.8 else 1
+    twCard.BackgroundColor3 = if isTwitch then Color3.fromRGB(40, 16, 55) else Color3.fromRGB(26, 16, 36)
+
+    ttcStroke.Color = if isTikTok then Color3.fromRGB(0, 235, 255) else Color3.fromRGB(0, 175, 200)
+    ttcStroke.Thickness = if isTikTok then 1.8 else 1
+    ttCard.BackgroundColor3 = if isTikTok then Color3.fromRGB(16, 38, 48) else Color3.fromRGB(12, 26, 32)
+end
+
+LocalPlayer:GetAttributeChangedSignal("YouTubeSubs"):Connect(updatePlatformCounters)
+LocalPlayer:GetAttributeChangedSignal("TwitchSubs"):Connect(updatePlatformCounters)
+LocalPlayer:GetAttributeChangedSignal("TikTokSubs"):Connect(updatePlatformCounters)
+LocalPlayer:GetAttributeChangedSignal("IsStreamingYouTube"):Connect(updatePlatformCounters)
+LocalPlayer:GetAttributeChangedSignal("IsStreamingTwitch"):Connect(updatePlatformCounters)
+LocalPlayer:GetAttributeChangedSignal("IsStreamingTikTok"):Connect(updatePlatformCounters)
+updatePlatformCounters()
+
+-- Row 4: Setup Quality Rank + Compact Energy Meter
 local setupBadge = Instance.new("Frame")
 setupBadge.Name = "SetupBadge"
 setupBadge.Size = UDim2.new(1, -16, 0, 22)
-setupBadge.Position = UDim2.new(0, 8, 0, 72)
+setupBadge.Position = UDim2.new(0, 8, 0, 114)
 setupBadge.BackgroundColor3 = Color3.fromRGB(20, 24, 34)
 setupBadge.BorderSizePixel = 0
 setupBadge.Parent = streamerHub
