@@ -8756,6 +8756,139 @@ local function togglePlatform(platId: string)
     refreshPlatformRows()
 end
 
+-- Render Individual Platform Rows
+for idx, p in platformsList do
+    local card = Instance.new("Frame")
+    card.Name = `Row_{p.Id}`
+    card.LayoutOrder = idx
+    card.Size = UDim2.new(1, 0, 0, 72)
+    card.BackgroundColor3 = Color3.fromRGB(24, 28, 38)
+    card.BorderSizePixel = 0
+    card.ZIndex = 33
+    card.Parent = cardsContainer
+
+    local cCorner = Instance.new("UICorner"); cCorner.CornerRadius = UDim.new(0, 10); cCorner.Parent = card
+    local cStroke = Instance.new("UIStroke"); cStroke.Color = Color3.fromRGB(50, 60, 80); cStroke.Thickness = 1; cStroke.Parent = card
+
+    -- Icon + Name Badge
+    local nameBadge = Instance.new("TextLabel")
+    nameBadge.Size = UDim2.new(0, 135, 0, 26)
+    nameBadge.Position = UDim2.new(0, 12, 0, 10)
+    nameBadge.BackgroundColor3 = Color3.fromHex(p.ColorHex)
+    nameBadge.Text = `{p.Icon} {p.Name}`
+    nameBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
+    nameBadge.Font = Enum.Font.GothamBold
+    nameBadge.TextSize = 12
+    nameBadge.ZIndex = 34
+    nameBadge.Parent = card
+    local nbCorner = Instance.new("UICorner"); nbCorner.CornerRadius = UDim.new(0, 6); nbCorner.Parent = nameBadge
+
+    -- Stats label
+    local stats = Instance.new("TextLabel")
+    stats.Size = UDim2.new(1, -275, 0, 26)
+    stats.Position = UDim2.new(0, 155, 0, 10)
+    stats.BackgroundTransparency = 1
+    stats.Font = Enum.Font.GothamBold
+    stats.TextSize = 12
+    stats.TextColor3 = Color3.fromRGB(255, 215, 0)
+    stats.TextXAlignment = Enum.TextXAlignment.Left
+    stats.Text = `💵 {p.MoneyMult} Cash  |  ⭐ {p.HypeMult} Subs`
+    stats.ZIndex = 34
+    stats.Parent = card
+
+    -- Description
+    local desc = Instance.new("TextLabel")
+    desc.Size = UDim2.new(1, -145, 0, 22)
+    desc.Position = UDim2.new(0, 12, 0, 40)
+    desc.BackgroundTransparency = 1
+    desc.Font = Enum.Font.Gotham
+    desc.TextSize = 11
+    desc.TextColor3 = Color3.fromRGB(165, 175, 195)
+    desc.TextXAlignment = Enum.TextXAlignment.Left
+    desc.Text = p.Desc
+    desc.ZIndex = 34
+    desc.Parent = card
+
+    -- Select Toggle Button
+    local selBtn = Instance.new("TextButton")
+    selBtn.Name = "SelectBtn"
+    selBtn.Size = UDim2.new(0, 115, 0, 38)
+    selBtn.Position = UDim2.new(1, -125, 0.5, -19)
+    selBtn.BackgroundColor3 = Color3.fromRGB(40, 50, 70)
+    selBtn.TextColor3 = Color3.fromRGB(180, 195, 220)
+    selBtn.Font = Enum.Font.GothamBold
+    selBtn.TextSize = 12
+    selBtn.Text = "Select"
+    selBtn.ZIndex = 35
+    selBtn.Parent = card
+    local sbCorner = Instance.new("UICorner"); sbCorner.CornerRadius = UDim.new(0, 8); sbCorner.Parent = selBtn
+
+    selBtn.MouseButton1Click:Connect(function()
+        togglePlatform(p.Id)
+    end)
+
+    -- Also clicking card row toggles
+    local clickArea = Instance.new("TextButton")
+    clickArea.Size = UDim2.new(1, -130, 1, 0)
+    clickArea.BackgroundTransparency = 1
+    clickArea.Text = ""
+    clickArea.ZIndex = 34
+    clickArea.Parent = card
+    clickArea.MouseButton1Click:Connect(function()
+        togglePlatform(p.Id)
+    end)
+
+    platformRowCards[p.Id] = card
+    platformSelectBtns[p.Id] = selBtn
+    platformClickAreas[p.Id] = clickArea
+end
+
+launchBtn.MouseButton1Click:Connect(function()
+    local existingLock = LocalPlayer:GetAttribute("LockedPlatform")
+    if existingLock and existingLock ~= "" then
+        backdrop.Visible = false
+        return
+    end
+
+    local selectedList = {}
+    for _, p in platformsList do
+        if selectedPlatforms[p.Id] then
+            table.insert(selectedList, p.Id)
+        end
+    end
+
+    if #selectedList == 0 then
+        table.insert(selectedList, "YouTube")
+    end
+
+    local platformArg = table.concat(selectedList, "+")
+    lockPlatformRemote:FireServer(platformArg)
+    backdrop.Visible = false
+end)
+
+LocalPlayer:GetAttributeChangedSignal("LockedPlatform"):Connect(function()
+    syncWithLock()
+    updateModeBanner()
+    refreshPlatformRows()
+    updateLockState()
+end)
+
+LocalPlayer:GetAttributeChangedSignal("Owned_MultiStreamLicense"):Connect(function()
+    updateModeBanner()
+    local hasSplit = LocalPlayer:GetAttribute("Owned_MultiStreamLicense") == true
+    if not hasSplit and getSelectedCount() > 1 then
+        for k in selectedPlatforms do
+            selectedPlatforms = { [k] = true }
+            break
+        end
+    end
+    refreshPlatformRows()
+    updateLockState()
+end)
+
+updateModeBanner()
+refreshPlatformRows()
+updateLockState()
 
 --------------------------------------------------------------------------------
 -- Open Menu Listener & Global Function
