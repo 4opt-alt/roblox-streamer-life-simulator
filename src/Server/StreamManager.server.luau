@@ -63,6 +63,38 @@ if not choiceResultRemote then
     choiceResultRemote.Parent = remotesFolder
 end
 
+-- 7. Lock Platform Contract (Client -> Server)
+local lockPlatformRemote = remotesFolder:FindFirstChild("LockPlatform") :: RemoteEvent?
+if not lockPlatformRemote then
+    lockPlatformRemote = Instance.new("RemoteEvent")
+    lockPlatformRemote.Name = "LockPlatform"
+    lockPlatformRemote.Parent = remotesFolder
+end
+
+-- 8. Perform Rebirth (Client -> Server)
+local performRebirthRemote = remotesFolder:FindFirstChild("PerformRebirth") :: RemoteEvent?
+if not performRebirthRemote then
+    performRebirthRemote = Instance.new("RemoteEvent")
+    performRebirthRemote.Name = "PerformRebirth"
+    performRebirthRemote.Parent = remotesFolder
+end
+
+-- 9. Rebirth Result (Server -> Client)
+local rebirthResultRemote = remotesFolder:FindFirstChild("RebirthResult") :: RemoteEvent?
+if not rebirthResultRemote then
+    rebirthResultRemote = Instance.new("RemoteEvent")
+    rebirthResultRemote.Name = "RebirthResult"
+    rebirthResultRemote.Parent = remotesFolder
+end
+
+-- 10. Prompt Platform Select Modal (Server -> Client)
+local promptPlatformSelectRemote = remotesFolder:FindFirstChild("PromptPlatformSelect") :: RemoteEvent?
+if not promptPlatformSelectRemote then
+    promptPlatformSelectRemote = Instance.new("RemoteEvent")
+    promptPlatformSelectRemote.Name = "PromptPlatformSelect"
+    promptPlatformSelectRemote.Parent = remotesFolder
+end
+
 -- State tracking
 local isStreaming: { [Player]: boolean } = {}
 local activePlatforms: { [Player]: string } = {}
