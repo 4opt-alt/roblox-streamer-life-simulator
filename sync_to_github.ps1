@@ -3,7 +3,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Continue'
 
 $env:Path = "$env:Path;C:\Users\lyutu\.tools\git\cmd;C:\Users\lyutu\.tools\bin"
-Set-Location 'C:\Users\lyutu\.gemini\antigravity\scratch\roblox-streamer-game'
+Set-Location $PSScriptRoot
 
 Write-Host '====================================================' -ForegroundColor Green
 Write-Host '   Roblox Streamer Simulator - Auto-Sync GitHub    ' -ForegroundColor Green

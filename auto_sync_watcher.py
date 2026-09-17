@@ -1,10 +1,10 @@
-﻿import os
+import os
 import sys
 import time
 import subprocess
 import shutil
 
-PROJECT_DIR = r"C:\Users\lyutu\.gemini\antigravity\scratch\roblox-streamer-game"
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 DESKTOP_RBXLX = r"C:\Users\lyutu\Desktop\StreamerGame.rbxlx"
 GIT_EXE = r"C:\Users\lyutu\.tools\git\cmd\git.exe"
 

@@ -2,7 +2,7 @@ import os
 import math
 
 def create_rbxlx():
-    base_dir = r"C:\Users\lyutu\.gemini\antigravity\scratch\roblox-streamer-game"
+    base_dir = os.path.dirname(os.path.abspath(__file__))
     src_dir = os.path.join(base_dir, "src")
     
     # Read source files
