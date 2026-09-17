@@ -6261,7 +6261,31 @@ local function startStream(player: Player, platformKey: string)
                     end
 
                     moneyObj.Value += totalMoney
-                    hypeObj.Value += totalHype
+
+                    -- Розподіл підписників по обраних стрім-платформах (YouTube, Twitch, TikTok)
+                    local currentYT = (player:GetAttribute("YouTubeSubs") :: number?) or 0
+                    local currentTW = (player:GetAttribute("TwitchSubs") :: number?) or 0
+                    local currentTT = (player:GetAttribute("TikTokSubs") :: number?) or 0
+
+                    local numPlatforms = #validPlatforms
+                    if numPlatforms > 0 then
+                        local perPlatformHype = math.max(1, math.floor(totalHype / numPlatforms))
+                        for _, pKey in validPlatforms do
+                            if pKey == "YouTube" then
+                                currentYT += perPlatformHype
+                            elseif pKey == "Twitch" then
+                                currentTW += perPlatformHype
+                            elseif pKey == "TikTok" then
+                                currentTT += perPlatformHype
+                            end
+                        end
+                        player:SetAttribute("YouTubeSubs", currentYT)
+                        player:SetAttribute("TwitchSubs", currentTW)
+                        player:SetAttribute("TikTokSubs", currentTT)
+                        hypeObj.Value = currentYT + currentTW + currentTT
+                    else
+                        hypeObj.Value += totalHype
+                    end
 
                     -- Оновлення рангу стрімера для HUD
                     local rankTitle = "Potato Setup"
