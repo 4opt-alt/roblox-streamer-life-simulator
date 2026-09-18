@@ -858,9 +858,19 @@ local function buildClipZapPage(app: PhoneConfig.AppConfig)
 	statsRow.Position = UDim2.new(0, 10, 0, 72)
 	statsRow.BackgroundTransparency = 1
 	statsRow.Parent = channelContent
+	-- ЗНАЙДЕНИЙ СПРАВЖНІЙ БАГ (не клавіша!): "SpaceEvenly" — це значення
+	-- Enum.UIFlexAlignment і належить властивості HorizontalFlex, а НЕ
+	-- Enum.HorizontalAlignment (у якого є лише Left/Center/Right). Стара
+	-- версія коду присвоювала неіснуюче значення властивості
+	-- HorizontalAlignment — у справжньому Roblox це кидає помилку одразу
+	-- при побудові сторінки ClipZap (яка виконується ще на старті скрипта,
+	-- в циклі build всіх сторінок), тож ВЕСЬ LocalScript зупинявся на цьому
+	-- рядку — і підключення клавіші/кліку внизу файлу просто ніколи не
+	-- виконувались. Ось чому ні "P", ні клік мишкою не працювали, хоча
+	-- підказка (яка будується РАНІШЕ за цей рядок) — з'являлась нормально.
 	local statsLayout = Instance.new("UIListLayout")
 	statsLayout.FillDirection = Enum.FillDirection.Horizontal
-	statsLayout.HorizontalAlignment = Enum.HorizontalAlignment.SpaceEvenly
+	statsLayout.HorizontalFlex = Enum.UIFlexAlignment.SpaceEvenly
 	statsLayout.Parent = statsRow
 
 	local function buildStatCell(caption: string): TextLabel
