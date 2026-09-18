@@ -53,11 +53,55 @@ local MAX_TILT_RADIANS = math.rad(7) -- невеликий нахил впере
 local STAND_ANIM_R15 = "rbxassetid://507766388"
 local STAND_ANIM_R6 = "rbxassetid://180435571"
 
+-- Звук їзди на гіроскутері: тихе рівне електричне гудіння двигуна/гіроскопів,
+-- що трохи "заводиться" гучніше при прискоренні — так, як звучить реальний
+-- електричний гіроскутер/ховерборд, а не тупіт ніг персонажа по підлозі.
+-- Якщо цей конкретний звук колись стане недоступний (буває з модерацією Roblox) —
+-- заміни ID тут: Studio → Toolbox → Audio → пошук "electric hum" / "hover" / "drone".
+local HOVER_SOUND_ID = "rbxassetid://9072278552" -- "Electrical Humming"
+local HOVER_SOUND_IDLE_VOLUME = 0.28
+local HOVER_SOUND_MAX_VOLUME = 0.68
+local HOVER_SOUND_IDLE_PITCH = 0.85
+local HOVER_SOUND_MAX_PITCH = 1.25
+
+-- Стандартні звуки кроків/бігу персонажа (з вбудованого Animate-скрипта Roblox) —
+-- їх треба вимкнути на час їзди, інакше чути "тупотіння", хоча персонаж стоїть на дошці.
+local DEFAULT_MOVEMENT_SOUND_NAMES = {
+    "Climbing", "FreeFalling", "GettingUp", "Jumping", "Landing", "Running", "Splash", "Swimming",
+}
+
+local function muteDefaultMovementSounds(character: Model): { [Sound]: number }
+    local muted: { [Sound]: number } = {}
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    local hrp = character:FindFirstChild("HumanoidRootPart")
+    for _, container in { humanoid, hrp } do
+        if container then
+            for _, name in DEFAULT_MOVEMENT_SOUND_NAMES do
+                local snd = container:FindFirstChild(name)
+                if snd and snd:IsA("Sound") and muted[snd] == nil then
+                    muted[snd] = snd.Volume
+                    snd.Volume = 0
+                end
+            end
+        end
+    end
+    return muted
+end
+
+local function restoreMutedSounds(muted: { [Sound]: number })
+    for snd, originalVolume in muted do
+        if snd and snd.Parent then
+            snd.Volume = originalVolume
+        end
+    end
+end
+
 type RiderData = {
     weld: WeldConstraint,
     animTrack: AnimationTrack?,
     throttle: number,
     steer: number,
+    mutedSounds: { [Sound]: number },
 }
 
 local function setupHoverboard()
@@ -130,6 +174,7 @@ local function setupHoverboard()
         if data.animTrack then
             data.animTrack:Stop()
         end
+        restoreMutedSounds(data.mutedSounds)
 
         local character = player.Character
         if character then
@@ -189,7 +234,9 @@ local function setupHoverboard()
             end
         end
 
-        riders[player] = { weld = weld, animTrack = animTrack, throttle = 0, steer = 0 }
+        local mutedSounds = muteDefaultMovementSounds(character)
+
+        riders[player] = { weld = weld, animTrack = animTrack, throttle = 0, steer = 0, mutedSounds = mutedSounds }
 
         setPromptAvailable(false)
         hoverMountRemote:FireClient(player, true)
@@ -263,19 +310,49 @@ local function setupHoverboard()
         bg.Parent = deck
     end
 
+    -- Звук двигуна гіроскутера (замість тупотіння ніг) — рівне гудіння на холостому ході,
+    -- трохи гучніше й вище тоном при прискоренні (див. HOVER_SOUND_* константи вище).
+    local hoverSound = deck:FindFirstChild("HoverEngineSound") :: Sound?
+    if not hoverSound then
+        hoverSound = Instance.new("Sound")
+        hoverSound.Name = "HoverEngineSound"
+        hoverSound.SoundId = HOVER_SOUND_ID
+        hoverSound.Looped = true
+        hoverSound.Volume = 0
+        hoverSound.PlaybackSpeed = HOVER_SOUND_IDLE_PITCH
+        hoverSound.RollOffMaxDistance = 60
+        hoverSound.Parent = deck
+    end
+
     local spawnPosition = Vector3.new(14, 2.6, -42)
 
     -- Цикл керування рухом гіроскутера
     RunService.Heartbeat:Connect(function()
         if not deck or not bv or not bav or not bg then return end
 
+        local isRiding = next(riders) ~= nil
         local throttle, steer = 0, 0
         for _, data in riders do
             throttle, steer = data.throttle, data.steer
             break -- гіроскутер одномісний
         end
 
-        if throttle ~= 0 or steer ~= 0 or next(riders) ~= nil then
+        -- Звук двигуна: грає весь час поки хтось їде (навіть на холостому ході),
+        -- гучнішає й вищає тоном пропорційно до того, наскільки сильно тиснуть газ.
+        if hoverSound then
+            if isRiding and not hoverSound.IsPlaying then
+                hoverSound:Play()
+            elseif not isRiding and hoverSound.IsPlaying then
+                hoverSound:Stop()
+            end
+            if isRiding then
+                local speedFrac = math.abs(throttle)
+                hoverSound.Volume = HOVER_SOUND_IDLE_VOLUME + speedFrac * (HOVER_SOUND_MAX_VOLUME - HOVER_SOUND_IDLE_VOLUME)
+                hoverSound.PlaybackSpeed = HOVER_SOUND_IDLE_PITCH + speedFrac * (HOVER_SOUND_MAX_PITCH - HOVER_SOUND_IDLE_PITCH)
+            end
+        end
+
+        if throttle ~= 0 or steer ~= 0 or isRiding then
             -- Персонаж стоїть боком (розвернутий на 90° від LookVector дошки),
             -- тож "вперед" — це туди, куди дивиться обличчя: вздовж -RightVector,
             -- а не вздовж LookVector (інакше дошка їхала б "як машина" боком).
