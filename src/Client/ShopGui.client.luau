@@ -267,7 +267,7 @@ end)
 local ProximityPromptService = game:GetService("ProximityPromptService")
 ProximityPromptService.PromptTriggered:Connect(function(prompt: ProximityPrompt, player: Player)
     if player == LocalPlayer then
-        if prompt.Name == "TechPrompt" or prompt.Name == "GroceryPrompt" then
+        if prompt.Name == "TechPrompt" or prompt.Name == "GroceryPrompt" or prompt.Name == "VehiclePrompt" then
             openShop()
         end
     end

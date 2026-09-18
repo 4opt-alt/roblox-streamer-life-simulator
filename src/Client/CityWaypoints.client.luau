@@ -53,6 +53,36 @@ local waypoints: { WaypointData } = {
         Color = Color3.fromRGB(255, 215, 0),
         GetPosition = function() return Vector3.new(-46, 12, 130) end,
     },
+    {
+        Name = "SkyGlide Boards",
+        Icon = "🛹",
+        Color = Color3.fromRGB(60, 150, 255),
+        GetPosition = function() return Vector3.new(46, 7, 250) end,
+    },
+    {
+        Name = "Splash Street Pool",
+        Icon = "🏊",
+        Color = Color3.fromRGB(60, 190, 255),
+        GetPosition = function() return Vector3.new(-46, 4, 250) end,
+    },
+    {
+        Name = "Colosseum",
+        Icon = "🏛️",
+        Color = Color3.fromRGB(255, 215, 0),
+        GetPosition = function() return Vector3.new(0, 12, 460) end,
+    },
+    {
+        Name = "Wild Stream Zoo",
+        Icon = "🦁",
+        Color = Color3.fromRGB(120, 220, 100),
+        GetPosition = function() return Vector3.new(130, 7, 320) end,
+    },
+    {
+        Name = "Celebrity Row",
+        Icon = "🏡",
+        Color = Color3.fromRGB(255, 200, 80),
+        GetPosition = function() return Vector3.new(0, 7, -190) end,
+    },
 }
 
 -- Create Screen Markers

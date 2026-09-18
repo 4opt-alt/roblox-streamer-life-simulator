@@ -128,6 +128,82 @@ def create_rbxlx(auto_push=True):
     HOVER_WHEEL_BLACK = 4278979598 # rgb(12, 12, 14) - колеса
     HOVER_LED_BLUE = 4282166015    # rgb(60, 170, 255) - синя LED-підсвітка
 
+    # Кольори для розширення міста (басейн, зоопарк, колізей, особняки)
+    POOL_WATER = 4282430694        # rgb(64,180,230)
+    POOL_TILE = 4293651425         # rgb(235,235,225)
+    POOL_TILE_BLUE = 4282158270    # rgb(60,140,190)
+    ZOO_GRASS = 4282810940         # rgb(70,130,60)
+    ZOO_FENCE = 4285419570         # rgb(110,80,50)
+    ZOO_ROCK = 4286082660          # rgb(120,110,100)
+    MANSION_WHITE = 4294308584     # rgb(245,242,232)
+    MANSION_ROOF_DARK = 4280821808 # rgb(40,40,48)
+    MANSION_GATE = 4279505944      # rgb(20,20,24)
+    COLOSSEUM_STONE = 4291080332   # rgb(196,176,140)
+    COLOSSEUM_SAND = 4292260480    # rgb(214,178,128)
+    SILVER_COLOR = 4290692040      # rgb(190,195,200)
+    BRONZE_COLOR = 4288043570      # rgb(150,90,50)
+    LAMP_WARM = 4294959540         # rgb(255,225,180)
+    GLASS_BLUE = 4287419135        # rgb(140,210,255)
+
+    badge_counter = [3000]
+    def label_children(text, bg_color=(0.08, 0.12, 0.18), stroke_color=(0.2, 0.8, 1.0), width=220, height=46, offset_y=3.5):
+        badge_counter[0] += 1
+        bid = f"RBX_Badge_{badge_counter[0]}"
+        return f'''
+				<Item class="BillboardGui" referent="{bid}">
+					<Properties>
+						<string name="Name">Badge</string>
+						<Vector3 name="StudsOffset"><X>0</X><Y>{offset_y}</Y><Z>0</Z></Vector3>
+						<UDim2 name="Size"><XS>0</XS><XO>{width}</XO><YS>0</YS><YO>{height}</YO></UDim2>
+						<bool name="AlwaysOnTop">true</bool>
+						<float name="MaxDistance">100</float>
+						<float name="LightInfluence">0</float>
+					</Properties>
+					<Item class="Frame" referent="{bid}_F">
+						<Properties>
+							<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
+							<Color3 name="BackgroundColor3"><R>{bg_color[0]}</R><G>{bg_color[1]}</G><B>{bg_color[2]}</B></Color3>
+							<float name="BackgroundTransparency">0.2</float>
+						</Properties>
+						<Item class="UICorner" referent="{bid}_C">
+							<Properties><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
+						</Item>
+						<Item class="UIStroke" referent="{bid}_S">
+							<Properties>
+								<Color3 name="Color"><R>{stroke_color[0]}</R><G>{stroke_color[1]}</G><B>{stroke_color[2]}</B></Color3>
+								<float name="Thickness">2</float>
+							</Properties>
+						</Item>
+						<Item class="TextLabel" referent="{bid}_L">
+							<Properties>
+								<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
+								<float name="BackgroundTransparency">1</float>
+								<string name="Text">{text}</string>
+								<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
+								<token name="Font">17</token>
+								<float name="TextSize">15</float>
+							</Properties>
+						</Item>
+					</Item>
+				</Item>'''
+
+    prompt_counter = [3000]
+    def shop_children(prompt_name, object_text, action_text, badge_text, bg_color=(0.08, 0.12, 0.18), stroke_color=(0.2, 0.8, 1.0)):
+        prompt_counter[0] += 1
+        pid = f"RBX_{prompt_name}_{prompt_counter[0]}"
+        return f'''
+				<Item class="ProximityPrompt" referent="{pid}">
+					<Properties>
+						<string name="Name">{prompt_name}</string>
+						<string name="ObjectText">{object_text}</string>
+						<string name="ActionText">{action_text}</string>
+						<float name="MaxActivationDistance">12</float>
+						<float name="HoldDuration">0</float>
+						<token name="KeyboardKeyCode">101</token>
+						<bool name="RequiresLineOfSight">false</bool>
+					</Properties>
+				</Item>''' + label_children(badge_text, bg_color, stroke_color)
+
     city_parts = []
 
     # =========================================================================
@@ -505,6 +581,206 @@ def create_rbxlx(auto_push=True):
     city_parts.append(make_part("LB_BackPanel", (15, 11, 0.5), (-46, 9.5, 142.3), color=DARK_WALL, material=256))
     city_parts.append(make_part("LB_NeonGlow", (15.4, 11.4, 0.1), (-46, 9.5, 142.35), color=GOLD_COLOR, material=288,
                                 light=("PointLight", (1.0, 0.85, 0.0), 2.0, 22)))
+
+    # =========================================================================
+    # 7. NORTH AVENUE — продовження головної дороги на північ, до нових районів
+    #    (Vehicle Shop, Pool, Zoo, Colosseum). Стикується з MainRoadAsphalt (Z до 220).
+    # =========================================================================
+    city_parts.append(make_part("NorthAvenueAsphalt", (28, 0.4, 210), (0, 0.2, 325), color=ROAD_ASPHALT, material=256))
+    for z_line in range(230, 420, 16):
+        city_parts.append(make_part("NorthAveCenterLine", (0.5, 0.42, 10), (0, 0.22, z_line), color=ROAD_MARK_YELLOW, material=288))
+    city_parts.append(make_part("NorthAveEdgeL", (0.5, 0.42, 208), (-13, 0.22, 325), color=ROAD_MARK_WHITE, material=256))
+    city_parts.append(make_part("NorthAveEdgeR", (0.5, 0.42, 208), (13, 0.22, 325), color=ROAD_MARK_WHITE, material=256))
+    city_parts.append(make_part("NorthAveSidewalkL", (10, 0.8, 210), (-19, 0.4, 325), color=SIDEWALK_GREY, material=800))
+    city_parts.append(make_part("NorthAveSidewalkR", (10, 0.8, 210), (19, 0.4, 325), color=SIDEWALK_GREY, material=800))
+    for z_light in (250, 320, 390):
+        city_parts.append(make_part("NAvePoleL", (0.6, 14, 0.6), (-23, 7, z_light), color=DESK_LEGS, material=800))
+        city_parts.append(make_part("NAveLampL", (1.2, 0.4, 1.2), (-20.5, 13.6, z_light), color=4294967295, material=288,
+                                    light=("PointLight", (1.0, 0.9, 0.6), 2.2, 26)))
+        city_parts.append(make_part("NAvePoleR", (0.6, 14, 0.6), (23, 7, z_light), color=DESK_LEGS, material=800))
+        city_parts.append(make_part("NAveLampR", (1.2, 0.4, 1.2), (20.5, 13.6, z_light), color=4294967295, material=288,
+                                    light=("PointLight", (1.0, 0.9, 0.6), 2.2, 26)))
+
+    # =========================================================================
+    # 8. VEHICLE SHOP — "SkyGlide Board Shop" (окремий магазин гіроскутерів, X=46, Z=250)
+    #    Та сама generic ShopConfig-система: тут просто інша ProximityPrompt ("VehiclePrompt"),
+    #    яку відкриває ShopGui.client.luau (потрібно додати назву промпта в клієнтський скрипт).
+    # =========================================================================
+    city_parts.append(make_part("VShopFloor", (36, 1, 32), (46, 0.5, 250), color=DARK_WALL, material=256))
+    city_parts.append(make_part("VShopRoof", (38, 1.5, 34), (46, 16.5, 250), color=DARK_WALL, material=256))
+    city_parts.append(make_part("VShopBackWall", (1, 15, 32), (64.5, 8.5, 250), color=DARK_WALL, material=256))
+    city_parts.append(make_part("VShopSideWall1", (36, 15, 1), (46, 8.5, 233.5), color=DARK_WALL, material=256))
+    city_parts.append(make_part("VShopSideWall2", (36, 15, 1), (46, 8.5, 266.5), color=DARK_WALL, material=256))
+    city_parts.append(make_part("VShopGlassFront", (1, 15, 20), (27.5, 8.5, 250), color=HOVER_LED_BLUE, material=304, transparency=0.4))
+    city_parts.append(make_part("VShopSignBoard", (1, 3.5, 24), (27.0, 17.5, 250), color=DARK_WALL, material=256))
+    city_parts.append(make_part("VShopSignNeon", (0.2, 2.5, 23), (26.4, 17.5, 250), color=HOVER_LED_BLUE, material=288,
+                                light=("PointLight", (0.3, 0.6, 1.0), 2.5, 30)))
+
+    vshop_counter_children = shop_children(
+        "VehiclePrompt",
+        "SkyGlide Board Shop",
+        "Купити гіроскутер (E)",
+        "🛹 SkyGlide Boards [E]",
+        bg_color=(0.08, 0.10, 0.20), stroke_color=(0.3, 0.6, 1.0))
+    city_parts.append(make_part("VShopCounter", (14, 3.5, 2.5), (46, 2.25, 252), color=DESK_TOP, material=256, children_xml=vshop_counter_children))
+    city_parts.append(make_part("VShopShowcaseGlass", (13.6, 1.5, 0.2), (46, 4.75, 252), color=HOVER_LED_BLUE, material=304, transparency=0.4))
+    # Демонстраційні дошки на підставках у вітрині
+    city_parts.append(make_part("VShopDisplayBoard1", (1.4, 0.25, 3.8), (40, 2.3, 240), color=HOVER_NAVY_DARK, material=256))
+    city_parts.append(make_part("VShopDisplayGlow1", (0.5, 0.05, 3.2), (40, 2.44, 240), color=RGB_PURPLE, material=288))
+    city_parts.append(make_part("VShopDisplayBoard2", (1.4, 0.25, 3.8), (52, 2.3, 240), color=HOVER_NAVY_DARK, material=256))
+    city_parts.append(make_part("VShopDisplayGlow2", (0.5, 0.05, 3.2), (52, 2.44, 240), color=HOVER_LED_BLUE, material=288))
+
+    # =========================================================================
+    # 9. SPLASH STREET POOL — міський басейн для стрімів (X=-46, Z=250)
+    # =========================================================================
+    city_parts.append(make_part("PoolDeck", (44, 1, 36), (-46, 0.5, 250), color=POOL_TILE, material=256))
+    city_parts.append(make_part("PoolWater", (30, 1, 20), (-46, 0.55, 250), color=POOL_WATER, material=304, transparency=0.25, can_collide=False))
+    city_parts.append(make_part("PoolBorderN", (32, 0.4, 1), (-46, 0.7, 240), color=POOL_TILE_BLUE, material=256))
+    city_parts.append(make_part("PoolBorderS", (32, 0.4, 1), (-46, 0.7, 260), color=POOL_TILE_BLUE, material=256))
+    city_parts.append(make_part("PoolBorderE", (1, 0.4, 20), (-30, 0.7, 250), color=POOL_TILE_BLUE, material=256))
+    city_parts.append(make_part("PoolBorderW", (1, 0.4, 20), (-62, 0.7, 250), color=POOL_TILE_BLUE, material=256))
+
+    # Шезлонги вздовж північної (z=234, обличчям на південь до води) та південної (z=266) смуг деку
+    lounge_spots = [(-60, 234, 0), (-52, 234, 0), (-40, 234, 0), (-32, 234, 0), (-60, 266, 180), (-32, 266, 180)]
+    for i, (lx, lz, lry) in enumerate(lounge_spots):
+        back_z = lz + (2.0 if lry == 0 else -2.0)
+        city_parts.append(make_part(f"LoungeChair{i+1}", (2.0, 0.6, 4.4), (lx, 0.8, lz), rot=(0, lry, 0), color=POOL_TILE, material=816))
+        city_parts.append(make_part(f"LoungeChairBack{i+1}", (2.0, 1.6, 0.3), (lx, 1.4, back_z), rot=(-20, lry, 0), color=POOL_TILE_BLUE, material=816))
+
+    for i, (ux, uz) in enumerate([(-38, 238), (-54, 262)]):
+        city_parts.append(make_part(f"PoolUmbrellaPole{i+1}", (0.3, 6.5, 0.3), (ux, 3.25, uz), shape=2, color=DESK_LEGS, material=800))
+        city_parts.append(make_part(f"PoolUmbrellaCanopy{i+1}", (0.6, 6.5, 6.5), (ux, 6.6, uz), rot=(0, 0, 90), shape=2, color=RGB_CYAN if i == 0 else GOLD_COLOR, material=816))
+
+    pool_sign_children = label_children("🏊 Splash Street Pool — Streaming Zone", bg_color=(0.06, 0.14, 0.22), stroke_color=(0.3, 0.75, 1.0))
+    city_parts.append(make_part("PoolSignPost", (0.6, 8, 0.6), (-46, 4, 232), color=DESK_LEGS, material=800, children_xml=pool_sign_children))
+    city_parts.append(make_part("PoolFenceGlassN", (32, 1.6, 0.15), (-46, 1.6, 233), color=POOL_TILE_BLUE, material=304, transparency=0.55))
+    city_parts.append(make_part("PoolFenceGlassS", (32, 1.6, 0.15), (-46, 1.6, 267), color=POOL_TILE_BLUE, material=304, transparency=0.55))
+
+    # =========================================================================
+    # 10. TOP STREAMERS COLOSSEUM — арена, де обирають найкращого стрімера (X=0, Z=460)
+    # =========================================================================
+    COL_CX, COL_CZ, COL_R = 0, 460, 50
+    SEGMENTS = 28
+    GATE_SEGMENTS = {13, 14, 15}  # розрив кільця = вхід з боку North Avenue (південь)
+    seg_deg = 360 / SEGMENTS
+    seg_width = (2 * math.pi * COL_R / SEGMENTS) * 1.05
+    for i in range(SEGMENTS):
+        if i in GATE_SEGMENTS:
+            continue
+        ang = math.radians(i * seg_deg)
+        sx = COL_CX + COL_R * math.sin(ang)
+        sz = COL_CZ + COL_R * math.cos(ang)
+        city_parts.append(make_part(f"ColosseumWall{i}", (seg_width, 22, 3), (sx, 11, sz), rot=(0, i * seg_deg, 0), color=COLOSSEUM_STONE, material=1296))
+        city_parts.append(make_part(f"ColosseumTrim{i}", (seg_width, 1.2, 3.6), (sx, 22.6, sz), rot=(0, i * seg_deg, 0), color=MANSION_ROOF_DARK, material=256))
+
+    # Кругла піщана арена (циліндр, покладений пласко: rot=(0,0,90) ставить вісь вертикально)
+    city_parts.append(make_part("ColosseumFloor", (1.5, COL_R * 2 - 4, COL_R * 2 - 4), (COL_CX, 0.5, COL_CZ), rot=(0, 0, 90), shape=2, color=COLOSSEUM_SAND, material=256))
+    city_parts.append(make_part("ColosseumInnerRing", (1.6, COL_R * 1.3, COL_R * 1.3), (COL_CX, 0.55, COL_CZ), rot=(0, 0, 90), shape=2, color=COLOSSEUM_STONE, material=1296))
+
+    # П'єдестал ТОП-3 стрімерів у центрі арени
+    city_parts.append(make_part("PodiumFirst", (7, 4, 7), (COL_CX, 2, COL_CZ), color=GOLD_COLOR, material=800))
+    city_parts.append(make_part("PodiumSecond", (6, 2.6, 6), (COL_CX - 9, 1.3, COL_CZ), color=SILVER_COLOR, material=800))
+    city_parts.append(make_part("PodiumThird", (6, 2.0, 6), (COL_CX + 9, 1.0, COL_CZ), color=BRONZE_COLOR, material=800))
+    podium_sign_children = label_children("🥇 TOP СТРІМЕР СЕРВЕРА", bg_color=(0.2, 0.16, 0.0), stroke_color=(1.0, 0.85, 0.0), width=260, height=50)
+    city_parts.append(make_part("PodiumFirstFlag", (0.4, 6, 0.4), (COL_CX, 7, COL_CZ), color=DESK_LEGS, material=800, children_xml=podium_sign_children))
+
+    # Велика вивіска на північній внутрішній стіні арени (навпроти входу)
+    colosseum_title_children = label_children("🏛️ COLOSSEUM OF STREAMERS", bg_color=(0.12, 0.09, 0.02), stroke_color=(1.0, 0.85, 0.0), width=320, height=56)
+    city_parts.append(make_part("ColosseumSignPanel", (22, 8, 0.6), (COL_CX, 15, COL_CZ + COL_R - 4), color=MANSION_ROOF_DARK, material=256, children_xml=colosseum_title_children))
+    city_parts.append(make_part("ColosseumSignNeon", (21.4, 7.4, 0.1), (COL_CX, 15, COL_CZ + COL_R - 3.65), color=GOLD_COLOR, material=288,
+                                light=("PointLight", (1.0, 0.85, 0.0), 3.0, 34)))
+
+    # Ворота-арка з боку North Avenue (південний розрив кільця)
+    gate_ang = math.radians(14 * seg_deg)
+    gate_x = COL_CX + COL_R * math.sin(gate_ang)
+    gate_z = COL_CZ + COL_R * math.cos(gate_ang)
+    city_parts.append(make_part("ColosseumArchL", (4, 24, 4), (gate_x - 19, 12, gate_z), color=COLOSSEUM_STONE, material=1296))
+    city_parts.append(make_part("ColosseumArchR", (4, 24, 4), (gate_x + 19, 12, gate_z), color=COLOSSEUM_STONE, material=1296))
+    arch_sign_children = label_children("🏟️ Colosseum of Streamers", bg_color=(0.12, 0.09, 0.02), stroke_color=(1.0, 0.85, 0.0))
+    city_parts.append(make_part("ColosseumArchTop", (44, 4, 4), (gate_x, 25, gate_z), color=COLOSSEUM_STONE, material=1296, children_xml=arch_sign_children))
+
+    # =========================================================================
+    # 11. WILD STREAM ZOO — невеликий зоопарк для ІРЛ-стрімів (X=130, Z=320)
+    # =========================================================================
+    ZOO_CX, ZOO_CZ = 130, 320
+    city_parts.append(make_part("ZooGround", (64, 0.6, 64), (ZOO_CX, 0.3, ZOO_CZ), color=ZOO_GRASS, material=1280))
+    city_parts.append(make_part("ZooFenceN", (64, 3.4, 1), (ZOO_CX, 1.7, ZOO_CZ - 32), color=ZOO_FENCE, material=272))
+    city_parts.append(make_part("ZooFenceS", (64, 3.4, 1), (ZOO_CX, 1.7, ZOO_CZ + 32), color=ZOO_FENCE, material=272))
+    city_parts.append(make_part("ZooFenceE", (1, 3.4, 64), (ZOO_CX + 32, 1.7, ZOO_CZ), color=ZOO_FENCE, material=272))
+    city_parts.append(make_part("ZooFenceW1", (1, 3.4, 20), (ZOO_CX - 32, 1.7, ZOO_CZ - 22), color=ZOO_FENCE, material=272))
+    city_parts.append(make_part("ZooFenceW2", (1, 3.4, 20), (ZOO_CX - 32, 1.7, ZOO_CZ + 22), color=ZOO_FENCE, material=272))
+    zoo_gate_children = label_children("🦁 Wild Stream Zoo — IRL Content Zone", bg_color=(0.08, 0.16, 0.06), stroke_color=(0.4, 0.9, 0.3), width=280)
+    city_parts.append(make_part("ZooGatePost", (1.2, 8, 1.2), (ZOO_CX - 32, 4, ZOO_CZ), color=ZOO_FENCE, material=272, children_xml=zoo_gate_children))
+    # Внутрішні перегородки на 4 вольєри
+    city_parts.append(make_part("ZooDividerNS", (0.8, 2.8, 60), (ZOO_CX, 1.4, ZOO_CZ), color=ZOO_FENCE, material=272))
+    city_parts.append(make_part("ZooDividerEW", (60, 2.8, 0.8), (ZOO_CX, 1.4, ZOO_CZ), color=ZOO_FENCE, material=272))
+
+    # Лев (Lion) — X<CX, Z<CZ
+    city_parts.append(make_part("LionBody", (3.2, 2.2, 5.2), (ZOO_CX - 16, 1.6, ZOO_CZ - 16), color=4294956800, material=816))
+    city_parts.append(make_part("LionMane", (2.6, 2.6, 2.6), (ZOO_CX - 16, 2.3, ZOO_CZ - 18.5), shape=1, color=BRONZE_COLOR, material=816))
+    city_parts.append(make_part("LionHead", (1.6, 1.6, 1.6), (ZOO_CX - 16, 2.3, ZOO_CZ - 18.5), shape=1, color=4294956800, material=816))
+    city_parts.append(make_part("LionRock", (3, 1.4, 2), (ZOO_CX - 19, 0.7, ZOO_CZ - 12), shape=1, color=ZOO_ROCK, material=1296))
+
+    # Жираф (Giraffe) — X>CX, Z<CZ
+    city_parts.append(make_part("GiraffeLegs", (1.6, 5.5, 3.2), (ZOO_CX + 16, 2.75, ZOO_CZ - 16), color=4294956800, material=816))
+    city_parts.append(make_part("GiraffeNeck", (1.0, 4.5, 1.0), (ZOO_CX + 16, 7.5, ZOO_CZ - 17.5), rot=(-15, 0, 0), color=4294956800, material=816))
+    city_parts.append(make_part("GiraffeHead", (1.2, 1.4, 1.8), (ZOO_CX + 16, 9.7, ZOO_CZ - 19), color=4294956800, material=816))
+    city_parts.append(make_part("GiraffeOssicone1", (0.2, 0.6, 0.2), (ZOO_CX + 15.6, 10.5, ZOO_CZ - 19.3), color=DESK_LEGS, material=816))
+    city_parts.append(make_part("GiraffeOssicone2", (0.2, 0.6, 0.2), (ZOO_CX + 16.4, 10.5, ZOO_CZ - 19.3), color=DESK_LEGS, material=816))
+
+    # Слон (Elephant) — X<CX, Z>CZ
+    city_parts.append(make_part("ElephantBody", (4.4, 3.6, 6.4), (ZOO_CX - 16, 2.2, ZOO_CZ + 16), color=SIDEWALK_GREY, material=816))
+    city_parts.append(make_part("ElephantHead", (2.6, 2.6, 2.0), (ZOO_CX - 16, 2.6, ZOO_CZ + 13), color=SIDEWALK_GREY, material=816))
+    city_parts.append(make_part("ElephantTrunk", (0.7, 2.4, 0.7), (ZOO_CX - 16, 1.4, ZOO_CZ + 11.4), rot=(35, 0, 0), color=SIDEWALK_GREY, material=816))
+    city_parts.append(make_part("ElephantEarL", (0.3, 1.8, 1.6), (ZOO_CX - 17.4, 2.9, ZOO_CZ + 13), color=DARK_WALL, material=816))
+    city_parts.append(make_part("ElephantEarR", (0.3, 1.8, 1.6), (ZOO_CX - 14.6, 2.9, ZOO_CZ + 13), color=DARK_WALL, material=816))
+
+    # Пінгвіни (Penguins) — X>CX, Z>CZ, з невеликим ставком
+    city_parts.append(make_part("PenguinPond", (7, 0.5, 7), (ZOO_CX + 16, 0.25, ZOO_CZ + 16), rot=(0, 0, 90), shape=2, color=POOL_WATER, material=304, transparency=0.2))
+    for i, (px, pz) in enumerate([(ZOO_CX + 14, ZOO_CZ + 20), (ZOO_CX + 18, ZOO_CZ + 21), (ZOO_CX + 16, ZOO_CZ + 19)]):
+        city_parts.append(make_part(f"PenguinBody{i+1}", (0.8, 1.4, 0.8), (px, 0.9, pz), shape=1, color=4281545523, material=816))
+        city_parts.append(make_part(f"PenguinBelly{i+1}", (0.5, 1.0, 0.4), (px, 0.9, pz - 0.3), color=4294967295, material=816))
+
+    # =========================================================================
+    # 12. CELEBRITY ROW — вулиця з розкішними особняками відомих стрімерів (на південь від будинку)
+    # =========================================================================
+    city_parts.append(make_part("CelebrityRowAsphalt", (28, 0.4, 190), (0, 0.2, -165), color=ROAD_ASPHALT, material=256))
+    for z_line in range(-100, -255, -16):
+        city_parts.append(make_part("CelebRowCenterLine", (0.5, 0.42, 10), (0, 0.22, z_line), color=ROAD_MARK_YELLOW, material=288))
+
+    def build_mansion(cx, cz, label_text, accent_color, scale=1.0):
+        w = 34 * scale
+        d = 26 * scale
+        h = 16 * scale
+        parts = []
+        parts.append(make_part(f"MansionFoundation_{cx}_{cz}", (w + 6, 0.6, d + 10), (cx, 0.3, cz), color=SIDEWALK_GREY, material=800))
+        parts.append(make_part(f"MansionBody_{cx}_{cz}", (w, h, d), (cx, h / 2 + 0.6, cz), color=MANSION_WHITE, material=256))
+        parts.append(make_part(f"MansionRoof_{cx}_{cz}", (w + 4, 1.6, d + 4), (cx, h + 1.4, cz), color=MANSION_ROOF_DARK, material=256))
+        # Фасад дивиться на +Z (у бік проспекту Celebrity Row, який іде на північ до головної дороги)
+        parts.append(make_part(f"MansionGlass_{cx}_{cz}", (w * 0.55, h * 0.55, 0.4), (cx, h * 0.5 + 0.6, cz + d / 2 + 0.3), color=GLASS_BLUE, material=304, transparency=0.35))
+        for cxi in (-1, 1):
+            parts.append(make_part(f"MansionColumn_{cx}_{cz}_{cxi}", (1.3, h * 0.85, 1.3), (cx + cxi * (w * 0.36), h * 0.42 + 0.6, cz + d / 2 + 1.5), color=MANSION_WHITE, material=256))
+        parts.append(make_part(f"MansionBalcony_{cx}_{cz}", (w * 0.6, 0.6, 3), (cx, h * 0.7, cz + d / 2 + 1.5), color=accent_color, material=256))
+        # Невеликий басейн перед будинком (з боку фасаду)
+        parts.append(make_part(f"MansionPool_{cx}_{cz}", (0.6, 14, 14), (cx, 0.35, cz + d / 2 + 12), rot=(0, 0, 90), shape=2, color=POOL_WATER, material=304, transparency=0.25, can_collide=False))
+        # Ворота при в'їзді (з боку дороги) + вивіска
+        gate_children = label_children(label_text, bg_color=(0.08, 0.07, 0.02), stroke_color=(1.0, 0.85, 0.2))
+        parts.append(make_part(f"MansionGateL_{cx}_{cz}", (1.2, 6, 1.2), (cx - 8, 3, cz + d / 2 + 24), color=MANSION_GATE, material=800))
+        parts.append(make_part(f"MansionGateR_{cx}_{cz}", (1.2, 6, 1.2), (cx + 8, 3, cz + d / 2 + 24), color=MANSION_GATE, material=800, children_xml=gate_children))
+        parts.append(make_part(f"MansionGateBar_{cx}_{cz}", (17, 0.4, 0.4), (cx, 5.2, cz + d / 2 + 24), color=GOLD_COLOR, material=800))
+        # Пара декоративних кущів позаду будинку
+        for txi in (-1, 1):
+            parts.append(make_part(f"MansionHedge_{cx}_{cz}_{txi}", (2.5, 2.0, 2.5), (cx + txi * (w * 0.48), 1.0, cz - d / 2 - 1), shape=1, color=ZOO_GRASS, material=1280))
+        return parts
+
+    mansions = [
+        (-90, -140, "🎮 GG Legend Villa", GOLD_COLOR),
+        (90, -140, "👑 QueenClip Estate", RGB_PURPLE),
+        (0, -290, "🌟 MrHype Grand Manor", HOVER_LED_BLUE),
+    ]
+    for mcx, mcz, mlabel, maccent in mansions:
+        scale = 1.35 if mcz == -290 else 1.0
+        city_parts.extend(build_mansion(mcx, mcz, mlabel, maccent, scale=scale))
 
     all_parts_xml = "\n".join(city_parts)
 
