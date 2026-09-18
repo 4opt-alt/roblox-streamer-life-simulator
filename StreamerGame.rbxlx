@@ -9291,6 +9291,7 @@ local channelNickname: string? = nil
 local showPage: (string) -> ()
 local refreshStats: () -> ()
 local refreshClipZapView: () -> ()
+local rebuildVideoGrid: () -> ()
 local recordButton: TextButton
 local recordStatusLabel: TextLabel
 local avatarImage: ImageLabel
@@ -9302,6 +9303,8 @@ local nicknameSetupFrame: Frame
 local channelContent: Frame
 local nicknameBox: TextBox
 local setupError: TextLabel
+local videoGrid: ScrollingFrame
+local lastRenderedVideoCount = -1
 
 -- Сторінки WatchBox/LiveWave підписуються сюди, щоб дізнатись, коли гравець
 -- нарешті вписав нік у ClipZap, і оновити свій "@нік перенесеться" напис.
@@ -9534,6 +9537,8 @@ local CAMERA_STYLES = { "selfie", "orbit", "lowAngle" }
 local cameraConnection: RBXScriptConnection? = nil
 local activeEmoteTrack: AnimationTrack? = nil
 local originalCameraType: Enum.CameraType? = nil
+local recordingHumanoid: Humanoid? = nil
+local savedWalkSpeed: number? = nil
 
 -- Рахує CFrame камери для обраного ракурсу; progress іде 0 -> 1 протягом
 -- усієї зйомки (потрібен для "orbit", який плавно облітає персонажа).
@@ -9568,13 +9573,33 @@ local function startRecordingCamera(recordSeconds: number)
 		return
 	end
 
+	-- Illia сказав, що бачив тільки зміну кута камери, а сам персонаж
+	-- виглядав так, ніби нічого не робить. Причина: деякі стандартні емоції
+	-- (wave/point/laugh/cheer) — короткі, одноразові, і завершуються ще ДО
+	-- кінця 4-секундного запису, тому персонаж встигав повернутись у Idle
+	-- посеред зйомки. Фікс: примусово ставимо track.Looped = true одразу
+	-- після старту — тоді емоція просто повторюється по колу аж до самого
+	-- :Stop() у stopRecordingCamera(), і рух видно ввесь час запису.
 	local emoteName = ACTION_EMOTES[math.random(1, #ACTION_EMOTES)]
 	local ok, track = pcall(function()
 		return (humanoid :: Humanoid):PlayEmote(emoteName)
 	end)
 	if ok and track then
-		activeEmoteTrack = track :: AnimationTrack
+		local realTrack = track :: AnimationTrack
+		realTrack.Looped = true
+		activeEmoteTrack = realTrack
 	end
+
+	-- Також фіксуємо швидкість ходьби на 0 на час зйомки — інакше гравець
+	-- може піти вбік і "затерти" анімацію емоції рухом, і виглядатиме так,
+	-- ніби персонаж узагалі нічого не робить.
+	-- (Окрема локальна змінна тут ще й рятує від класичної Luau-пастки:
+	-- рядок, що починається з "(", інакше "приклеївся" б до попереднього
+	-- виразу як виклик функції — SyntaxError "ambiguous syntax".)
+	local humanoidRef = humanoid :: Humanoid
+	recordingHumanoid = humanoidRef
+	savedWalkSpeed = humanoidRef.WalkSpeed
+	humanoidRef.WalkSpeed = 0
 
 	local cameraStyle = CAMERA_STYLES[math.random(1, #CAMERA_STYLES)]
 	local startClock = os.clock()
@@ -9607,6 +9632,11 @@ local function stopRecordingCamera()
 		activeEmoteTrack:Stop(0.3)
 		activeEmoteTrack = nil
 	end
+	if recordingHumanoid and savedWalkSpeed then
+		recordingHumanoid.WalkSpeed = savedWalkSpeed
+	end
+	recordingHumanoid = nil
+	savedWalkSpeed = nil
 end
 
 -- ============================================================
@@ -9907,13 +9937,18 @@ local function startRecording()
 	startRecDotPulse()
 	startRecordingCamera(Economy.RecordSeconds)
 
+	-- Кнопка запису тепер маленька (60x60) — довгий текст туди не влізе,
+	-- тому на самій кнопці лишаємо тільки цифру/іконку, а опис ("Filming...",
+	-- "Uploading...") показуємо в окремому тонкому рядку recordStatusLabel.
+	recordStatusLabel.Text = "⏺ Filming..."
 	task.spawn(function()
 		for i = Economy.RecordSeconds, 1, -1 do
-			recordButton.Text = `⏺ Filming... {i}`
+			recordButton.Text = `{i}`
 			recLabel.Text = `REC {i}s`
+			recordStatusLabel.Text = `⏺ Filming... {i}s`
 			task.wait(1)
 		end
-		recordButton.Text = "📤 Uploading..."
+		recordButton.Text = "📤"
 		recLabel.Text = "UPLOADING"
 		recordStatusLabel.Text = "Waiting for the audience's reaction..."
 		recordVideoRequest:FireServer()
@@ -10137,17 +10172,131 @@ local function buildClipZapPage(app: PhoneConfig.AppConfig)
 	channelFollowersLabel = buildStatCell("👥 Followers")
 	videosStatLabel = buildStatCell("🎬 Videos")
 
+	-- Короткий рядок статусу (був частиною великої кнопки запису, тепер
+	-- кнопка маленька — тому статус живе окремим тонким написом зверху).
+	recordStatusLabel = Instance.new("TextLabel")
+	recordStatusLabel.Size = UDim2.new(1, -20, 0, 18)
+	recordStatusLabel.Position = UDim2.new(0, 10, 0, 116)
+	recordStatusLabel.BackgroundTransparency = 1
+	recordStatusLabel.Font = Enum.Font.Gotham
+	recordStatusLabel.TextSize = 12
+	recordStatusLabel.TextTruncate = Enum.TextTruncate.AtEnd
+	recordStatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+	recordStatusLabel.TextColor3 = Color3.fromRGB(200, 204, 214)
+	recordStatusLabel.Text = "Tap 🔴 to film a new video!"
+	recordStatusLabel.Parent = channelContent
+
+	-- Illia попросив: кнопку запису зробити МЕНШОЮ, а на тому місці, де вона
+	-- була, показати ніби "стрічку" вже знятих відео (іконки-картки, скільки
+	-- відео гравець уже зняв). Реальних відеофайлів немає — це умовне
+	-- відображення VideoCount у вигляді карток "🎬 #N".
+	local videoSectionLabel = Instance.new("TextLabel")
+	videoSectionLabel.Size = UDim2.new(1, -20, 0, 16)
+	videoSectionLabel.Position = UDim2.new(0, 10, 0, 138)
+	videoSectionLabel.BackgroundTransparency = 1
+	videoSectionLabel.Font = Enum.Font.GothamBold
+	videoSectionLabel.TextSize = 11
+	videoSectionLabel.TextXAlignment = Enum.TextXAlignment.Left
+	videoSectionLabel.TextColor3 = Color3.fromRGB(160, 164, 176)
+	videoSectionLabel.Text = "YOUR VIDEOS"
+	videoSectionLabel.Parent = channelContent
+
+	videoGrid = Instance.new("ScrollingFrame")
+	videoGrid.Name = "VideoGrid"
+	videoGrid.Size = UDim2.new(1, -20, 1, -158)
+	videoGrid.Position = UDim2.new(0, 10, 0, 158)
+	videoGrid.BackgroundTransparency = 1
+	videoGrid.BorderSizePixel = 0
+	videoGrid.ScrollBarThickness = 4
+	videoGrid.ScrollingDirection = Enum.ScrollingDirection.Y
+	videoGrid.CanvasSize = UDim2.new(0, 0, 0, 0)
+	videoGrid.AutomaticCanvasSize = Enum.AutomaticSize.Y
+	videoGrid.Parent = channelContent
+
+	local videoGridLayout = Instance.new("UIGridLayout")
+	videoGridLayout.CellSize = UDim2.new(0, 50, 0, 50)
+	videoGridLayout.CellPadding = UDim2.new(0, 8, 0, 8)
+	videoGridLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	videoGridLayout.Parent = videoGrid
+
+	-- Невеликий запас знизу-справа, щоб плаваюча кнопка запису не
+	-- перекривала останній ряд карток відео.
+	local videoGridPadding = Instance.new("UIPadding")
+	videoGridPadding.PaddingBottom = UDim.new(0, 56)
+	videoGridPadding.Parent = videoGrid
+
+	local emptyVideosLabel = Instance.new("TextLabel")
+	emptyVideosLabel.Name = "EmptyHint"
+	emptyVideosLabel.Size = UDim2.new(1, 0, 0, 40)
+	emptyVideosLabel.BackgroundTransparency = 1
+	emptyVideosLabel.Font = Enum.Font.Gotham
+	emptyVideosLabel.TextSize = 12
+	emptyVideosLabel.TextWrapped = true
+	emptyVideosLabel.TextColor3 = Color3.fromRGB(140, 144, 156)
+	emptyVideosLabel.Text = "No videos yet — film your first one!"
+	emptyVideosLabel.LayoutOrder = 0
+	emptyVideosLabel.Parent = videoGrid
+
+	rebuildVideoGrid = function()
+		local count = videoCountStat.Value
+		if count == lastRenderedVideoCount then
+			return
+		end
+		lastRenderedVideoCount = count
+		for _, child in videoGrid:GetChildren() do
+			if child:IsA("Frame") and child.Name == "VideoCard" then
+				child:Destroy()
+			end
+		end
+		emptyVideosLabel.Visible = count == 0
+		for i = count, 1, -1 do
+			-- Найновіше відео — першою карткою (LayoutOrder за спаданням i).
+			local card = Instance.new("Frame")
+			card.Name = "VideoCard"
+			card.BackgroundColor3 = Color3.fromRGB(32, 34, 44)
+			card.BorderSizePixel = 0
+			card.LayoutOrder = count - i + 1
+			card.Parent = videoGrid
+			local cardCorner = Instance.new("UICorner")
+			cardCorner.CornerRadius = UDim.new(0, 10)
+			cardCorner.Parent = card
+
+			local cardIcon = Instance.new("TextLabel")
+			cardIcon.Size = UDim2.new(1, 0, 1, -14)
+			cardIcon.BackgroundTransparency = 1
+			cardIcon.Font = Enum.Font.GothamBold
+			cardIcon.TextSize = 18
+			cardIcon.Text = "🎬"
+			cardIcon.Parent = card
+
+			local cardLabel = Instance.new("TextLabel")
+			cardLabel.Size = UDim2.new(1, 0, 0, 14)
+			cardLabel.Position = UDim2.new(0, 0, 1, -14)
+			cardLabel.BackgroundTransparency = 1
+			cardLabel.Font = Enum.Font.Gotham
+			cardLabel.TextSize = 9
+			cardLabel.TextColor3 = Color3.fromRGB(160, 164, 176)
+			cardLabel.Text = `#{i}`
+			cardLabel.Parent = card
+		end
+	end
+	rebuildVideoGrid()
+
+	-- Маленька кругла кнопка запису — тепер "плаває" в правому нижньому куті
+	-- поверх стрічки відео (як кнопка запису в реальних застосунках), а не
+	-- займає майже весь екран, як раніше.
 	recordButton = Instance.new("TextButton")
-	recordButton.Size = UDim2.new(0, 130, 0, 130)
-	recordButton.AnchorPoint = Vector2.new(0.5, 0)
-	recordButton.Position = UDim2.new(0.5, 0, 0, 128)
+	recordButton.Size = UDim2.new(0, 60, 0, 60)
+	recordButton.AnchorPoint = Vector2.new(1, 1)
+	recordButton.Position = UDim2.new(1, -4, 1, -4)
 	recordButton.BackgroundColor3 = app.AccentColor
 	recordButton.BorderSizePixel = 0
 	recordButton.Font = Enum.Font.GothamBold
-	recordButton.TextSize = 14
+	recordButton.TextSize = 20
 	recordButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 	recordButton.TextWrapped = true
-	recordButton.Text = "🔴 Record video"
+	recordButton.Text = "🔴"
+	recordButton.ZIndex = 5
 	recordButton.Parent = channelContent
 	local recordCorner = Instance.new("UICorner")
 	recordCorner.CornerRadius = UDim.new(1, 0)
@@ -10157,18 +10306,6 @@ local function buildClipZapPage(app: PhoneConfig.AppConfig)
 	recordStroke.Color = Color3.fromRGB(255, 255, 255)
 	recordStroke.Transparency = 0.6
 	recordStroke.Parent = recordButton
-
-	recordStatusLabel = Instance.new("TextLabel")
-	recordStatusLabel.Size = UDim2.new(1, -30, 0, 60)
-	recordStatusLabel.AnchorPoint = Vector2.new(0.5, 0)
-	recordStatusLabel.Position = UDim2.new(0.5, 0, 0, 268)
-	recordStatusLabel.BackgroundTransparency = 1
-	recordStatusLabel.Font = Enum.Font.Gotham
-	recordStatusLabel.TextSize = 13
-	recordStatusLabel.TextWrapped = true
-	recordStatusLabel.TextColor3 = Color3.fromRGB(200, 204, 214)
-	recordStatusLabel.Text = "Tap to film a new video!"
-	recordStatusLabel.Parent = channelContent
 
 	recordButton.MouseButton1Click:Connect(startRecording)
 
@@ -10331,6 +10468,9 @@ refreshStats = function()
 	if videosStatLabel then
 		videosStatLabel.Text = tostring(videoCountStat.Value)
 	end
+	if rebuildVideoGrid then
+		rebuildVideoGrid()
+	end
 end
 
 followersStat.Changed:Connect(refreshStats)
@@ -10345,7 +10485,7 @@ refreshStats()
 recordVideoResult.OnClientEvent:Connect(function(result)
 	recording = false
 	recordButton.AutoButtonColor = true
-	recordButton.Text = "🔴 Record video"
+	recordButton.Text = "🔴"
 
 	stopRecordingCamera()
 	recHud.Visible = false
