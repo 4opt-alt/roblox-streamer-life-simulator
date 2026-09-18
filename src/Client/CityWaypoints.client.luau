@@ -69,7 +69,7 @@ local waypoints: { WaypointData } = {
         Name = "Colosseum",
         Icon = "🏛️",
         Color = Color3.fromRGB(255, 215, 0),
-        GetPosition = function() return Vector3.new(0, 12, 460) end,
+        GetPosition = function() return Vector3.new(0, 12, 530) end,
     },
     {
         Name = "Wild Stream Zoo",

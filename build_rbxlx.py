@@ -1,5 +1,7 @@
 import os
 import math
+import glob
+import shutil
 
 def create_rbxlx(auto_push=True):
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -140,6 +142,10 @@ def create_rbxlx(auto_push=True):
     MANSION_GATE = 4279505944      # rgb(20,20,24)
     COLOSSEUM_STONE = 4291080332   # rgb(196,176,140)
     COLOSSEUM_SAND = 4292260480    # rgb(214,178,128)
+    COLOSSEUM_STONE_LIGHT = 4292265120  # rgb(214,196,160) — освітлені пілони (передній план)
+    COLOSSEUM_STONE_MID = 4291343504    # rgb(200,180,144) — 2й ярус
+    ARCH_SHADOW = 4280031252            # rgb(28,24,20) — темна заглиблена арка
+    COLOSSEUM_FLOODLIGHT = 4294962110   # rgb(255,235,190) — тепле підсвічування прожекторами
     SILVER_COLOR = 4290692040      # rgb(190,195,200)
     BRONZE_COLOR = 4288043570      # rgb(150,90,50)
     LAMP_WARM = 4294959540         # rgb(255,225,180)
@@ -585,15 +591,18 @@ def create_rbxlx(auto_push=True):
     # =========================================================================
     # 7. NORTH AVENUE — продовження головної дороги на північ, до нових районів
     #    (Vehicle Shop, Pool, Zoo, Colosseum). Стикується з MainRoadAsphalt (Z до 220).
+    #    Подовжена вперед аж до воріт Колізею (Z~500), щоб вулиця виразно "вела" до нього.
     # =========================================================================
-    city_parts.append(make_part("NorthAvenueAsphalt", (28, 0.4, 210), (0, 0.2, 325), color=ROAD_ASPHALT, material=256))
-    for z_line in range(230, 420, 16):
+    NAVE_LEN = 250
+    NAVE_CZ = 220 + NAVE_LEN / 2
+    city_parts.append(make_part("NorthAvenueAsphalt", (28, 0.4, NAVE_LEN), (0, 0.2, NAVE_CZ), color=ROAD_ASPHALT, material=256))
+    for z_line in range(230, 465, 16):
         city_parts.append(make_part("NorthAveCenterLine", (0.5, 0.42, 10), (0, 0.22, z_line), color=ROAD_MARK_YELLOW, material=288))
-    city_parts.append(make_part("NorthAveEdgeL", (0.5, 0.42, 208), (-13, 0.22, 325), color=ROAD_MARK_WHITE, material=256))
-    city_parts.append(make_part("NorthAveEdgeR", (0.5, 0.42, 208), (13, 0.22, 325), color=ROAD_MARK_WHITE, material=256))
-    city_parts.append(make_part("NorthAveSidewalkL", (10, 0.8, 210), (-19, 0.4, 325), color=SIDEWALK_GREY, material=800))
-    city_parts.append(make_part("NorthAveSidewalkR", (10, 0.8, 210), (19, 0.4, 325), color=SIDEWALK_GREY, material=800))
-    for z_light in (250, 320, 390):
+    city_parts.append(make_part("NorthAveEdgeL", (0.5, 0.42, NAVE_LEN - 2), (-13, 0.22, NAVE_CZ), color=ROAD_MARK_WHITE, material=256))
+    city_parts.append(make_part("NorthAveEdgeR", (0.5, 0.42, NAVE_LEN - 2), (13, 0.22, NAVE_CZ), color=ROAD_MARK_WHITE, material=256))
+    city_parts.append(make_part("NorthAveSidewalkL", (10, 0.8, NAVE_LEN), (-19, 0.4, NAVE_CZ), color=SIDEWALK_GREY, material=800))
+    city_parts.append(make_part("NorthAveSidewalkR", (10, 0.8, NAVE_LEN), (19, 0.4, NAVE_CZ), color=SIDEWALK_GREY, material=800))
+    for z_light in (250, 320, 390, 460):
         city_parts.append(make_part("NAvePoleL", (0.6, 14, 0.6), (-23, 7, z_light), color=DESK_LEGS, material=800))
         city_parts.append(make_part("NAveLampL", (1.2, 0.4, 1.2), (-20.5, 13.6, z_light), color=4294967295, material=288,
                                     light=("PointLight", (1.0, 0.9, 0.6), 2.2, 26)))
@@ -657,25 +666,71 @@ def create_rbxlx(auto_push=True):
     city_parts.append(make_part("PoolFenceGlassS", (32, 1.6, 0.15), (-46, 1.6, 267), color=POOL_TILE_BLUE, material=304, transparency=0.55))
 
     # =========================================================================
-    # 10. TOP STREAMERS COLOSSEUM — арена, де обирають найкращого стрімера (X=0, Z=460)
+    # 10. TOP STREAMERS COLOSSEUM — справжня арена з ярусами арок (як у Римі),
+    #     не просто рівна стіна. X=0, Z=560, кінець North Avenue.
     # =========================================================================
-    COL_CX, COL_CZ, COL_R = 0, 460, 50
-    SEGMENTS = 28
-    GATE_SEGMENTS = {13, 14, 15}  # розрив кільця = вхід з боку North Avenue (південь)
+    COL_CX, COL_CZ, COL_R = 0, 530, 55
+    SEGMENTS = 32
+    GATE_SEGMENTS = {14, 15, 16, 17, 18}  # широкий розрив кільця = вхід з боку North Avenue (південь)
     seg_deg = 360 / SEGMENTS
-    seg_width = (2 * math.pi * COL_R / SEGMENTS) * 1.05
+    seg_width = (2 * math.pi * COL_R / SEGMENTS) * 1.06
+    PIER_W = 2.6       # ширина світлого пілона (стовпа) між арками
+    RECESS = 1.3        # на скільки заглиблена темна арка відносно пілонів
+    ARCH_GAP = 0.4
+
+    def colosseum_ring(radius, y_center, height, stone_color, tier_label):
+        """Один ярус арени: по колу чергуються світлі пілони і темні заглиблені 'арки'."""
+        for i in range(SEGMENTS):
+            if i in GATE_SEGMENTS:
+                continue
+            deg = i * seg_deg
+            ang = math.radians(deg)
+            s, cco = math.sin(ang), math.cos(ang)
+            tx, tz = math.cos(ang), -math.sin(ang)  # тангенціальний напрямок (вздовж кільця)
+            outer_x, outer_z = COL_CX + radius * s, COL_CZ + radius * cco
+            inner_x, inner_z = COL_CX + (radius - RECESS) * s, COL_CZ + (radius - RECESS) * cco
+            off = (seg_width - PIER_W) / 2
+            arch_w = max(1.0, seg_width - 2 * PIER_W - ARCH_GAP)
+            city_parts.append(make_part(f"ColPier_{tier_label}_{i}L", (PIER_W, height, 3.0),
+                                        (outer_x - tx * off, y_center, outer_z - tz * off),
+                                        rot=(0, deg, 0), color=stone_color, material=256))
+            city_parts.append(make_part(f"ColPier_{tier_label}_{i}R", (PIER_W, height, 3.0),
+                                        (outer_x + tx * off, y_center, outer_z + tz * off),
+                                        rot=(0, deg, 0), color=stone_color, material=256))
+            city_parts.append(make_part(f"ColArch_{tier_label}_{i}", (arch_w, height * 0.86, 2.0),
+                                        (inner_x, y_center, inner_z),
+                                        rot=(0, deg, 0), color=ARCH_SHADOW, material=256))
+            # маленький підсвічений "замковий камінь" над аркою для акценту
+            city_parts.append(make_part(f"ColKeystone_{tier_label}_{i}", (min(1.4, arch_w * 0.3), 1.0, 2.2),
+                                        (outer_x, y_center + height * 0.5 - 0.2, outer_z),
+                                        rot=(0, deg, 0), color=COLOSSEUM_FLOODLIGHT, material=288))
+
+    # Ярус 1 (нижній, найширший)
+    colosseum_ring(COL_R, 5.5, 11, COLOSSEUM_STONE_LIGHT, "T1")
+    # Ярус 2 (трохи вужчий і коротший — як справжній Колізей "звужується" догори)
+    colosseum_ring(COL_R - 2.5, 15.5, 9, COLOSSEUM_STONE_MID, "T2")
+    # Горішній суцільний "аттик"-пояс + ряд стовпчиків на гребені (як риштування на фото-референсі)
     for i in range(SEGMENTS):
         if i in GATE_SEGMENTS:
             continue
-        ang = math.radians(i * seg_deg)
-        sx = COL_CX + COL_R * math.sin(ang)
-        sz = COL_CZ + COL_R * math.cos(ang)
-        city_parts.append(make_part(f"ColosseumWall{i}", (seg_width, 22, 3), (sx, 11, sz), rot=(0, i * seg_deg, 0), color=COLOSSEUM_STONE, material=1296))
-        city_parts.append(make_part(f"ColosseumTrim{i}", (seg_width, 1.2, 3.6), (sx, 22.6, sz), rot=(0, i * seg_deg, 0), color=MANSION_ROOF_DARK, material=256))
+        deg = i * seg_deg
+        ang = math.radians(deg)
+        s, cco = math.sin(ang), math.cos(ang)
+        ax, az = COL_CX + (COL_R - 2.5) * s, COL_CZ + (COL_R - 2.5) * cco
+        city_parts.append(make_part(f"ColAttic_{i}", (seg_width, 3, 3.4), (ax, 21.5, az), rot=(0, deg, 0), color=COLOSSEUM_STONE, material=256))
+        city_parts.append(make_part(f"ColPole_{i}", (0.35, 5, 0.35), (ax, 25.5, az), color=DESK_LEGS, material=800))
 
     # Кругла піщана арена (циліндр, покладений пласко: rot=(0,0,90) ставить вісь вертикально)
-    city_parts.append(make_part("ColosseumFloor", (1.5, COL_R * 2 - 4, COL_R * 2 - 4), (COL_CX, 0.5, COL_CZ), rot=(0, 0, 90), shape=2, color=COLOSSEUM_SAND, material=256))
-    city_parts.append(make_part("ColosseumInnerRing", (1.6, COL_R * 1.3, COL_R * 1.3), (COL_CX, 0.55, COL_CZ), rot=(0, 0, 90), shape=2, color=COLOSSEUM_STONE, material=1296))
+    city_parts.append(make_part("ColosseumFloor", (1.5, COL_R * 2 - 6, COL_R * 2 - 6), (COL_CX, 0.5, COL_CZ), rot=(0, 0, 90), shape=2, color=COLOSSEUM_SAND, material=256))
+    city_parts.append(make_part("ColosseumInnerRing", (1.6, COL_R * 1.3, COL_R * 1.3), (COL_CX, 0.55, COL_CZ), rot=(0, 0, 90), shape=2, color=COLOSSEUM_STONE, material=256))
+
+    # Прожектори знизу вгору попід стінами (щоб фасад був виразно освітлений, а не в суцільній тіні)
+    for fl_deg in (0, 45, 90, 135, 225, 270, 315):
+        fl_ang = math.radians(fl_deg)
+        fx = COL_CX + (COL_R - 6) * math.sin(fl_ang)
+        fz = COL_CZ + (COL_R - 6) * math.cos(fl_ang)
+        city_parts.append(make_part(f"ColFloodlight_{fl_deg}", (1.2, 1.2, 1.2), (fx, 1.0, fz), color=4294967295, material=288,
+                                    light=("SpotLight", (1.0, 0.92, 0.75), 4.0, 60)))
 
     # П'єдестал ТОП-3 стрімерів у центрі арени
     city_parts.append(make_part("PodiumFirst", (7, 4, 7), (COL_CX, 2, COL_CZ), color=GOLD_COLOR, material=800))
@@ -690,14 +745,14 @@ def create_rbxlx(auto_push=True):
     city_parts.append(make_part("ColosseumSignNeon", (21.4, 7.4, 0.1), (COL_CX, 15, COL_CZ + COL_R - 3.65), color=GOLD_COLOR, material=288,
                                 light=("PointLight", (1.0, 0.85, 0.0), 3.0, 34)))
 
-    # Ворота-арка з боку North Avenue (південний розрив кільця)
-    gate_ang = math.radians(14 * seg_deg)
-    gate_x = COL_CX + COL_R * math.sin(gate_ang)
-    gate_z = COL_CZ + COL_R * math.cos(gate_ang)
-    city_parts.append(make_part("ColosseumArchL", (4, 24, 4), (gate_x - 19, 12, gate_z), color=COLOSSEUM_STONE, material=1296))
-    city_parts.append(make_part("ColosseumArchR", (4, 24, 4), (gate_x + 19, 12, gate_z), color=COLOSSEUM_STONE, material=1296))
+    # Ворота-арка з боку North Avenue (південний розрив кільця, точно навпроти вулиці)
+    gate_z = COL_CZ - COL_R
+    city_parts.append(make_part("ColosseumArchL", (4, 24, 4), (-21, 12, gate_z), color=COLOSSEUM_STONE, material=256))
+    city_parts.append(make_part("ColosseumArchR", (4, 24, 4), (21, 12, gate_z), color=COLOSSEUM_STONE, material=256))
     arch_sign_children = label_children("🏟️ Colosseum of Streamers", bg_color=(0.12, 0.09, 0.02), stroke_color=(1.0, 0.85, 0.0))
-    city_parts.append(make_part("ColosseumArchTop", (44, 4, 4), (gate_x, 25, gate_z), color=COLOSSEUM_STONE, material=1296, children_xml=arch_sign_children))
+    city_parts.append(make_part("ColosseumArchTop", (48, 4, 4), (0, 25, gate_z), color=COLOSSEUM_STONE, material=256, children_xml=arch_sign_children))
+    city_parts.append(make_part("ColosseumArchGlow", (46, 0.3, 0.3), (0, 22.7, gate_z), color=GOLD_COLOR, material=288,
+                                light=("PointLight", (1.0, 0.85, 0.0), 2.0, 26)))
 
     # =========================================================================
     # 11. WILD STREAM ZOO — невеликий зоопарк для ІРЛ-стрімів (X=130, Z=320)
@@ -1166,18 +1221,42 @@ def create_rbxlx(auto_push=True):
         f.write(rbxlx_content)
     print(f"Generated successfully: {output_path} ({os.path.getsize(output_path)} bytes)")
 
-    # Also copy to Desktop
-    desktop_path = r"C:\Users\lyutu\Desktop\StreamerGame.rbxlx"
-    with open(desktop_path, "w", encoding="utf-8") as f:
-        f.write(rbxlx_content)
-    print(f"Copied to Desktop: {desktop_path} ({os.path.getsize(desktop_path)} bytes)")
+    # Також копіюємо на Робочий стіл — ЦЕ БУЛО ЗАХАРДКОДЖЕНО НА "lyutu" (чужий Windows-профіль,
+    # якого нема ні в Illia (illad), ні, можливо, у друга) — тому щоразу падало з
+    # FileNotFoundError і watcher-скрипт тихо ковтав цю помилку (except: pass), а це, схоже,
+    # і була причина, чому нові зміни не з'являлись у грі. Тепер шлях обчислюється динамічно
+    # для того, хто реально запускає скрипт, і обгорнутий у try/except, щоб навіть якщо
+    # Робочого столу немає — основний файл у самій папці проєкту (output_path вище) все одно
+    # вже записаний і саме його треба відкривати в Studio.
+    try:
+        desktop_path = os.path.join(os.path.expanduser("~"), "Desktop", "StreamerGame.rbxlx")
+        with open(desktop_path, "w", encoding="utf-8") as f:
+            f.write(rbxlx_content)
+        print(f"Copied to Desktop: {desktop_path} ({os.path.getsize(desktop_path)} bytes)")
+    except Exception as desktop_err:
+        print(f"Desktop copy skipped (not critical, project copy above is the real file): {desktop_err}")
+
+    def _find_git_exe():
+        # 1) git у PATH (найнадійніше, працює для будь-якого користувача)
+        found = shutil.which("git")
+        if found:
+            return found
+        # 2) вбудований git з GitHub Desktop — шлях залежить від імені користувача Windows,
+        #    тож шукаємо динамічно (%LOCALAPPDATA%), а не хардкодимо чиєсь конкретне ім'я.
+        local_appdata = os.environ.get("LOCALAPPDATA")
+        if local_appdata:
+            matches = glob.glob(os.path.join(local_appdata, "GitHubDesktop", "app-*", "resources", "app", "git", "cmd", "git.exe"))
+            if matches:
+                matches.sort(reverse=True)
+                return matches[0]
+        return None
 
     # Auto-sync to Git & GitHub
     if auto_push:
         try:
             import subprocess, time
-            git_cmd = r"C:\Users\lyutu\.tools\git\cmd\git.exe"
-            if os.path.exists(git_cmd):
+            git_cmd = _find_git_exe()
+            if git_cmd and os.path.exists(git_cmd):
                 subprocess.run([git_cmd, "add", "-A"], cwd=base_dir, check=False)
                 now_str = time.strftime("%Y-%m-%d %H:%M:%S")
                 subprocess.run([git_cmd, "commit", "-m", f"Auto-sync build: {now_str}"], cwd=base_dir, check=False)
