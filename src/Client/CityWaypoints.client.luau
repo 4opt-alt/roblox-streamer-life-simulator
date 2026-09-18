@@ -57,13 +57,13 @@ local waypoints: { WaypointData } = {
         Name = "SkyGlide Boards",
         Icon = "🛹",
         Color = Color3.fromRGB(60, 150, 255),
-        GetPosition = function() return Vector3.new(46, 7, 250) end,
+        GetPosition = function() return Vector3.new(50, 7, 245) end,
     },
     {
         Name = "Splash Street Pool",
         Icon = "🏊",
         Color = Color3.fromRGB(60, 190, 255),
-        GetPosition = function() return Vector3.new(-46, 4, 250) end,
+        GetPosition = function() return Vector3.new(50, 4, 440) end,
     },
     {
         Name = "Colosseum",
@@ -75,7 +75,7 @@ local waypoints: { WaypointData } = {
         Name = "Wild Stream Zoo",
         Icon = "🦁",
         Color = Color3.fromRGB(120, 220, 100),
-        GetPosition = function() return Vector3.new(130, 7, 320) end,
+        GetPosition = function() return Vector3.new(152, 7, 345) end,
     },
     {
         Name = "Celebrity Row",

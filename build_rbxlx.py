@@ -589,40 +589,92 @@ def create_rbxlx(auto_push=True):
                                 light=("PointLight", (1.0, 0.85, 0.0), 2.0, 22)))
 
     # =========================================================================
-    # 7. NORTH AVENUE — продовження головної дороги на північ, до нових районів
-    #    (Vehicle Shop, Pool, Zoo, Colosseum). Стикується з MainRoadAsphalt (Z до 220).
-    #    Подовжена вперед аж до воріт Колізею (Z~500), щоб вулиця виразно "вела" до нього.
+    # 7. DISTRICT LOOP — вигнута вулиця з поворотами (справжній квартал, а не
+    #    одна пряма лінія): від головної дороги (Z=220) через гіроскутерну
+    #    крамницю → зоопарк → басейн, і насамкінець прямо у ворота Колізею.
     # =========================================================================
-    NAVE_LEN = 250
-    NAVE_CZ = 220 + NAVE_LEN / 2
-    city_parts.append(make_part("NorthAvenueAsphalt", (28, 0.4, NAVE_LEN), (0, 0.2, NAVE_CZ), color=ROAD_ASPHALT, material=256))
-    for z_line in range(230, 465, 16):
-        city_parts.append(make_part("NorthAveCenterLine", (0.5, 0.42, 10), (0, 0.22, z_line), color=ROAD_MARK_YELLOW, material=288))
-    city_parts.append(make_part("NorthAveEdgeL", (0.5, 0.42, NAVE_LEN - 2), (-13, 0.22, NAVE_CZ), color=ROAD_MARK_WHITE, material=256))
-    city_parts.append(make_part("NorthAveEdgeR", (0.5, 0.42, NAVE_LEN - 2), (13, 0.22, NAVE_CZ), color=ROAD_MARK_WHITE, material=256))
-    city_parts.append(make_part("NorthAveSidewalkL", (10, 0.8, NAVE_LEN), (-19, 0.4, NAVE_CZ), color=SIDEWALK_GREY, material=800))
-    city_parts.append(make_part("NorthAveSidewalkR", (10, 0.8, NAVE_LEN), (19, 0.4, NAVE_CZ), color=SIDEWALK_GREY, material=800))
-    for z_light in (250, 320, 390, 460):
-        city_parts.append(make_part("NAvePoleL", (0.6, 14, 0.6), (-23, 7, z_light), color=DESK_LEGS, material=800))
-        city_parts.append(make_part("NAveLampL", (1.2, 0.4, 1.2), (-20.5, 13.6, z_light), color=4294967295, material=288,
-                                    light=("PointLight", (1.0, 0.9, 0.6), 2.2, 26)))
-        city_parts.append(make_part("NAvePoleR", (0.6, 14, 0.6), (23, 7, z_light), color=DESK_LEGS, material=800))
-        city_parts.append(make_part("NAveLampR", (1.2, 0.4, 1.2), (20.5, 13.6, z_light), color=4294967295, material=288,
-                                    light=("PointLight", (1.0, 0.9, 0.6), 2.2, 26)))
+    ROAD_W = 28
+    CORNER_SZ = ROAD_W + 4
+
+    LOOP_POINTS = [
+        (0, 220),    # стик з головною дорогою
+        (0, 290),    # поворот 1
+        (100, 290),  # поворот 2
+        (100, 400),  # поворот 3
+        (0, 400),    # поворот 4
+        (0, 475),    # прямий фінішний відрізок = COL_CZ(530) - COL_R(55), впирається у ворота Колізею
+    ]
+
+    def _emit_road_segment(name, x0, z0, x1, z1):
+        if x0 == x1:
+            length = abs(z1 - z0)
+            cz = (z0 + z1) / 2
+            city_parts.append(make_part(f"{name}Asphalt", (ROAD_W, 0.4, length), (x0, 0.2, cz), color=ROAD_ASPHALT, material=256))
+            city_parts.append(make_part(f"{name}EdgeL", (0.5, 0.42, length - 2), (x0 - ROAD_W / 2, 0.22, cz), color=ROAD_MARK_WHITE, material=256))
+            city_parts.append(make_part(f"{name}EdgeR", (0.5, 0.42, length - 2), (x0 + ROAD_W / 2, 0.22, cz), color=ROAD_MARK_WHITE, material=256))
+            city_parts.append(make_part(f"{name}SidewalkL", (10, 0.8, length), (x0 - ROAD_W / 2 - 5, 0.4, cz), color=SIDEWALK_GREY, material=800))
+            city_parts.append(make_part(f"{name}SidewalkR", (10, 0.8, length), (x0 + ROAD_W / 2 + 5, 0.4, cz), color=SIDEWALK_GREY, material=800))
+            zlo, zhi = sorted((z0, z1))
+            zl = int(zlo) + 12
+            while zl < zhi - 12:
+                city_parts.append(make_part(f"{name}Line{zl}", (0.5, 0.42, 10), (x0, 0.22, zl), color=ROAD_MARK_YELLOW, material=288))
+                zl += 16
+        else:
+            length = abs(x1 - x0)
+            cx = (x0 + x1) / 2
+            city_parts.append(make_part(f"{name}Asphalt", (length, 0.4, ROAD_W), (cx, 0.2, z0), color=ROAD_ASPHALT, material=256))
+            city_parts.append(make_part(f"{name}EdgeN", (length - 2, 0.42, 0.5), (cx, 0.22, z0 - ROAD_W / 2), color=ROAD_MARK_WHITE, material=256))
+            city_parts.append(make_part(f"{name}EdgeS", (length - 2, 0.42, 0.5), (cx, 0.22, z0 + ROAD_W / 2), color=ROAD_MARK_WHITE, material=256))
+            city_parts.append(make_part(f"{name}SidewalkN", (length, 0.8, 10), (cx, 0.4, z0 - ROAD_W / 2 - 5), color=SIDEWALK_GREY, material=800))
+            city_parts.append(make_part(f"{name}SidewalkS", (length, 0.8, 10), (cx, 0.4, z0 + ROAD_W / 2 + 5), color=SIDEWALK_GREY, material=800))
+            xlo, xhi = sorted((x0, x1))
+            xl = int(xlo) + 12
+            while xl < xhi - 12:
+                city_parts.append(make_part(f"{name}Line{xl}", (10, 0.42, 0.5), (xl, 0.22, z0), color=ROAD_MARK_YELLOW, material=288))
+                xl += 16
+
+    for idx in range(len(LOOP_POINTS) - 1):
+        lx0, lz0 = LOOP_POINTS[idx]
+        lx1, lz1 = LOOP_POINTS[idx + 1]
+        _emit_road_segment(f"DistrictLoop{idx}_", lx0, lz0, lx1, lz1)
+
+    # Квадратні перехрестя на кожному повороті, щоб кут виглядав суцільним
+    for idx in range(1, len(LOOP_POINTS) - 1):
+        ccx, ccz = LOOP_POINTS[idx]
+        city_parts.append(make_part(f"DistrictCorner{idx}", (CORNER_SZ, 0.42, CORNER_SZ), (ccx, 0.21, ccz), color=ROAD_ASPHALT, material=256))
+
+    # Ліхтарі по обидва боки кожного прямого відрізка (посередині)
+    for idx in range(len(LOOP_POINTS) - 1):
+        lx0, lz0 = LOOP_POINTS[idx]
+        lx1, lz1 = LOOP_POINTS[idx + 1]
+        mx, mz = (lx0 + lx1) / 2, (lz0 + lz1) / 2
+        is_ns = (lx0 == lx1)
+        for side in (-1, 1):
+            if is_ns:
+                lampx, lampz = mx + side * (ROAD_W / 2 + 4), mz
+            else:
+                lampx, lampz = mx, mz + side * (ROAD_W / 2 + 4)
+            city_parts.append(make_part(f"DistrictLampPole{idx}_{side}", (0.6, 14, 0.6), (lampx, 7, lampz), color=DESK_LEGS, material=800))
+            city_parts.append(make_part(f"DistrictLamp{idx}_{side}", (1.2, 0.4, 1.2), (lampx, 13.6, lampz), color=4294967295, material=288,
+                                        light=("PointLight", (1.0, 0.9, 0.6), 2.2, 26)))
 
     # =========================================================================
-    # 8. VEHICLE SHOP — "SkyGlide Board Shop" (окремий магазин гіроскутерів, X=46, Z=250)
-    #    Та сама generic ShopConfig-система: тут просто інша ProximityPrompt ("VehiclePrompt"),
-    #    яку відкриває ShopGui.client.luau (потрібно додати назву промпта в клієнтський скрипт).
+    # 8. VEHICLE SHOP — "SkyGlide Board Shop", тепер на першому повороті
+    #    District Loop (X≈50, Z≈245), розвернутий фасадом (rot 90°) до дороги,
+    #    що йде на схід — а не мертво приліплений до однієї прямої вулиці.
+    #    Той самий generic ShopConfig: ProximityPrompt "VehiclePrompt", яку
+    #    відкриває ShopGui.client.luau.
     # =========================================================================
-    city_parts.append(make_part("VShopFloor", (36, 1, 32), (46, 0.5, 250), color=DARK_WALL, material=256))
-    city_parts.append(make_part("VShopRoof", (38, 1.5, 34), (46, 16.5, 250), color=DARK_WALL, material=256))
-    city_parts.append(make_part("VShopBackWall", (1, 15, 32), (64.5, 8.5, 250), color=DARK_WALL, material=256))
-    city_parts.append(make_part("VShopSideWall1", (36, 15, 1), (46, 8.5, 233.5), color=DARK_WALL, material=256))
-    city_parts.append(make_part("VShopSideWall2", (36, 15, 1), (46, 8.5, 266.5), color=DARK_WALL, material=256))
-    city_parts.append(make_part("VShopGlassFront", (1, 15, 20), (27.5, 8.5, 250), color=HOVER_LED_BLUE, material=304, transparency=0.4))
-    city_parts.append(make_part("VShopSignBoard", (1, 3.5, 24), (27.0, 17.5, 250), color=DARK_WALL, material=256))
-    city_parts.append(make_part("VShopSignNeon", (0.2, 2.5, 23), (26.4, 17.5, 250), color=HOVER_LED_BLUE, material=288,
+    VSHOP_CX, VSHOP_CZ = 50, 245
+    VSHOP_ROT = (0, 90, 0)
+    city_parts.append(make_part("VShopFloor", (36, 1, 32), (VSHOP_CX, 0.5, VSHOP_CZ), rot=VSHOP_ROT, color=DARK_WALL, material=256))
+    city_parts.append(make_part("VShopRoof", (38, 1.5, 34), (VSHOP_CX, 16.5, VSHOP_CZ), rot=VSHOP_ROT, color=DARK_WALL, material=256))
+    city_parts.append(make_part("VShopBackWall", (1, 15, 32), (VSHOP_CX, 8.5, VSHOP_CZ - 18.5), rot=VSHOP_ROT, color=DARK_WALL, material=256))
+    city_parts.append(make_part("VShopSideWall1", (36, 15, 1), (VSHOP_CX - 16.5, 8.5, VSHOP_CZ), rot=VSHOP_ROT, color=DARK_WALL, material=256))
+    city_parts.append(make_part("VShopSideWall2", (36, 15, 1), (VSHOP_CX + 16.5, 8.5, VSHOP_CZ), rot=VSHOP_ROT, color=DARK_WALL, material=256))
+    city_parts.append(make_part("VShopGlassFront", (1, 15, 20), (VSHOP_CX, 8.5, VSHOP_CZ + 18.5), rot=VSHOP_ROT, color=HOVER_LED_BLUE, material=304, transparency=0.4))
+    city_parts.append(make_part("VShopSignBoard", (1, 3.5, 24), (VSHOP_CX, 17.5, VSHOP_CZ + 19), rot=VSHOP_ROT, color=DARK_WALL, material=256))
+    city_parts.append(make_part("VShopSignNeon", (0.2, 2.5, 23), (VSHOP_CX, 17.5, VSHOP_CZ + 19.6), rot=VSHOP_ROT, color=HOVER_LED_BLUE, material=288,
                                 light=("PointLight", (0.3, 0.6, 1.0), 2.5, 30)))
 
     vshop_counter_children = shop_children(
@@ -631,39 +683,44 @@ def create_rbxlx(auto_push=True):
         "Купити гіроскутер (E)",
         "🛹 SkyGlide Boards [E]",
         bg_color=(0.08, 0.10, 0.20), stroke_color=(0.3, 0.6, 1.0))
-    city_parts.append(make_part("VShopCounter", (14, 3.5, 2.5), (46, 2.25, 252), color=DESK_TOP, material=256, children_xml=vshop_counter_children))
-    city_parts.append(make_part("VShopShowcaseGlass", (13.6, 1.5, 0.2), (46, 4.75, 252), color=HOVER_LED_BLUE, material=304, transparency=0.4))
+    city_parts.append(make_part("VShopCounter", (14, 3.5, 2.5), (VSHOP_CX + 2, 2.25, VSHOP_CZ), rot=VSHOP_ROT, color=DESK_TOP, material=256, children_xml=vshop_counter_children))
+    city_parts.append(make_part("VShopShowcaseGlass", (13.6, 1.5, 0.2), (VSHOP_CX + 2, 4.75, VSHOP_CZ), rot=VSHOP_ROT, color=HOVER_LED_BLUE, material=304, transparency=0.4))
     # Демонстраційні дошки на підставках у вітрині
-    city_parts.append(make_part("VShopDisplayBoard1", (1.4, 0.25, 3.8), (40, 2.3, 240), color=HOVER_NAVY_DARK, material=256))
-    city_parts.append(make_part("VShopDisplayGlow1", (0.5, 0.05, 3.2), (40, 2.44, 240), color=RGB_PURPLE, material=288))
-    city_parts.append(make_part("VShopDisplayBoard2", (1.4, 0.25, 3.8), (52, 2.3, 240), color=HOVER_NAVY_DARK, material=256))
-    city_parts.append(make_part("VShopDisplayGlow2", (0.5, 0.05, 3.2), (52, 2.44, 240), color=HOVER_LED_BLUE, material=288))
+    city_parts.append(make_part("VShopDisplayBoard1", (1.4, 0.25, 3.8), (VSHOP_CX - 10, 2.3, VSHOP_CZ + 6), rot=VSHOP_ROT, color=HOVER_NAVY_DARK, material=256))
+    city_parts.append(make_part("VShopDisplayGlow1", (0.5, 0.05, 3.2), (VSHOP_CX - 10, 2.44, VSHOP_CZ + 6), rot=VSHOP_ROT, color=RGB_PURPLE, material=288))
+    city_parts.append(make_part("VShopDisplayBoard2", (1.4, 0.25, 3.8), (VSHOP_CX - 10, 2.3, VSHOP_CZ - 6), rot=VSHOP_ROT, color=HOVER_NAVY_DARK, material=256))
+    city_parts.append(make_part("VShopDisplayGlow2", (0.5, 0.05, 3.2), (VSHOP_CX - 10, 2.44, VSHOP_CZ - 6), rot=VSHOP_ROT, color=HOVER_LED_BLUE, material=288))
 
     # =========================================================================
-    # 9. SPLASH STREET POOL — міський басейн для стрімів (X=-46, Z=250)
+    # 9. SPLASH STREET POOL — тепер на четвертому відрізку District Loop
+    #    (X≈50, Z≈440), фасадом (вивіскою) до дороги на південь — орієнтація
+    #    та сама, що й раніше, просто перенесено на нове місце (offset +96,+190).
     # =========================================================================
-    city_parts.append(make_part("PoolDeck", (44, 1, 36), (-46, 0.5, 250), color=POOL_TILE, material=256))
-    city_parts.append(make_part("PoolWater", (30, 1, 20), (-46, 0.55, 250), color=POOL_WATER, material=304, transparency=0.25, can_collide=False))
-    city_parts.append(make_part("PoolBorderN", (32, 0.4, 1), (-46, 0.7, 240), color=POOL_TILE_BLUE, material=256))
-    city_parts.append(make_part("PoolBorderS", (32, 0.4, 1), (-46, 0.7, 260), color=POOL_TILE_BLUE, material=256))
-    city_parts.append(make_part("PoolBorderE", (1, 0.4, 20), (-30, 0.7, 250), color=POOL_TILE_BLUE, material=256))
-    city_parts.append(make_part("PoolBorderW", (1, 0.4, 20), (-62, 0.7, 250), color=POOL_TILE_BLUE, material=256))
+    POOL_DX, POOL_DZ = 96, 190
+    city_parts.append(make_part("PoolDeck", (44, 1, 36), (-46 + POOL_DX, 0.5, 250 + POOL_DZ), color=POOL_TILE, material=256))
+    city_parts.append(make_part("PoolWater", (30, 1, 20), (-46 + POOL_DX, 0.55, 250 + POOL_DZ), color=POOL_WATER, material=304, transparency=0.25, can_collide=False))
+    city_parts.append(make_part("PoolBorderN", (32, 0.4, 1), (-46 + POOL_DX, 0.7, 240 + POOL_DZ), color=POOL_TILE_BLUE, material=256))
+    city_parts.append(make_part("PoolBorderS", (32, 0.4, 1), (-46 + POOL_DX, 0.7, 260 + POOL_DZ), color=POOL_TILE_BLUE, material=256))
+    city_parts.append(make_part("PoolBorderE", (1, 0.4, 20), (-30 + POOL_DX, 0.7, 250 + POOL_DZ), color=POOL_TILE_BLUE, material=256))
+    city_parts.append(make_part("PoolBorderW", (1, 0.4, 20), (-62 + POOL_DX, 0.7, 250 + POOL_DZ), color=POOL_TILE_BLUE, material=256))
 
-    # Шезлонги вздовж північної (z=234, обличчям на південь до води) та південної (z=266) смуг деку
+    # Шезлонги вздовж північної (обличчям на південь до води) та південної смуг деку
     lounge_spots = [(-60, 234, 0), (-52, 234, 0), (-40, 234, 0), (-32, 234, 0), (-60, 266, 180), (-32, 266, 180)]
     for i, (lx, lz, lry) in enumerate(lounge_spots):
+        lx, lz = lx + POOL_DX, lz + POOL_DZ
         back_z = lz + (2.0 if lry == 0 else -2.0)
         city_parts.append(make_part(f"LoungeChair{i+1}", (2.0, 0.6, 4.4), (lx, 0.8, lz), rot=(0, lry, 0), color=POOL_TILE, material=816))
         city_parts.append(make_part(f"LoungeChairBack{i+1}", (2.0, 1.6, 0.3), (lx, 1.4, back_z), rot=(-20, lry, 0), color=POOL_TILE_BLUE, material=816))
 
     for i, (ux, uz) in enumerate([(-38, 238), (-54, 262)]):
+        ux, uz = ux + POOL_DX, uz + POOL_DZ
         city_parts.append(make_part(f"PoolUmbrellaPole{i+1}", (0.3, 6.5, 0.3), (ux, 3.25, uz), shape=2, color=DESK_LEGS, material=800))
         city_parts.append(make_part(f"PoolUmbrellaCanopy{i+1}", (0.6, 6.5, 6.5), (ux, 6.6, uz), rot=(0, 0, 90), shape=2, color=RGB_CYAN if i == 0 else GOLD_COLOR, material=816))
 
     pool_sign_children = label_children("🏊 Splash Street Pool — Streaming Zone", bg_color=(0.06, 0.14, 0.22), stroke_color=(0.3, 0.75, 1.0))
-    city_parts.append(make_part("PoolSignPost", (0.6, 8, 0.6), (-46, 4, 232), color=DESK_LEGS, material=800, children_xml=pool_sign_children))
-    city_parts.append(make_part("PoolFenceGlassN", (32, 1.6, 0.15), (-46, 1.6, 233), color=POOL_TILE_BLUE, material=304, transparency=0.55))
-    city_parts.append(make_part("PoolFenceGlassS", (32, 1.6, 0.15), (-46, 1.6, 267), color=POOL_TILE_BLUE, material=304, transparency=0.55))
+    city_parts.append(make_part("PoolSignPost", (0.6, 8, 0.6), (-46 + POOL_DX, 4, 232 + POOL_DZ), color=DESK_LEGS, material=800, children_xml=pool_sign_children))
+    city_parts.append(make_part("PoolFenceGlassN", (32, 1.6, 0.15), (-46 + POOL_DX, 1.6, 233 + POOL_DZ), color=POOL_TILE_BLUE, material=304, transparency=0.55))
+    city_parts.append(make_part("PoolFenceGlassS", (32, 1.6, 0.15), (-46 + POOL_DX, 1.6, 267 + POOL_DZ), color=POOL_TILE_BLUE, material=304, transparency=0.55))
 
     # =========================================================================
     # 10. TOP STREAMERS COLOSSEUM — справжня арена з ярусами арок (як у Римі),
@@ -755,9 +812,9 @@ def create_rbxlx(auto_push=True):
                                 light=("PointLight", (1.0, 0.85, 0.0), 2.0, 26)))
 
     # =========================================================================
-    # 11. WILD STREAM ZOO — невеликий зоопарк для ІРЛ-стрімів (X=130, Z=320)
+    # 11. WILD STREAM ZOO — невеликий зоопарк для ІРЛ-стрімів (уздовж District Loop, третій сегмент X=100)
     # =========================================================================
-    ZOO_CX, ZOO_CZ = 130, 320
+    ZOO_CX, ZOO_CZ = 152, 345
     city_parts.append(make_part("ZooGround", (64, 0.6, 64), (ZOO_CX, 0.3, ZOO_CZ), color=ZOO_GRASS, material=1280))
     city_parts.append(make_part("ZooFenceN", (64, 3.4, 1), (ZOO_CX, 1.7, ZOO_CZ - 32), color=ZOO_FENCE, material=272))
     city_parts.append(make_part("ZooFenceS", (64, 3.4, 1), (ZOO_CX, 1.7, ZOO_CZ + 32), color=ZOO_FENCE, material=272))

@@ -56,13 +56,16 @@ local STAND_ANIM_R6 = "rbxassetid://180435571"
 -- Звук їзди на гіроскутері: тихе рівне електричне гудіння двигуна/гіроскопів,
 -- що трохи "заводиться" гучніше при прискоренні — так, як звучить реальний
 -- електричний гіроскутер/ховерборд, а не тупіт ніг персонажа по підлозі.
+-- Перший підібраний звук ("Electrical Humming") виявився занадто гучним і не
+-- дуже пасував по характеру — замінено на більш м'який/механічний SFX-звук
+-- мотора, і суттєво знижена гучність (idle/max) відносно першої спроби.
 -- Якщо цей конкретний звук колись стане недоступний (буває з модерацією Roblox) —
 -- заміни ID тут: Studio → Toolbox → Audio → пошук "electric hum" / "hover" / "drone".
-local HOVER_SOUND_ID = "rbxassetid://9072278552" -- "Electrical Humming"
-local HOVER_SOUND_IDLE_VOLUME = 0.28
-local HOVER_SOUND_MAX_VOLUME = 0.68
+local HOVER_SOUND_ID = "rbxassetid://9125699963" -- "Motor Sounds Electric Whir Mechanical Movement (SFX)"
+local HOVER_SOUND_IDLE_VOLUME = 0.10
+local HOVER_SOUND_MAX_VOLUME = 0.30
 local HOVER_SOUND_IDLE_PITCH = 0.85
-local HOVER_SOUND_MAX_PITCH = 1.25
+local HOVER_SOUND_MAX_PITCH = 1.2
 
 -- Стандартні звуки кроків/бігу персонажа (з вбудованого Animate-скрипта Roblox) —
 -- їх треба вимкнути на час їзди, інакше чути "тупотіння", хоча персонаж стоїть на дошці.
