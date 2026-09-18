@@ -8,44 +8,19 @@ def create_rbxlx(auto_push=True):
     src_dir = os.path.join(base_dir, "src")
     
     # Read source files
-    with open(os.path.join(src_dir, "Shared", "StreamConfig.luau"), "r", encoding="utf-8") as f:
-        stream_config_src = f.read()
-    with open(os.path.join(src_dir, "Shared", "StreamEventsConfig.luau"), "r", encoding="utf-8") as f:
-        stream_events_src = f.read()
-    with open(os.path.join(src_dir, "Shared", "ShopConfig.luau"), "r", encoding="utf-8") as f:
-        shop_config_src = f.read()
+    # ПРИМІТКА (start-fresh clean-up): Illia попросив прибрати всі механіки/меню
+    # (стрім-симуляцію, магазини, лідерборд, robux-стор, керування гіроскутером)
+    # і лишити тільки саму фізичну мапу. Тому тут читається і запікається в
+    # StreamerGame.rbxlx ЛИШЕ EnvironmentConfig/EnvironmentManager (цикл дня-ночі
+    # — це властивість самого світу, а не ігрова механіка/меню). Усі інші
+    # .luau-файли з src/Client, src/Server, src/Shared більше НЕ читаються і
+    # НЕ потрапляють у згенерований файл — самі файли можуть і далі лежати в
+    # репозиторії (видалити їх фізично звідси я не можу), але вони ні на що
+    # не впливають, бо build_rbxlx.py їх просто ігнорує.
     with open(os.path.join(src_dir, "Shared", "EnvironmentConfig.luau"), "r", encoding="utf-8") as f:
         environment_config_src = f.read()
-    with open(os.path.join(src_dir, "Server", "Leaderstats.server.luau"), "r", encoding="utf-8") as f:
-        leaderstats_src = f.read()
-    with open(os.path.join(src_dir, "Server", "StreamManager.server.luau"), "r", encoding="utf-8") as f:
-        stream_manager_src = f.read()
-    with open(os.path.join(src_dir, "Server", "ShopManager.server.luau"), "r", encoding="utf-8") as f:
-        shop_manager_src = f.read()
-    with open(os.path.join(src_dir, "Server", "EventManager.server.luau"), "r", encoding="utf-8") as f:
-        event_manager_src = f.read()
-    with open(os.path.join(src_dir, "Server", "LeaderboardManager.server.luau"), "r", encoding="utf-8") as f:
-        leaderboard_manager_src = f.read()
-    with open(os.path.join(src_dir, "Server", "VehicleManager.server.luau"), "r", encoding="utf-8") as f:
-        vehicle_manager_src = f.read()
     with open(os.path.join(src_dir, "Server", "EnvironmentManager.server.luau"), "r", encoding="utf-8") as f:
         environment_manager_src = f.read()
-    with open(os.path.join(src_dir, "Client", "StreamGui.client.luau"), "r", encoding="utf-8") as f:
-        stream_gui_src = f.read()
-    with open(os.path.join(src_dir, "Client", "StreamController.client.luau"), "r", encoding="utf-8") as f:
-        stream_controller_src = f.read()
-    with open(os.path.join(src_dir, "Client", "PlatformSelectGui.client.luau"), "r", encoding="utf-8") as f:
-        platform_select_gui_src = f.read()
-    with open(os.path.join(src_dir, "Client", "StreamEventGui.client.luau"), "r", encoding="utf-8") as f:
-        stream_event_gui_src = f.read()
-    with open(os.path.join(src_dir, "Client", "ShopGui.client.luau"), "r", encoding="utf-8") as f:
-        shop_gui_src = f.read()
-    with open(os.path.join(src_dir, "Client", "VehicleGui.client.luau"), "r", encoding="utf-8") as f:
-        vehicle_gui_src = f.read()
-    with open(os.path.join(src_dir, "Client", "CityWaypoints.client.luau"), "r", encoding="utf-8") as f:
-        city_waypoints_src = f.read()
-    with open(os.path.join(src_dir, "Client", "RobuxStoreGui.client.luau"), "r", encoding="utf-8") as f:
-        robux_store_gui_src = f.read()
 
     part_counter = [2000]
     def make_part(name, size, pos, rot=(0,0,0), color="4281545523", material=256, anchored=True, can_collide=True, transparency=0, light=None, is_seat=False, shape=None, children_xml=""):
@@ -195,20 +170,11 @@ def create_rbxlx(auto_push=True):
 
     prompt_counter = [3000]
     def shop_children(prompt_name, object_text, action_text, badge_text, bg_color=(0.08, 0.12, 0.18), stroke_color=(0.2, 0.8, 1.0)):
-        prompt_counter[0] += 1
-        pid = f"RBX_{prompt_name}_{prompt_counter[0]}"
-        return f'''
-				<Item class="ProximityPrompt" referent="{pid}">
-					<Properties>
-						<string name="Name">{prompt_name}</string>
-						<string name="ObjectText">{object_text}</string>
-						<string name="ActionText">{action_text}</string>
-						<float name="MaxActivationDistance">12</float>
-						<float name="HoldDuration">0</float>
-						<token name="KeyboardKeyCode">101</token>
-						<bool name="RequiresLineOfSight">false</bool>
-					</Properties>
-				</Item>''' + label_children(badge_text, bg_color, stroke_color)
+        # Раніше тут ще додавався ProximityPrompt ("Натисни E") — прибрано разом
+        # з усіма магазинними/стрімерськими механіками: без ShopManager/ShopGui
+        # натискання E все одно нічого б не робило. Лишилась тільки вивіска
+        # (BillboardGui) — будівля виглядає як звичайна споруда на мапі.
+        return label_children(badge_text, bg_color, stroke_color)
 
     city_parts = []
 
@@ -290,20 +256,9 @@ def create_rbxlx(auto_push=True):
 
     city_parts.append(make_part("StreamerRug", (12, 0.05, 10), (0, 1.03, -66), color=RUG_COLOR, material=816))
 
-    # Desk Setup with ProximityPrompt on Desk
-    desk_prompt_xml = '''
-				<Item class="ProximityPrompt" referent="RBX_DeskPrompt">
-					<Properties>
-						<string name="Name">DeskPrompt</string>
-						<string name="ObjectText">Streaming Battlestation</string>
-						<string name="ActionText">Start / Manage Stream (E)</string>
-						<float name="MaxActivationDistance">10</float>
-						<float name="HoldDuration">0</float>
-						<token name="KeyboardKeyCode">101</token>
-						<bool name="RequiresLineOfSight">false</bool>
-					</Properties>
-				</Item>'''
-    city_parts.append(make_part("DeskTop", (10, 0.3, 4.5), (0, 4.5, -70), color=DESK_TOP, material=256, children_xml=desk_prompt_xml))
+    # Desk Setup — просто меблі; ProximityPrompt "Start/Manage Stream" прибрано
+    # разом зі стрім-механікою (без StreamManager/StreamGui він нічого не робив би).
+    city_parts.append(make_part("DeskTop", (10, 0.3, 4.5), (0, 4.5, -70), color=DESK_TOP, material=256))
     city_parts.append(make_part("DeskLegL", (0.4, 3.5, 4.2), (-4.6, 2.75, -70), color=DESK_LEGS, material=800))
     city_parts.append(make_part("DeskLegR", (0.4, 3.5, 4.2), (4.6, 2.75, -70), color=DESK_LEGS, material=800))
     city_parts.append(make_part("DeskLED", (9, 0.1, 0.1), (0, 4.4, -68.5), color=RGB_CYAN, material=288,
@@ -329,25 +284,15 @@ def create_rbxlx(auto_push=True):
     city_parts.append(make_part("MicClamp", (0.3, 0.4, 0.3), (-3.2, 4.8, -68.5), color=DESK_LEGS, material=800))
     city_parts.append(make_part("MicBody", (0.3, 0.6, 0.3), (-1.4, 5.8, -68.9), color=4280427045, material=800))
 
-    # Grounded Gaming Chair with ProximityPrompt
-    chair_prompt_xml = '''
-				<Item class="ProximityPrompt" referent="RBX_ChairSitPrompt">
-					<Properties>
-						<string name="Name">SitPrompt</string>
-						<string name="ObjectText">Streamer Chair</string>
-						<string name="ActionText">Sit &amp; Stream (E)</string>
-						<float name="MaxActivationDistance">10</float>
-						<float name="HoldDuration">0</float>
-						<token name="KeyboardKeyCode">101</token>
-						<bool name="RequiresLineOfSight">false</bool>
-					</Properties>
-				</Item>'''
+    # Grounded Gaming Chair — залишається справжнім Seat (сідати клацанням —
+    # це вбудована поведінка Roblox, не пов'язана зі скриптами), інформаційний
+    # ProximityPrompt "Sit & Stream" прибрано разом зі стрім-механікою.
     city_parts.append(make_part("ChairWheelBase1", (2.4, 0.2, 0.4), (0, 1.2, -67.0), color=DESK_LEGS, material=800))
     city_parts.append(make_part("ChairWheelBase2", (0.4, 0.2, 2.4), (0, 1.2, -67.0), color=DESK_LEGS, material=800))
     city_parts.append(make_part("ChairWheel1", (0.3, 0.3, 0.3), (1.0, 1.2, -67.0), color=DESK_LEGS, material=256))
     city_parts.append(make_part("ChairWheel2", (0.3, 0.3, 0.3), (-1.0, 1.2, -67.0), color=DESK_LEGS, material=256))
     city_parts.append(make_part("ChairPiston", (0.35, 1.0, 0.35), (0, 1.75, -67.0), color=4289374890, material=800))
-    city_parts.append(make_part("GamingChairSeat", (2.2, 0.4, 2.2), (0, 2.4, -67.0), color=CHAIR_BLACK, material=816, is_seat=True, children_xml=chair_prompt_xml))
+    city_parts.append(make_part("GamingChairSeat", (2.2, 0.4, 2.2), (0, 2.4, -67.0), color=CHAIR_BLACK, material=816, is_seat=True))
     city_parts.append(make_part("ChairBackrest", (2.0, 2.8, 0.35), (0, 3.8, -65.9), rot=(-5, 0, 0), color=CHAIR_BLACK, material=816))
     city_parts.append(make_part("ChairHeadrest", (1.4, 0.7, 0.3), (0, 5.3, -65.8), rot=(-5, 0, 0), color=CHAIR_RED, material=816))
     city_parts.append(make_part("ChairLumbarPillow", (1.2, 0.5, 0.25), (0, 2.9, -66.0), rot=(-5, 0, 0), color=CHAIR_RED, material=816))
@@ -367,19 +312,10 @@ def create_rbxlx(auto_push=True):
     # =========================================================================
     hoverboard_parts = []
 
-    # Deck (root/chassis) with RidePrompt ProximityPrompt and 3D Badge
+    # Deck (root/chassis) — тепер просто декоративна модель на під'їзній доріжці.
+    # ProximityPrompt "Ride (E)" прибрано разом з VehicleManager/VehicleGui —
+    # кататись більше не можна, лишається тільки вивіска-бейдж.
     hoverboard_children = '''
-				<Item class="ProximityPrompt" referent="RBX_HoverRidePrompt">
-					<Properties>
-						<string name="Name">RidePrompt</string>
-						<string name="ObjectText">Galaxy Hoverboard</string>
-						<string name="ActionText">Ride (E)</string>
-						<float name="MaxActivationDistance">10</float>
-						<float name="HoldDuration">0</float>
-						<token name="KeyboardKeyCode">101</token>
-						<bool name="RequiresLineOfSight">false</bool>
-					</Properties>
-				</Item>
 				<Item class="BillboardGui" referent="RBX_HoverBadge">
 					<Properties>
 						<string name="Name">HoverBadge</string>
@@ -408,7 +344,7 @@ def create_rbxlx(auto_push=True):
 							<Properties>
 								<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
 								<float name="BackgroundTransparency">1</float>
-								<string name="Text">🛹 Galaxy Hoverboard [E]</string>
+								<string name="Text">🛹 Galaxy Hoverboard</string>
 								<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 								<token name="Font">17</token>
 								<float name="TextSize">14</float>
@@ -417,9 +353,6 @@ def create_rbxlx(auto_push=True):
 					</Item>
 				</Item>'''
 
-    # Немає VehicleSeat/Seat навмисно: ці класи в Roblox автоматично саджають
-    # гравця, щойно він торкнеться деталі, а нам потрібно, щоб персонаж СТОЯВ
-    # на дошці (керування реалізоване вручну через ProximityPrompt + сервер).
     hoverboard_parts.append(make_part("HoverboardBody", (1.6, 0.3, 4.4), (14, 2.0, -42), color=HOVER_NAVY_DARK, material=256, anchored=True, can_collide=True, children_xml=hoverboard_children))
 
     # Deco "galaxy" stripe + grip footpads (can_collide=False, welded to the deck)
@@ -460,19 +393,9 @@ def create_rbxlx(auto_push=True):
     city_parts.append(make_part("TechStoreSignNeon", (0.2, 2.5, 23), (26.4, 17.5, 40), color=RGB_CYAN, material=288,
                                 light=("PointLight", (0.2, 0.8, 1.0), 2.5, 30)))
 
-    # Tech Counter with ProximityPrompt & 3D Billboard
+    # Tech Counter — прибрано ProximityPrompt "Browse Hardware" (без ShopManager
+    # він нічого не робив би), лишається тільки вивіска.
     tech_counter_children = '''
-				<Item class="ProximityPrompt" referent="RBX_TechPrompt">
-					<Properties>
-						<string name="Name">TechPrompt</string>
-						<string name="ObjectText">CyberByte Tech Store</string>
-						<string name="ActionText">Browse Hardware &amp; Games (E)</string>
-						<float name="MaxActivationDistance">12</float>
-						<float name="HoldDuration">0</float>
-						<token name="KeyboardKeyCode">101</token>
-						<bool name="RequiresLineOfSight">false</bool>
-					</Properties>
-				</Item>
 				<Item class="BillboardGui" referent="RBX_TechBadge">
 					<Properties>
 						<string name="Name">TechBadge</string>
@@ -501,7 +424,7 @@ def create_rbxlx(auto_push=True):
 							<Properties>
 								<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
 								<float name="BackgroundTransparency">1</float>
-								<string name="Text">💻 CyberByte Tech [E]</string>
+								<string name="Text">💻 CyberByte Tech</string>
 								<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 								<token name="Font">17</token>
 								<float name="TextSize">15</float>
@@ -528,18 +451,9 @@ def create_rbxlx(auto_push=True):
                                 light=("PointLight", (1.0, 0.8, 0.2), 2.5, 30)))
 
     # Food Counter with ProximityPrompt & 3D Billboard
+    # Food Counter — прибрано ProximityPrompt "Buy Energy Drinks" (без ShopManager
+    # він нічого не робив би), лишається тільки вивіска.
     grocery_counter_children = '''
-				<Item class="ProximityPrompt" referent="RBX_GroceryPrompt">
-					<Properties>
-						<string name="Name">GroceryPrompt</string>
-						<string name="ObjectText">Burger &amp; Snacks Mart</string>
-						<string name="ActionText">Buy Energy Drinks &amp; Food (E)</string>
-						<float name="MaxActivationDistance">12</float>
-						<float name="HoldDuration">0</float>
-						<token name="KeyboardKeyCode">101</token>
-						<bool name="RequiresLineOfSight">false</bool>
-					</Properties>
-				</Item>
 				<Item class="BillboardGui" referent="RBX_GroceryBadge">
 					<Properties>
 						<string name="Name">GroceryBadge</string>
@@ -568,7 +482,7 @@ def create_rbxlx(auto_push=True):
 							<Properties>
 								<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
 								<float name="BackgroundTransparency">1</float>
-								<string name="Text">🍔 Burger Mart [E]</string>
+								<string name="Text">🍔 Burger Mart</string>
 								<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 								<token name="Font">17</token>
 								<float name="TextSize">15</float>
@@ -589,21 +503,18 @@ def create_rbxlx(auto_push=True):
                                 light=("PointLight", (1.0, 0.85, 0.0), 2.0, 22)))
 
     # =========================================================================
-    # 7. DISTRICT LOOP — вигнута вулиця з поворотами (справжній квартал, а не
-    #    одна пряма лінія): від головної дороги (Z=220) через гіроскутерну
-    #    крамницю → зоопарк → басейн, і насамкінець прямо у ворота Колізею.
+    # 7. MAIN STREET GRID — головна дорога йде ПРЯМО від Z=220 до воріт
+    #    Колізею (Z=475, без жодних поворотів), а два справжні перехрестя
+    #    розходяться ліворуч і праворуч поперечними вулицями — як у
+    #    звичайному місті. Магазин гіроскутерів, басейн і зоопарк стоять по
+    #    кутах цих перехресть (по одному ліворуч/праворуч на кожному), а не
+    #    приліплені один за одним вздовж однієї лінії.
     # =========================================================================
     ROAD_W = 28
     CORNER_SZ = ROAD_W + 4
-
-    LOOP_POINTS = [
-        (0, 220),    # стик з головною дорогою
-        (0, 290),    # поворот 1
-        (100, 290),  # поворот 2
-        (100, 400),  # поворот 3
-        (0, 400),    # поворот 4
-        (0, 475),    # прямий фінішний відрізок = COL_CZ(530) - COL_R(55), впирається у ворота Колізею
-    ]
+    INTERSECTION_A_Z = 270   # перше перехрестя — гіроскутерна крамниця (SW) + басейн (NE)
+    INTERSECTION_B_Z = 420   # друге перехрестя — зоопарк (капом на заході) + декоративні будівлі
+    CROSS_HALF = 100         # довжина поперечної вулиці в кожен бік від головної дороги
 
     def _emit_road_segment(name, x0, z0, x1, z1):
         if x0 == x1:
@@ -633,40 +544,72 @@ def create_rbxlx(auto_push=True):
                 city_parts.append(make_part(f"{name}Line{xl}", (10, 0.42, 0.5), (xl, 0.22, z0), color=ROAD_MARK_YELLOW, material=288))
                 xl += 16
 
-    for idx in range(len(LOOP_POINTS) - 1):
-        lx0, lz0 = LOOP_POINTS[idx]
-        lx1, lz1 = LOOP_POINTS[idx + 1]
-        _emit_road_segment(f"DistrictLoop{idx}_", lx0, lz0, lx1, lz1)
+    # Головна пряма дорога: від стику зі старою вулицею (Z=220) прямо до воріт Колізею (Z=475)
+    _emit_road_segment("MainExt_", 0, 220, 0, 475)
 
-    # Квадратні перехрестя на кожному повороті, щоб кут виглядав суцільним
-    for idx in range(1, len(LOOP_POINTS) - 1):
-        ccx, ccz = LOOP_POINTS[idx]
-        city_parts.append(make_part(f"DistrictCorner{idx}", (CORNER_SZ, 0.42, CORNER_SZ), (ccx, 0.21, ccz), color=ROAD_ASPHALT, material=256))
+    # Два перехрестя — поперечні вулиці ліворуч/праворуч від головної дороги
+    _emit_road_segment("CrossA_", -CROSS_HALF, INTERSECTION_A_Z, CROSS_HALF, INTERSECTION_A_Z)
+    _emit_road_segment("CrossB_", -CROSS_HALF, INTERSECTION_B_Z, CROSS_HALF, INTERSECTION_B_Z)
 
-    # Ліхтарі по обидва боки кожного прямого відрізка (посередині)
-    for idx in range(len(LOOP_POINTS) - 1):
-        lx0, lz0 = LOOP_POINTS[idx]
-        lx1, lz1 = LOOP_POINTS[idx + 1]
-        mx, mz = (lx0 + lx1) / 2, (lz0 + lz1) / 2
-        is_ns = (lx0 == lx1)
+    # Квадратні перехрестя, щоб не було "дірки" там, де дороги перетинаються
+    city_parts.append(make_part("IntersectionA", (CORNER_SZ, 0.42, CORNER_SZ), (0, 0.21, INTERSECTION_A_Z), color=ROAD_ASPHALT, material=256))
+    city_parts.append(make_part("IntersectionB", (CORNER_SZ, 0.42, CORNER_SZ), (0, 0.21, INTERSECTION_B_Z), color=ROAD_ASPHALT, material=256))
+
+    # Ліхтарі: на головній дорозі між перехрестями + на кожній поперечній вулиці
+    for lampz in (345,):
         for side in (-1, 1):
-            if is_ns:
-                lampx, lampz = mx + side * (ROAD_W / 2 + 4), mz
-            else:
-                lampx, lampz = mx, mz + side * (ROAD_W / 2 + 4)
-            city_parts.append(make_part(f"DistrictLampPole{idx}_{side}", (0.6, 14, 0.6), (lampx, 7, lampz), color=DESK_LEGS, material=800))
-            city_parts.append(make_part(f"DistrictLamp{idx}_{side}", (1.2, 0.4, 1.2), (lampx, 13.6, lampz), color=4294967295, material=288,
+            lx = side * (ROAD_W / 2 + 4)
+            city_parts.append(make_part(f"MainExtLampPole_{lampz}_{side}", (0.6, 14, 0.6), (lx, 7, lampz), color=DESK_LEGS, material=800))
+            city_parts.append(make_part(f"MainExtLamp_{lampz}_{side}", (1.2, 0.4, 1.2), (lx, 13.6, lampz), color=4294967295, material=288,
+                                        light=("PointLight", (1.0, 0.9, 0.6), 2.2, 26)))
+    for crossz, tag in ((INTERSECTION_A_Z, "A"), (INTERSECTION_B_Z, "B")):
+        for lx in (-60, 60):
+            lz = crossz + (ROAD_W / 2 + 4)
+            city_parts.append(make_part(f"Cross{tag}LampPole_{lx}", (0.6, 14, 0.6), (lx, 7, lz), color=DESK_LEGS, material=800))
+            city_parts.append(make_part(f"Cross{tag}Lamp_{lx}", (1.2, 0.4, 1.2), (lx, 13.6, lz), color=4294967295, material=288,
                                         light=("PointLight", (1.0, 0.9, 0.6), 2.2, 26)))
 
     # =========================================================================
-    # 8. VEHICLE SHOP — "SkyGlide Board Shop", тепер на першому повороті
-    #    District Loop (X≈50, Z≈245), розвернутий фасадом (rot 90°) до дороги,
-    #    що йде на схід — а не мертво приліплений до однієї прямої вулиці.
-    #    Той самий generic ShopConfig: ProximityPrompt "VehiclePrompt", яку
-    #    відкриває ShopGui.client.luau.
+    # 7b. TOWN BLOCKS — прості декоративні багатоповерхівки "для вигляду" по
+    #     кутах обох перехресть і на кінцях поперечних вулиць, щоб райони не
+    #     виглядали порожньо (як просив Illia — "додай ще будинків для виду").
+    #     Вікна світяться з усіх 4 боків, тому орієнтація не критична.
     # =========================================================================
-    VSHOP_CX, VSHOP_CZ = 50, 245
-    VSHOP_ROT = (0, 90, 0)
+    def add_town_block(name, cx, cz, width, depth, height, wall_color, window_color=GLASS_BLUE):
+        city_parts.append(make_part(f"{name}Base", (width, height, depth), (cx, height / 2, cz), color=wall_color, material=256))
+        city_parts.append(make_part(f"{name}Roof", (width + 1, 1, depth + 1), (cx, height + 0.5, cz), color=CEILING_COLOR, material=256))
+        floor_y = 4.0
+        while floor_y < height - 3:
+            city_parts.append(make_part(f"{name}WinN_{int(floor_y)}", (width - 3, 2.4, 0.2), (cx, floor_y, cz - depth / 2 - 0.05), color=window_color, material=288, transparency=0.2))
+            city_parts.append(make_part(f"{name}WinS_{int(floor_y)}", (width - 3, 2.4, 0.2), (cx, floor_y, cz + depth / 2 + 0.05), color=window_color, material=288, transparency=0.2))
+            city_parts.append(make_part(f"{name}WinE_{int(floor_y)}", (0.2, 2.4, depth - 3), (cx + width / 2 + 0.05, floor_y, cz), color=window_color, material=288, transparency=0.2))
+            city_parts.append(make_part(f"{name}WinW_{int(floor_y)}", (0.2, 2.4, depth - 3), (cx - width / 2 - 0.05, floor_y, cz), color=window_color, material=288, transparency=0.2))
+            floor_y += 8
+
+    # Перехрестя A (Z=270) — кути, вільні від магазину/басейну
+    add_town_block("TownBlockA1", 42, 228, 24, 24, 36, DARK_WALL, GLASS_BLUE)
+    add_town_block("TownBlockA2", -42, 312, 24, 24, 50, CEILING_COLOR, HOVER_LED_BLUE)
+    # Кінці поперечної вулиці A
+    add_town_block("TownBlockA3", -121, 270, 30, 30, 30, DARK_WALL, GLASS_BLUE)
+    add_town_block("TownBlockA4", 121, 270, 30, 30, 42, CEILING_COLOR, GLASS_BLUE)
+
+    # Перехрестя B (Z=420) — кути, вільні від зоопарку
+    add_town_block("TownBlockB1", -42, 378, 24, 24, 40, DARK_WALL, HOVER_LED_BLUE)
+    add_town_block("TownBlockB2", 42, 378, 24, 24, 30, CEILING_COLOR, GLASS_BLUE)
+    add_town_block("TownBlockB3", -42, 458, 20, 20, 45, DARK_WALL, GLASS_BLUE)
+    add_town_block("TownBlockB4", 42, 458, 20, 20, 35, CEILING_COLOR, HOVER_LED_BLUE)
+    # Східний кінець поперечної вулиці B (дзеркально до зоопарку на заході)
+    add_town_block("TownBlockB5", 126, 420, 40, 40, 55, DARK_WALL, GLASS_BLUE)
+
+    # =========================================================================
+    # 8. VEHICLE SHOP — "SkyGlide Board Shop", тепер у південно-західному
+    #    куті першого перехрестя (X≈-50, Z≈220), в оригінальній (без
+    #    розвороту) орієнтації — фасад дивиться на північ, просто в бік
+    #    перехрестя. Той самий generic ShopConfig: ProximityPrompt
+    #    "VehiclePrompt", яку відкриває ShopGui.client.luau.
+    # =========================================================================
+    VSHOP_CX, VSHOP_CZ = -66, 205
+    VSHOP_ROT = (0, 0, 0)
     city_parts.append(make_part("VShopFloor", (36, 1, 32), (VSHOP_CX, 0.5, VSHOP_CZ), rot=VSHOP_ROT, color=DARK_WALL, material=256))
     city_parts.append(make_part("VShopRoof", (38, 1.5, 34), (VSHOP_CX, 16.5, VSHOP_CZ), rot=VSHOP_ROT, color=DARK_WALL, material=256))
     city_parts.append(make_part("VShopBackWall", (1, 15, 32), (VSHOP_CX, 8.5, VSHOP_CZ - 18.5), rot=VSHOP_ROT, color=DARK_WALL, material=256))
@@ -681,7 +624,7 @@ def create_rbxlx(auto_push=True):
         "VehiclePrompt",
         "SkyGlide Board Shop",
         "Купити гіроскутер (E)",
-        "🛹 SkyGlide Boards [E]",
+        "🛹 SkyGlide Boards",
         bg_color=(0.08, 0.10, 0.20), stroke_color=(0.3, 0.6, 1.0))
     city_parts.append(make_part("VShopCounter", (14, 3.5, 2.5), (VSHOP_CX + 2, 2.25, VSHOP_CZ), rot=VSHOP_ROT, color=DESK_TOP, material=256, children_xml=vshop_counter_children))
     city_parts.append(make_part("VShopShowcaseGlass", (13.6, 1.5, 0.2), (VSHOP_CX + 2, 4.75, VSHOP_CZ), rot=VSHOP_ROT, color=HOVER_LED_BLUE, material=304, transparency=0.4))
@@ -692,11 +635,11 @@ def create_rbxlx(auto_push=True):
     city_parts.append(make_part("VShopDisplayGlow2", (0.5, 0.05, 3.2), (VSHOP_CX - 10, 2.44, VSHOP_CZ - 6), rot=VSHOP_ROT, color=HOVER_LED_BLUE, material=288))
 
     # =========================================================================
-    # 9. SPLASH STREET POOL — тепер на четвертому відрізку District Loop
-    #    (X≈50, Z≈440), фасадом (вивіскою) до дороги на південь — орієнтація
-    #    та сама, що й раніше, просто перенесено на нове місце (offset +96,+190).
+    # 9. SPLASH STREET POOL — тепер у північно-східному куті першого
+    #    перехрестя (X≈52, Z≈318), навпроти магазину гіроскутерів через
+    #    дорогу — орієнтація та сама, що й раніше, просто нове зміщення.
     # =========================================================================
-    POOL_DX, POOL_DZ = 96, 190
+    POOL_DX, POOL_DZ = 98, 68
     city_parts.append(make_part("PoolDeck", (44, 1, 36), (-46 + POOL_DX, 0.5, 250 + POOL_DZ), color=POOL_TILE, material=256))
     city_parts.append(make_part("PoolWater", (30, 1, 20), (-46 + POOL_DX, 0.55, 250 + POOL_DZ), color=POOL_WATER, material=304, transparency=0.25, can_collide=False))
     city_parts.append(make_part("PoolBorderN", (32, 0.4, 1), (-46 + POOL_DX, 0.7, 240 + POOL_DZ), color=POOL_TILE_BLUE, material=256))
@@ -812,9 +755,11 @@ def create_rbxlx(auto_push=True):
                                 light=("PointLight", (1.0, 0.85, 0.0), 2.0, 26)))
 
     # =========================================================================
-    # 11. WILD STREAM ZOO — невеликий зоопарк для ІРЛ-стрімів (уздовж District Loop, третій сегмент X=100)
+    # 11. WILD STREAM ZOO — невеликий зоопарк для ІРЛ-стрімів, тепер "накриває"
+    #     західний кінець другої поперечної вулиці (перехрестя B), як окрема
+    #     будівля в кінці провулка — типовий прийом реального міста.
     # =========================================================================
-    ZOO_CX, ZOO_CZ = 152, 345
+    ZOO_CX, ZOO_CZ = -138, 420
     city_parts.append(make_part("ZooGround", (64, 0.6, 64), (ZOO_CX, 0.3, ZOO_CZ), color=ZOO_GRASS, material=1280))
     city_parts.append(make_part("ZooFenceN", (64, 3.4, 1), (ZOO_CX, 1.7, ZOO_CZ - 32), color=ZOO_FENCE, material=272))
     city_parts.append(make_part("ZooFenceS", (64, 3.4, 1), (ZOO_CX, 1.7, ZOO_CZ + 32), color=ZOO_FENCE, material=272))
@@ -897,6 +842,10 @@ def create_rbxlx(auto_push=True):
     all_parts_xml = "\n".join(city_parts)
 
     # 3D Leaderboard Display Part with SurfaceGui
+    # Раніше цей екран заповнював LeaderboardManager.server.luau живими рядками
+    # рейтингу стрімерів (ScrollingFrame + UIListLayout). Без цього скрипта він
+    # назавжди лишався б порожнім під заголовком — тому спростив до простої
+    # статичної вивіски "Wall of Fame" (просто частина мапи/декору, не механіка).
     leaderboard_display_xml = '''
 		<Item class="Model" referent="RBX_StreamerCorner">
 			<Properties>
@@ -936,47 +885,20 @@ def create_rbxlx(auto_push=True):
 						<Item class="Frame" referent="RBX_LB_Header">
 							<Properties>
 								<string name="Name">Header</string>
-								<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>0</YS><YO>70</YO></UDim2>
+								<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
 								<Color3 name="BackgroundColor3"><R>0.08</R><G>0.1</G><B>0.14</B></Color3>
 								<float name="BackgroundTransparency">0</float>
 							</Properties>
 							<Item class="TextLabel" referent="RBX_LB_Title">
 								<Properties>
 									<string name="Name">Title</string>
-									<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>0.6</YS><YO>0</YO></UDim2>
-									<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>5</YO></UDim2>
+									<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>0.55</YS><YO>0</YO></UDim2>
+									<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0.15</YS><YO>0</YO></UDim2>
 									<float name="BackgroundTransparency">1</float>
-									<string name="Text">🏆 TOP STREAMERS | WALL OF FAME</string>
+									<string name="Text">🏆 WALL OF FAME</string>
 									<Color3 name="TextColor3"><R>1</R><G>0.84</G><B>0</B></Color3>
 									<token name="Font">17</token>
-									<float name="TextSize">26</float>
-								</Properties>
-							</Item>
-							<Item class="TextLabel" referent="RBX_LB_Sub">
-								<Properties>
-									<string name="Name">Subtitle</string>
-									<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>0.35</YS><YO>0</YO></UDim2>
-									<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0.6</YS><YO>0</YO></UDim2>
-									<float name="BackgroundTransparency">1</float>
-									<string name="Text">⭐ Top Stream Channels Ranked by Subscribers</string>
-									<Color3 name="TextColor3"><R>0.7</R><G>0.75</G><B>0.85</B></Color3>
-									<token name="Font">16</token>
-									<float name="TextSize">14</float>
-								</Properties>
-							</Item>
-						</Item>
-						<Item class="ScrollingFrame" referent="RBX_LB_Scroll">
-							<Properties>
-								<string name="Name">ScrollContainer</string>
-								<UDim2 name="Size"><XS>1</XS><XO>-20</XO><YS>1</YS><YO>-85</YO></UDim2>
-								<UDim2 name="Position"><XS>0</XS><XO>10</XO><YS>0</YS><YO>80</YO></UDim2>
-								<float name="BackgroundTransparency">1</float>
-								<token name="ScrollBarThickness">6</token>
-							</Properties>
-							<Item class="UIListLayout" referent="RBX_LB_Layout">
-								<Properties>
-									<token name="SortOrder">2</token>
-									<UDim name="Padding"><S>0</S><O>8</O></UDim>
+									<float name="TextSize">30</float>
 								</Properties>
 							</Item>
 						</Item>
@@ -1044,90 +966,10 @@ def create_rbxlx(auto_push=True):
 			<Properties>
 				<string name="Name">Shared</string>
 			</Properties>
-			<Item class="ModuleScript" referent="RBX_StreamConfig">
-				<Properties>
-					<string name="Name">StreamConfig</string>
-					<ProtectedString name="Source"><![CDATA[{stream_config_src}]]></ProtectedString>
-				</Properties>
-			</Item>
-			<Item class="ModuleScript" referent="RBX_StreamEventsConfig">
-				<Properties>
-					<string name="Name">StreamEventsConfig</string>
-					<ProtectedString name="Source"><![CDATA[{stream_events_src}]]></ProtectedString>
-				</Properties>
-			</Item>
-			<Item class="ModuleScript" referent="RBX_ShopConfig">
-				<Properties>
-					<string name="Name">ShopConfig</string>
-					<ProtectedString name="Source"><![CDATA[{shop_config_src}]]></ProtectedString>
-				</Properties>
-			</Item>
 			<Item class="ModuleScript" referent="RBX_EnvironmentConfig">
 				<Properties>
 					<string name="Name">EnvironmentConfig</string>
 					<ProtectedString name="Source"><![CDATA[{environment_config_src}]]></ProtectedString>
-				</Properties>
-			</Item>
-		</Item>
-		<Item class="Folder" referent="RBX_RemotesFolder">
-			<Properties>
-				<string name="Name">Remotes</string>
-			</Properties>
-			<Item class="RemoteEvent" referent="RBX_ToggleStream">
-				<Properties>
-					<string name="Name">ToggleStream</string>
-				</Properties>
-			</Item>
-			<Item class="RemoteEvent" referent="RBX_StreamStateChanged">
-				<Properties>
-					<string name="Name">StreamStateChanged</string>
-				</Properties>
-			</Item>
-			<Item class="RemoteEvent" referent="RBX_SetChannelName">
-				<Properties>
-					<string name="Name">SetChannelName</string>
-				</Properties>
-			</Item>
-			<Item class="RemoteEvent" referent="RBX_BuyShopItem">
-				<Properties>
-					<string name="Name">BuyShopItem</string>
-				</Properties>
-			</Item>
-			<Item class="RemoteEvent" referent="RBX_ShopItemPurchased">
-				<Properties>
-					<string name="Name">ShopItemPurchased</string>
-				</Properties>
-			</Item>
-			<Item class="RemoteEvent" referent="RBX_StreamPromptEvent">
-				<Properties>
-					<string name="Name">StreamPromptEvent</string>
-				</Properties>
-			</Item>
-			<Item class="RemoteEvent" referent="RBX_SubmitStreamChoice">
-				<Properties>
-					<string name="Name">SubmitStreamChoice</string>
-				</Properties>
-			</Item>
-			<Item class="RemoteEvent" referent="RBX_StreamChoiceResult">
-				<Properties>
-					<string name="Name">StreamChoiceResult</string>
-				</Properties>
-			</Item>
-		</Item>
-		<Item class="Folder" referent="RBX_EventStateFolder">
-			<Properties>
-				<string name="Name">EventState</string>
-			</Properties>
-			<Item class="BoolValue" referent="RBX_IsBoostActive">
-				<Properties>
-					<string name="Name">IsBoostActive</string>
-					<bool name="Value">false</bool>
-				</Properties>
-			</Item>
-			<Item class="IntValue" referent="RBX_RemainingSeconds">
-				<Properties>
-					<string name="Name">RemainingSeconds</string>
-					<int name="Value">3000</int>
 				</Properties>
 			</Item>
 		</Item>
@@ -1136,105 +978,11 @@ def create_rbxlx(auto_push=True):
 		<Properties>
 			<string name="Name">ServerScriptService</string>
 		</Properties>
-		<Item class="Script" referent="RBX_Leaderstats">
-			<Properties>
-				<string name="Name">Leaderstats</string>
-				<ProtectedString name="Source"><![CDATA[{leaderstats_src}]]></ProtectedString>
-			</Properties>
-		</Item>
-		<Item class="Script" referent="RBX_StreamManager">
-			<Properties>
-				<string name="Name">StreamManager</string>
-				<ProtectedString name="Source"><![CDATA[{stream_manager_src}]]></ProtectedString>
-			</Properties>
-		</Item>
-		<Item class="Script" referent="RBX_ShopManager">
-			<Properties>
-				<string name="Name">ShopManager</string>
-				<ProtectedString name="Source"><![CDATA[{shop_manager_src}]]></ProtectedString>
-			</Properties>
-		</Item>
-		<Item class="Script" referent="RBX_EventManager">
-			<Properties>
-				<string name="Name">EventManager</string>
-				<ProtectedString name="Source"><![CDATA[{event_manager_src}]]></ProtectedString>
-			</Properties>
-		</Item>
-		<Item class="Script" referent="RBX_LeaderboardManager">
-			<Properties>
-				<string name="Name">LeaderboardManager</string>
-				<ProtectedString name="Source"><![CDATA[{leaderboard_manager_src}]]></ProtectedString>
-			</Properties>
-		</Item>
-		<Item class="Script" referent="RBX_VehicleManager">
-			<Properties>
-				<string name="Name">VehicleManager</string>
-				<ProtectedString name="Source"><![CDATA[{vehicle_manager_src}]]></ProtectedString>
-			</Properties>
-		</Item>
 		<Item class="Script" referent="RBX_EnvironmentManager">
 			<Properties>
 				<string name="Name">EnvironmentManager</string>
 				<ProtectedString name="Source"><![CDATA[{environment_manager_src}]]></ProtectedString>
 			</Properties>
-		</Item>
-	</Item>
-	<Item class="StarterPlayer" referent="RBX_StarterPlayer">
-		<Properties>
-			<string name="Name">StarterPlayer</string>
-		</Properties>
-		<Item class="StarterPlayerScripts" referent="RBX_StarterPlayerScripts">
-			<Properties>
-				<string name="Name">StarterPlayerScripts</string>
-			</Properties>
-			<Item class="LocalScript" referent="RBX_StreamGui">
-				<Properties>
-					<string name="Name">StreamGui</string>
-					<ProtectedString name="Source"><![CDATA[{stream_gui_src}]]></ProtectedString>
-				</Properties>
-			</Item>
-			<Item class="LocalScript" referent="RBX_StreamController">
-				<Properties>
-					<string name="Name">StreamController</string>
-					<ProtectedString name="Source"><![CDATA[{stream_controller_src}]]></ProtectedString>
-				</Properties>
-			</Item>
-			<Item class="LocalScript" referent="RBX_PlatformSelectGui">
-				<Properties>
-					<string name="Name">PlatformSelectGui</string>
-					<ProtectedString name="Source"><![CDATA[{platform_select_gui_src}]]></ProtectedString>
-				</Properties>
-			</Item>
-			<Item class="LocalScript" referent="RBX_StreamEventGui">
-				<Properties>
-					<string name="Name">StreamEventGui</string>
-					<ProtectedString name="Source"><![CDATA[{stream_event_gui_src}]]></ProtectedString>
-				</Properties>
-			</Item>
-			<Item class="LocalScript" referent="RBX_ShopGui">
-				<Properties>
-					<string name="Name">ShopGui</string>
-					<ProtectedString name="Source"><![CDATA[{shop_gui_src}]]></ProtectedString>
-				</Properties>
-			</Item>
-			<Item class="LocalScript" referent="RBX_VehicleGui">
-				<Properties>
-					<string name="Name">VehicleGui</string>
-					<ProtectedString name="Source"><![CDATA[{vehicle_gui_src}]]></ProtectedString>
-				</Properties>
-			</Item>
-			<Item class="LocalScript" referent="RBX_CityWaypoints">
-				<Properties>
-					<string name="Name">CityWaypoints</string>
-					<ProtectedString name="Source"><![CDATA[{city_waypoints_src}]]></ProtectedString>
-				</Properties>
-			</Item>
-			<Item class="LocalScript" referent="RBX_RobuxStoreGui">
-				<Properties>
-					<string name="Name">RobuxStoreGui</string>
-					<ProtectedString name="Source"><![CDATA[{robux_store_gui_src}]]></ProtectedString>
-				</Properties>
-			</Item>
 		</Item>
 	</Item>
 	<Item class="Lighting" referent="RBX_Lighting">
