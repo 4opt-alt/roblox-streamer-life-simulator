@@ -1037,6 +1037,20 @@ local function setPhoneOpen(open: boolean)
 	isAnimating = false
 end
 
+-- Клік мишкою по підказці теж дістає телефон (не тільки клавіша "P") —
+-- Illia попросив мати обидва способи. AutoButtonColor вимкнено вище, тому
+-- додаємо власний маленький "натискальний" відгук (стискається й повертається),
+-- щоб було візуально видно, що по підказці справді можна клікнути.
+hintButton.MouseButton1Down:Connect(function()
+	TweenService:Create(hintButton, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+		BackgroundTransparency = 0.05,
+	}):Play()
+end)
+hintButton.MouseButton1Up:Connect(function()
+	TweenService:Create(hintButton, TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+		BackgroundTransparency = 0.28,
+	}):Play()
+end)
 hintButton.MouseButton1Click:Connect(function()
 	setPhoneOpen(true)
 end)
