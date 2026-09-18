@@ -1,5 +1,5 @@
 --!strict
--- Телефон гравця: маленька підказка "▲ Take out phone", сам телефон, який
+-- Телефон гравця: маленька підказка "[P] Take out phone", сам телефон, який
 -- живе з ПРАВОГО боку екрана (не закриває вид на персонажа), з 3 іконками
 -- застосунків (ClipZap відкритий одразу, WatchBox і LiveWave розблоковуються
 -- пізніше за підписниками) і механіка запису відео в ClipZap: під час зйомки
@@ -156,22 +156,33 @@ hintStroke.Transparency = 0.75
 hintStroke.Thickness = 1
 hintStroke.Parent = hintButton
 
+-- Раніше тут була стрілка "▲" (стрілка вверх), але саму стрілку вверх Roblox
+-- за замовчуванням перехоплює як клавішу руху персонажа (аналог W) — тобто
+-- UserInputService бачить її як "gameProcessed = true" і наш обробник нижче
+-- її просто ігнорував. Тому підказку й сам бінд перенесли на клавішу "P",
+-- яка нічим стандартним не зайнята. Малюємо її як маленьку "клавішу-кнопку".
 local hintArrow = Instance.new("TextLabel")
-hintArrow.Name = "Arrow"
+hintArrow.Name = "KeyBadge"
 hintArrow.AnchorPoint = Vector2.new(0, 0.5)
-hintArrow.Position = UDim2.new(0, 16, 0.5, 0)
-hintArrow.Size = UDim2.new(0, 18, 0, 18)
-hintArrow.BackgroundTransparency = 1
+hintArrow.Position = UDim2.new(0, 14, 0.5, 0)
+hintArrow.Size = UDim2.new(0, 22, 0, 22)
+hintArrow.BackgroundColor3 = Color3.fromRGB(120, 210, 255)
+hintArrow.BackgroundTransparency = 0.05
+hintArrow.BorderSizePixel = 0
 hintArrow.Font = Enum.Font.GothamBold
-hintArrow.Text = "▲"
-hintArrow.TextSize = 16
-hintArrow.TextColor3 = Color3.fromRGB(120, 210, 255)
+hintArrow.Text = "P"
+hintArrow.TextSize = 15
+hintArrow.TextColor3 = Color3.fromRGB(14, 16, 22)
 hintArrow.Parent = hintButton
+
+local hintArrowCorner = Instance.new("UICorner")
+hintArrowCorner.CornerRadius = UDim.new(0, 6)
+hintArrowCorner.Parent = hintArrow
 
 local hintText = Instance.new("TextLabel")
 hintText.Name = "Label"
 hintText.AnchorPoint = Vector2.new(0, 0.5)
-hintText.Position = UDim2.new(0, 40, 0.5, 0)
+hintText.Position = UDim2.new(0, 46, 0.5, 0)
 hintText.Size = UDim2.new(0, 140, 0, 20)
 hintText.BackgroundTransparency = 1
 hintText.Font = Enum.Font.Gotham
@@ -181,11 +192,11 @@ hintText.TextColor3 = Color3.fromRGB(235, 238, 245)
 hintText.TextXAlignment = Enum.TextXAlignment.Left
 hintText.Parent = hintButton
 
--- Легка пульсація стрілочки — привертає погляд, але не дратує
+-- Легка пульсація значка клавіші — привертає погляд, але не дратує
 task.spawn(function()
 	while hintArrow.Parent do
-		local up = TweenService:Create(hintArrow, TweenInfo.new(0.6, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), { Position = UDim2.new(0, 16, 0.5, -4) })
-		local down = TweenService:Create(hintArrow, TweenInfo.new(0.6, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), { Position = UDim2.new(0, 16, 0.5, 0) })
+		local up = TweenService:Create(hintArrow, TweenInfo.new(0.6, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), { Position = UDim2.new(0, 14, 0.5, -4) })
+		local down = TweenService:Create(hintArrow, TweenInfo.new(0.6, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), { Position = UDim2.new(0, 14, 0.5, 0) })
 		up:Play()
 		up.Completed:Wait()
 		down:Play()
@@ -1033,11 +1044,16 @@ closeButton.MouseButton1Click:Connect(function()
 	setPhoneOpen(false)
 end)
 
+-- КЛЮЧОВЕ ВИПРАВЛЕННЯ: Enum.KeyCode.Up (стрілка вверх) — це один зі стандартних
+-- клавіш руху персонажа Roblox (еквівалент W), тож стандартний контрол-скрипт
+-- гри перехоплював її ПЕРШИМ і виставляв gameProcessed = true — наш обробник
+-- нижче через це взагалі ніколи не спрацьовував. "P" — вільна клавіша, нічим
+-- стандартним не зайнята, тож gameProcessed для неї коректно false.
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	if gameProcessed then
 		return
 	end
-	if input.KeyCode == Enum.KeyCode.Up then
+	if input.KeyCode == Enum.KeyCode.P or input.KeyCode == Enum.KeyCode.Up then
 		setPhoneOpen(not phoneOpen)
 	end
 end)
