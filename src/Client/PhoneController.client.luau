@@ -1,12 +1,20 @@
 --!strict
--- Телефон гравця: маленька підказка "▲ Дістати телефон", сам телефон з 3
--- іконками застосунків (ClipZap відкритий одразу, WatchBox і LiveWave
--- розблоковуються пізніше за підписниками) і механіка запису відео в
--- ClipZap, за яке капають лайки -> підписники + гроші (кожні 10 лайків = $1).
+-- Телефон гравця: маленька підказка "▲ Take out phone", сам телефон, який
+-- живе з ПРАВОГО боку екрана (не закриває вид на персонажа), з 3 іконками
+-- застосунків (ClipZap відкритий одразу, WatchBox і LiveWave розблоковуються
+-- пізніше за підписниками) і механіка запису відео в ClipZap: під час зйомки
+-- камера перемикається на "селфі"-ракурс перед персонажем, персонаж танцює
+-- один із стандартних танців Roblox, і на екрані з'являється REC-індикатор —
+-- щоб виглядало так, ніби гравець реально знімає контент. За відео капають
+-- лайки -> підписники + гроші (кожні 10 лайків = $1).
+--
+-- ПРИМІТКА: усі тексти, які бачить гравець, тепер англійською (стандартне
+-- правило проєкту від Illia). Коментарі лишаються українською.
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local PhoneConfig = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("PhoneConfig"))
@@ -50,11 +58,10 @@ screenGui.Parent = PlayerGui
 -- ============================================================
 local introToast = Instance.new("TextLabel")
 introToast.Name = "IntroToast"
-introToast.Size = UDim2.new(0, 360, 0, 54)
+introToast.Size = UDim2.new(0, 380, 0, 54)
 introToast.AnchorPoint = Vector2.new(0.5, 0)
 introToast.Position = UDim2.new(0.5, 0, 0, 22)
 introToast.BackgroundColor3 = Color3.fromRGB(16, 18, 24)
-introToast.BackgroundTransparency = 0.15
 introToast.BorderSizePixel = 0
 introToast.Font = Enum.Font.Gotham
 introToast.TextSize = 14
@@ -62,7 +69,7 @@ introToast.TextWrapped = true
 introToast.TextColor3 = Color3.fromRGB(230, 233, 240)
 introToast.TextTransparency = 1
 introToast.BackgroundTransparency = 1
-introToast.Text = "Ти прокинувся на звалці без копійки за душею. Час знімати відео в ClipZap і ставати зіркою! 🎬"
+introToast.Text = "You woke up at the scrapyard without a penny. Time to film videos on ClipZap and become a star! 🎬"
 introToast.Parent = screenGui
 local introCorner = Instance.new("UICorner")
 introCorner.CornerRadius = UDim.new(0, 14)
@@ -76,13 +83,14 @@ task.spawn(function()
 end)
 
 -- ============================================================
--- Підказка: "▲ Дістати телефон" — маленька, приємна, клікабельна
+-- Підказка: "▲ Take out phone" — маленька, приємна, клікабельна, в
+-- нижньому правому куті (там-таки, звідки виїжджає сам телефон)
 -- ============================================================
 local hintButton = Instance.new("TextButton")
 hintButton.Name = "PhoneHint"
 hintButton.Size = UDim2.new(0, 190, 0, 40)
-hintButton.AnchorPoint = Vector2.new(0.5, 1)
-hintButton.Position = UDim2.new(0.5, 0, 1, -26)
+hintButton.AnchorPoint = Vector2.new(1, 1)
+hintButton.Position = UDim2.new(1, -20, 1, -26)
 hintButton.BackgroundColor3 = Color3.fromRGB(18, 20, 26)
 hintButton.BackgroundTransparency = 0.28
 hintButton.BorderSizePixel = 0
@@ -119,7 +127,7 @@ hintText.Position = UDim2.new(0, 40, 0.5, 0)
 hintText.Size = UDim2.new(0, 140, 0, 20)
 hintText.BackgroundTransparency = 1
 hintText.Font = Enum.Font.Gotham
-hintText.Text = "Дістати телефон"
+hintText.Text = "Take out phone"
 hintText.TextSize = 14
 hintText.TextColor3 = Color3.fromRGB(235, 238, 245)
 hintText.TextXAlignment = Enum.TextXAlignment.Left
@@ -139,13 +147,160 @@ task.spawn(function()
 end)
 
 -- ============================================================
--- Сам телефон
+-- REC-індикатор і червона рамка — з'являються під час зйомки, щоб було
+-- видно, що персонаж реально щось знімає (Illia попросив саме це)
 -- ============================================================
+local recHud = Instance.new("Frame")
+recHud.Name = "RecordingHud"
+recHud.Size = UDim2.new(0, 130, 0, 38)
+recHud.AnchorPoint = Vector2.new(0.5, 0)
+recHud.Position = UDim2.new(0.5, 0, 0, 22)
+recHud.BackgroundColor3 = Color3.fromRGB(20, 20, 24)
+recHud.BackgroundTransparency = 0.2
+recHud.BorderSizePixel = 0
+recHud.Visible = false
+recHud.Parent = screenGui
+local recHudCorner = Instance.new("UICorner")
+recHudCorner.CornerRadius = UDim.new(1, 0)
+recHudCorner.Parent = recHud
+
+local recDot = Instance.new("Frame")
+recDot.Name = "Dot"
+recDot.AnchorPoint = Vector2.new(0, 0.5)
+recDot.Position = UDim2.new(0, 14, 0.5, 0)
+recDot.Size = UDim2.new(0, 12, 0, 12)
+recDot.BackgroundColor3 = Color3.fromRGB(255, 45, 60)
+recDot.BorderSizePixel = 0
+recDot.Parent = recHud
+local recDotCorner = Instance.new("UICorner")
+recDotCorner.CornerRadius = UDim.new(1, 0)
+recDotCorner.Parent = recDot
+
+local recLabel = Instance.new("TextLabel")
+recLabel.Name = "Label"
+recLabel.AnchorPoint = Vector2.new(0, 0.5)
+recLabel.Position = UDim2.new(0, 34, 0.5, 0)
+recLabel.Size = UDim2.new(0, 90, 0, 22)
+recLabel.BackgroundTransparency = 1
+recLabel.Font = Enum.Font.GothamBold
+recLabel.TextSize = 14
+recLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+recLabel.TextXAlignment = Enum.TextXAlignment.Left
+recLabel.Text = "REC"
+recLabel.Parent = recHud
+
+-- Тонка пульсуюча червона рамка по краях екрана — легкий "camera app" вайб
+local recBorder = Instance.new("Frame")
+recBorder.Name = "RecordingBorder"
+recBorder.Size = UDim2.new(1, 0, 1, 0)
+recBorder.BackgroundTransparency = 1
+recBorder.Visible = false
+recBorder.Parent = screenGui
+local recBorderStroke = Instance.new("UIStroke")
+recBorderStroke.Color = Color3.fromRGB(255, 40, 60)
+recBorderStroke.Thickness = 4
+recBorderStroke.Transparency = 0.4
+recBorderStroke.Parent = recBorder
+
+local recDotPulseRunning = false
+local function startRecDotPulse()
+	if recDotPulseRunning then
+		return
+	end
+	recDotPulseRunning = true
+	task.spawn(function()
+		while recHud.Visible do
+			local fadeOut = TweenService:Create(recDot, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), { BackgroundTransparency = 0.75 })
+			fadeOut:Play()
+			fadeOut.Completed:Wait()
+			if not recHud.Visible then
+				break
+			end
+			local fadeIn = TweenService:Create(recDot, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), { BackgroundTransparency = 0 })
+			fadeIn:Play()
+			fadeIn.Completed:Wait()
+		end
+		recDot.BackgroundTransparency = 0
+		recDotPulseRunning = false
+	end)
+end
+
+-- ============================================================
+-- "Селфі"-камера + танець персонажа під час зйомки відео
+-- ============================================================
+local DANCE_EMOTES = { "dance1", "dance2", "dance3" }
+
+local selfieConnection: RBXScriptConnection? = nil
+local activeEmoteTrack: AnimationTrack? = nil
+local originalCameraType: Enum.CameraType? = nil
+
+local function startSelfieRecording()
+	local character = LocalPlayer.Character
+	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+	local head = character and character:FindFirstChild("Head") :: BasePart?
+	local hrp = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
+	if not (character and humanoid and head and hrp) then
+		return
+	end
+
+	-- Один із стандартних танців персонажа Roblox — випадковий щоразу,
+	-- щоб не набридало. Використовуємо PlayEmote (а не жорстко вбитий
+	-- AnimationId), бо стандартні танці вже є в будь-якого персонажа за
+	-- замовчуванням і повертають трек, який можна коректно зупинити.
+	local emoteName = DANCE_EMOTES[math.random(1, #DANCE_EMOTES)]
+	local ok, track = pcall(function()
+		return (humanoid :: Humanoid):PlayEmote(emoteName)
+	end)
+	if ok and track then
+		activeEmoteTrack = track :: AnimationTrack
+	end
+
+	local camera = workspace.CurrentCamera
+	if camera then
+		originalCameraType = camera.CameraType
+		camera.CameraType = Enum.CameraType.Scriptable
+		selfieConnection = RunService.RenderStepped:Connect(function()
+			if not (head.Parent and hrp.Parent) then
+				return
+			end
+			-- Камера висить попереду персонажа й дивиться назад на нього —
+			-- класичний "селфі на телефон" ракурс блогера.
+			local lookVector = hrp.CFrame.LookVector
+			local camPos = head.Position + lookVector * 6 + Vector3.new(0, 1.1, 0)
+			local focusPos = head.Position + Vector3.new(0, 0.2, 0)
+			camera.CFrame = CFrame.lookAt(camPos, focusPos)
+		end)
+	end
+end
+
+local function stopSelfieRecording()
+	if selfieConnection then
+		selfieConnection:Disconnect()
+		selfieConnection = nil
+	end
+	local camera = workspace.CurrentCamera
+	if camera and originalCameraType then
+		camera.CameraType = originalCameraType
+	end
+	originalCameraType = nil
+	if activeEmoteTrack then
+		activeEmoteTrack:Stop(0.3)
+		activeEmoteTrack = nil
+	end
+end
+
+-- ============================================================
+-- Сам телефон — тепер живе з ПРАВОГО боку екрана (не закриває вид на
+-- персонажа під час зйомки), а не по центру на весь екран
+-- ============================================================
+local PHONE_OPEN_POSITION = UDim2.new(1, -14, 0.5, 0)
+local PHONE_CLOSED_POSITION = UDim2.new(1, 300, 0.5, 0)
+
 local phoneFrame = Instance.new("Frame")
 phoneFrame.Name = "Phone"
-phoneFrame.Size = UDim2.new(0, 280, 0, 500)
-phoneFrame.AnchorPoint = Vector2.new(0.5, 1)
-phoneFrame.Position = UDim2.new(0.5, 0, 1.4, 0) -- за межами екрана знизу
+phoneFrame.Size = UDim2.new(0, 260, 0, 440)
+phoneFrame.AnchorPoint = Vector2.new(1, 0.5)
+phoneFrame.Position = PHONE_CLOSED_POSITION -- за межами екрана справа
 phoneFrame.BackgroundColor3 = Color3.fromRGB(14, 15, 20)
 phoneFrame.BorderSizePixel = 0
 phoneFrame.Visible = false
@@ -257,7 +412,7 @@ homeTitle.Font = Enum.Font.Gotham
 homeTitle.TextSize = 13
 homeTitle.TextColor3 = Color3.fromRGB(160, 164, 176)
 homeTitle.TextXAlignment = Enum.TextXAlignment.Left
-homeTitle.Text = "Застосунки"
+homeTitle.Text = "Apps"
 homeTitle.Parent = homePage
 
 local appsRow = Instance.new("Frame")
@@ -350,7 +505,7 @@ local function buildAppIcon(app: PhoneConfig.AppConfig, layoutOrder: number)
 	lockText.TextSize = 9
 	lockText.TextWrapped = true
 	lockText.TextColor3 = Color3.fromRGB(230, 230, 235)
-	lockText.Text = `Від {app.UnlockFollowers} підп.`
+	lockText.Text = `{app.UnlockFollowers}+ followers`
 	lockText.ZIndex = 4
 	lockText.Parent = lockOverlay
 
@@ -416,7 +571,7 @@ local function buildBackHeader(parent: Frame, titleText: string)
 	titleLabel.Parent = header
 end
 
--- ---- Сторінка ClipZap: запис відео ----
+-- ---- Сторінка ClipZap: запис відео (з "селфі"-камерою й танцем) ----
 local function startRecording()
 	if recording then
 		return
@@ -427,13 +582,20 @@ local function startRecording()
 	recording = true
 	recordButton.AutoButtonColor = false
 
+	recHud.Visible = true
+	recBorder.Visible = true
+	startRecDotPulse()
+	startSelfieRecording()
+
 	task.spawn(function()
 		for i = Economy.RecordSeconds, 1, -1 do
-			recordButton.Text = `⏺ Знімаємо... {i}`
+			recordButton.Text = `⏺ Filming... {i}`
+			recLabel.Text = `REC {i}s`
 			task.wait(1)
 		end
-		recordButton.Text = "📤 Публікуємо..."
-		recordStatusLabel.Text = "Чекаємо на реакцію глядачів..."
+		recordButton.Text = "📤 Uploading..."
+		recLabel.Text = "UPLOADING"
+		recordStatusLabel.Text = "Waiting for the audience's reaction..."
 		recordVideoRequest:FireServer()
 	end)
 end
@@ -457,7 +619,7 @@ local function buildClipZapPage(app: PhoneConfig.AppConfig)
 	recordButton.TextSize = 15
 	recordButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 	recordButton.TextWrapped = true
-	recordButton.Text = "🔴 Записати відео"
+	recordButton.Text = "🔴 Record video"
 	recordButton.Parent = page
 	local recordCorner = Instance.new("UICorner")
 	recordCorner.CornerRadius = UDim.new(1, 0)
@@ -477,7 +639,7 @@ local function buildClipZapPage(app: PhoneConfig.AppConfig)
 	recordStatusLabel.TextSize = 13
 	recordStatusLabel.TextWrapped = true
 	recordStatusLabel.TextColor3 = Color3.fromRGB(200, 204, 214)
-	recordStatusLabel.Text = "Натисни, щоб зняти новий відос!"
+	recordStatusLabel.Text = "Tap to film a new video!"
 	recordStatusLabel.Parent = page
 
 	recordButton.MouseButton1Click:Connect(startRecording)
@@ -503,7 +665,7 @@ local function buildComingSoonPage(app: PhoneConfig.AppConfig)
 	msg.TextSize = 14
 	msg.TextWrapped = true
 	msg.TextColor3 = Color3.fromRGB(190, 194, 204)
-	msg.Text = `🚧 {app.DisplayName} відкриється пізніше, коли розкрутишся!`
+	msg.Text = `🚧 {app.DisplayName} unlocks later as you grow!`
 	msg.Parent = page
 
 	pages[app.Id] = page
@@ -519,10 +681,15 @@ for i, app in PhoneConfig.Apps do
 end
 
 -- ============================================================
--- Відкриття / закриття телефону
+-- Відкриття / закриття телефону (тепер виїжджає СПРАВА, а не знизу)
 -- ============================================================
 local function setPhoneOpen(open: boolean)
 	if isAnimating or open == phoneOpen then
+		return
+	end
+	if not open and recording then
+		-- Не даємо ховати телефон посеред зйомки — інакше REC-камера й
+		-- танець лишаться без екрана статусу, на якому видно прогрес.
 		return
 	end
 	isAnimating = true
@@ -535,7 +702,7 @@ local function setPhoneOpen(open: boolean)
 		local tween = TweenService:Create(
 			phoneFrame,
 			TweenInfo.new(0.32, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-			{ Position = UDim2.new(0.5, 0, 1, -20) }
+			{ Position = PHONE_OPEN_POSITION }
 		)
 		tween:Play()
 		tween.Completed:Wait()
@@ -543,7 +710,7 @@ local function setPhoneOpen(open: boolean)
 		local tween = TweenService:Create(
 			phoneFrame,
 			TweenInfo.new(0.26, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
-			{ Position = UDim2.new(0.5, 0, 1.4, 0) }
+			{ Position = PHONE_CLOSED_POSITION }
 		)
 		tween:Play()
 		tween.Completed:Wait()
@@ -584,17 +751,21 @@ moneyStat.Changed:Connect(refreshStats)
 refreshStats()
 
 -- ============================================================
--- Результат запису відео
+-- Результат запису відео — тут же вимикаємо селфі-камеру, танець і REC-хад
 -- ============================================================
 recordVideoResult.OnClientEvent:Connect(function(result)
 	recording = false
 	recordButton.AutoButtonColor = true
-	recordButton.Text = "🔴 Записати відео"
+	recordButton.Text = "🔴 Record video"
+
+	stopSelfieRecording()
+	recHud.Visible = false
+	recBorder.Visible = false
 
 	if result.Success then
-		recordStatusLabel.Text = `🔥 +{result.Likes} лайків → +${result.Money}, +{result.Followers} підписників!`
+		recordStatusLabel.Text = `🔥 +{result.Likes} likes → +${result.Money}, +{result.Followers} followers!`
 		cooldownUntil = os.clock() + Economy.CooldownSeconds
 	else
-		recordStatusLabel.Text = "Зачекай трохи перед новим відео"
+		recordStatusLabel.Text = "Wait a bit before your next video"
 	end
 end)
