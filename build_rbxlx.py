@@ -13,14 +13,23 @@ def create_rbxlx(auto_push=True):
     # і лишити тільки саму фізичну мапу. Тому тут читається і запікається в
     # StreamerGame.rbxlx ЛИШЕ EnvironmentConfig/EnvironmentManager (цикл дня-ночі
     # — це властивість самого світу, а не ігрова механіка/меню). Усі інші
-    # .luau-файли з src/Client, src/Server, src/Shared більше НЕ читаються і
-    # НЕ потрапляють у згенерований файл — самі файли можуть і далі лежати в
-    # репозиторії (видалити їх фізично звідси я не можу), але вони ні на що
-    # не впливають, бо build_rbxlx.py їх просто ігнорує.
+    # старі .luau-файли з src/Client, src/Server, src/Shared (стрім-симуляція,
+    # магазини, старий лідерборд тощо) досі НЕ читаються — репозиторій їх
+    # фізично не втрачав, build_rbxlx.py просто їх ігнорує.
+    #
+    # НОВЕ (телефон + ClipZap-економія): перша механіка нової гри "з нуля" —
+    # гравець прокидається на звалці без копійки і знімає відео в ClipZap
+    # (вигаданий аналог TikTok), щоб заробляти підписників і гроші.
     with open(os.path.join(src_dir, "Shared", "EnvironmentConfig.luau"), "r", encoding="utf-8") as f:
         environment_config_src = f.read()
     with open(os.path.join(src_dir, "Server", "EnvironmentManager.server.luau"), "r", encoding="utf-8") as f:
         environment_manager_src = f.read()
+    with open(os.path.join(src_dir, "Shared", "PhoneConfig.luau"), "r", encoding="utf-8") as f:
+        phone_config_src = f.read()
+    with open(os.path.join(src_dir, "Server", "CreatorEconomyManager.server.luau"), "r", encoding="utf-8") as f:
+        creator_economy_manager_src = f.read()
+    with open(os.path.join(src_dir, "Client", "PhoneController.client.luau"), "r", encoding="utf-8") as f:
+        phone_controller_src = f.read()
 
     part_counter = [2000]
     def make_part(name, size, pos, rot=(0,0,0), color="4281545523", material=256, anchored=True, can_collide=True, transparency=0, light=None, is_seat=False, shape=None, children_xml=""):
@@ -462,6 +471,12 @@ def create_rbxlx(auto_push=True):
 					<ProtectedString name="Source"><![CDATA[{environment_config_src}]]></ProtectedString>
 				</Properties>
 			</Item>
+			<Item class="ModuleScript" referent="RBX_PhoneConfig">
+				<Properties>
+					<string name="Name">PhoneConfig</string>
+					<ProtectedString name="Source"><![CDATA[{phone_config_src}]]></ProtectedString>
+				</Properties>
+			</Item>
 		</Item>
 	</Item>
 	<Item class="ServerScriptService" referent="RBX_ServerScriptService">
@@ -473,6 +488,28 @@ def create_rbxlx(auto_push=True):
 				<string name="Name">EnvironmentManager</string>
 				<ProtectedString name="Source"><![CDATA[{environment_manager_src}]]></ProtectedString>
 			</Properties>
+		</Item>
+		<Item class="Script" referent="RBX_CreatorEconomyManager">
+			<Properties>
+				<string name="Name">CreatorEconomyManager</string>
+				<ProtectedString name="Source"><![CDATA[{creator_economy_manager_src}]]></ProtectedString>
+			</Properties>
+		</Item>
+	</Item>
+	<Item class="StarterPlayer" referent="RBX_StarterPlayer">
+		<Properties>
+			<string name="Name">StarterPlayer</string>
+		</Properties>
+		<Item class="StarterPlayerScripts" referent="RBX_StarterPlayerScripts">
+			<Properties>
+				<string name="Name">StarterPlayerScripts</string>
+			</Properties>
+			<Item class="LocalScript" referent="RBX_PhoneController">
+				<Properties>
+					<string name="Name">PhoneController</string>
+					<ProtectedString name="Source"><![CDATA[{phone_controller_src}]]></ProtectedString>
+				</Properties>
+			</Item>
 		</Item>
 	</Item>
 	<Item class="Lighting" referent="RBX_Lighting">
