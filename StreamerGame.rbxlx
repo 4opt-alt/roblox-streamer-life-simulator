@@ -9099,8 +9099,9 @@ end)
 			<Properties>
 				<string name="Name">CreatorEconomyManager</string>
 				<ProtectedString name="Source"><![CDATA[--!strict
--- Керує "творчою економікою" гравця: підписники (Followers) та гроші (Money),
--- які прибувають після запису відео в застосунку ClipZap на телефоні.
+-- Керує "творчою економікою" гравця: підписники (Followers) та гроші (Money)
+-- у leaderstats, плюс ChannelStats (TotalLikes, VideoCount) для профілю
+-- каналу на телефоні — усе це прибуває після запису відео в ClipZap.
 -- Сервер — єдине джерело правди для випадкових чисел (лайки/підписники за
 -- відео) і для кулдауну, щоб клієнт нічого не міг підробити чи проспамити.
 
@@ -9142,6 +9143,23 @@ Players.PlayerAdded:Connect(function(player: Player)
 	money.Name = "Money"
 	money.Value = 0
 	money.Parent = leaderstats
+
+	-- Окрема папка (НЕ leaderstats) для профілю каналу на телефоні — щоб не
+	-- додавати зайві колонки в стандартний Roblox-лідерборд. Ці значення
+	-- показуються в шапці ClipZap (❤️ лайки, 👥 підписники, 🎬 відео).
+	local channelStats = Instance.new("Folder")
+	channelStats.Name = "ChannelStats"
+	channelStats.Parent = player
+
+	local totalLikes = Instance.new("IntValue")
+	totalLikes.Name = "TotalLikes"
+	totalLikes.Value = 0
+	totalLikes.Parent = channelStats
+
+	local videoCount = Instance.new("IntValue")
+	videoCount.Name = "VideoCount"
+	videoCount.Value = 0
+	videoCount.Parent = channelStats
 end)
 
 Players.PlayerRemoving:Connect(function(player: Player)
@@ -9174,6 +9192,18 @@ recordVideoRequest.OnServerEvent:Connect(function(player: Player)
 	followers.Value += gainedFollowers
 	money.Value += gainedMoney
 
+	local channelStats = player:FindFirstChild("ChannelStats")
+	if channelStats then
+		local totalLikes = channelStats:FindFirstChild("TotalLikes") :: IntValue?
+		local videoCount = channelStats:FindFirstChild("VideoCount") :: IntValue?
+		if totalLikes then
+			totalLikes.Value += likes
+		end
+		if videoCount then
+			videoCount.Value += 1
+		end
+	end
+
 	-- Кулдаун рахуємо від моменту публікації, а не запиту — щоб врахувати і
 	-- саму "зйомку" на клієнті, і паузу між відео.
 	nextRecordAllowedAt[player.UserId] = now + Economy.RecordSeconds + Economy.CooldownSeconds
@@ -9205,13 +9235,19 @@ end)
 -- живе з ПРАВОГО боку екрана (не закриває вид на персонажа), з 3 іконками
 -- застосунків (ClipZap відкритий одразу, WatchBox і LiveWave розблоковуються
 -- пізніше за підписниками) і механіка запису відео в ClipZap: під час зйомки
--- камера перемикається на "селфі"-ракурс перед персонажем, персонаж танцює
--- один із стандартних танців Roblox, і на екрані з'являється REC-індикатор —
--- щоб виглядало так, ніби гравець реально знімає контент. За відео капають
--- лайки -> підписники + гроші (кожні 10 лайків = $1).
+-- камера випадково обирає один із 3 ракурсів (селфі/оберт навколо/знизу), а
+-- персонаж — одну з 7 стандартних емоцій Roblox, і на екрані з'являється
+-- REC-індикатор — щоб виглядало так, ніби гравець реально знімає контент, і
+-- щоб відео не здавались однотипними. За відео капають лайки -> підписники +
+-- гроші (кожні 10 лайків = $1).
 --
--- ПРИМІТКА: усі тексти, які бачить гравець, тепер англійською (стандартне
--- правило проєкту від Illia). Коментарі лишаються українською.
+-- ClipZap відкривається профілем каналу: аватарка (справжній аватар гравця
+-- Roblox), нікнейм, який гравець вписує сам при ПЕРШОМУ відкритті ClipZap
+-- (і більше не питається — той самий нік потім "переноситься" й на WatchBox/
+-- LiveWave), і статистика (лайки/підписники/відео).
+--
+-- ПРИМІТКА: усі тексти, які бачить гравець, англійською (стандартне правило
+-- проєкту від Illia). Коментарі лишаються українською.
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -9232,6 +9268,12 @@ local leaderstats = LocalPlayer:WaitForChild("leaderstats")
 local followersStat = leaderstats:WaitForChild("Followers") :: IntValue
 local moneyStat = leaderstats:WaitForChild("Money") :: IntValue
 
+-- Профільна статистика каналу (окрема папка, не leaderstats, щоб не
+-- засмічувати стандартний Roblox-лідерборд зайвими колонками).
+local channelStats = LocalPlayer:WaitForChild("ChannelStats")
+local totalLikesStat = channelStats:WaitForChild("TotalLikes") :: IntValue
+local videoCountStat = channelStats:WaitForChild("VideoCount") :: IntValue
+
 -- ============================================================
 -- Стан
 -- ============================================================
@@ -9240,10 +9282,46 @@ local isAnimating = false
 local recording = false
 local cooldownUntil = 0
 
+-- Нікнейм каналу — гравець вписує його сам при першому відкритті ClipZap,
+-- і той самий нік потім використовується і в WatchBox, і в LiveWave.
+-- Зберігається лише локально на клієнті (не надсилається на сервер і не
+-- видно іншим гравцям), тому фільтрація чату (TextService) тут не потрібна.
+local channelNickname: string? = nil
+
 local showPage: (string) -> ()
 local refreshStats: () -> ()
+local refreshClipZapView: () -> ()
 local recordButton: TextButton
 local recordStatusLabel: TextLabel
+local avatarImage: ImageLabel
+local nicknameLabel: TextLabel
+local likesStatLabel: TextLabel
+local channelFollowersLabel: TextLabel
+local videosStatLabel: TextLabel
+local nicknameSetupFrame: Frame
+local channelContent: Frame
+local nicknameBox: TextBox
+local setupError: TextLabel
+
+-- Сторінки WatchBox/LiveWave підписуються сюди, щоб дізнатись, коли гравець
+-- нарешті вписав нік у ClipZap, і оновити свій "@нік перенесеться" напис.
+local nicknameWatchers: { () -> () } = {}
+
+-- Аватарка каналу — беремо справжній аватар гравця Roblox (офіційний API,
+-- жодного підбору asset-ID). Запускаємо запит одразу, а не чекаємо, поки
+-- гравець відкриє ClipZap, щоб на момент відкриття картинка вже була готова.
+local avatarContent = ""
+task.spawn(function()
+	local ok, content = pcall(function()
+		return Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100)
+	end)
+	if ok and content then
+		avatarContent = content
+		if avatarImage then
+			avatarImage.Image = content
+		end
+	end
+end)
 
 -- ============================================================
 -- Корінь GUI
@@ -9428,15 +9506,49 @@ local function startRecDotPulse()
 end
 
 -- ============================================================
--- "Селфі"-камера + танець персонажа під час зйомки відео
+-- Камера + анімація персонажа під час зйомки відео. Illia попросив
+-- різноманіття, щоб відео не здавались однотипними — тому тут і набір із
+-- 7 РІЗНИХ стандартних емоцій Roblox (не тільки танці), і 3 РІЗНІ ракурси
+-- камери, обидва обираються випадково щоразу -> 21 унікальна комбінація.
+--
+-- Свідомо використовуємо ТІЛЬКИ Humanoid:PlayEmote() з іменами, які вже
+-- зареєстровані в стандартному Animate-скрипті будь-якого персонажа Roblox
+-- за замовчуванням (а не жорстко вбиті AnimationId) — це гарантовано existing
+-- і безпечно, без ризику "не той asset" (як було раніше з підбором звуку
+-- для гіроскутера в цьому ж проєкті).
 -- ============================================================
-local DANCE_EMOTES = { "dance1", "dance2", "dance3" }
+local ACTION_EMOTES = { "dance1", "dance2", "dance3", "wave", "point", "laugh", "cheer" }
+local CAMERA_STYLES = { "selfie", "orbit", "lowAngle" }
 
-local selfieConnection: RBXScriptConnection? = nil
+local cameraConnection: RBXScriptConnection? = nil
 local activeEmoteTrack: AnimationTrack? = nil
 local originalCameraType: Enum.CameraType? = nil
 
-local function startSelfieRecording()
+-- Рахує CFrame камери для обраного ракурсу; progress іде 0 -> 1 протягом
+-- усієї зйомки (потрібен для "orbit", який плавно облітає персонажа).
+local function computeCameraCFrame(style: string, head: BasePart, hrp: BasePart, progress: number): CFrame
+	local lookVector = hrp.CFrame.LookVector
+	if style == "orbit" then
+		-- Камера оператора, що повільно облітає персонажа по колу.
+		local angle = math.rad(progress * 200 - 40)
+		local radius = 9
+		local orbitOffset = Vector3.new(math.cos(angle) * radius, 2.6, math.sin(angle) * radius)
+		local camPos = hrp.Position + orbitOffset
+		return CFrame.lookAt(camPos, head.Position)
+	elseif style == "lowAngle" then
+		-- Драматичний нижній ракурс, як у кліпах — камера знизу-спереду.
+		local camPos = head.Position + lookVector * 5 - Vector3.new(0, 2.6, 0)
+		return CFrame.lookAt(camPos, head.Position + Vector3.new(0, 0.6, 0))
+	else
+		-- "selfie": камера висить попереду персонажа й дивиться назад —
+		-- класичний ракурс "зняв себе на телефон".
+		local camPos = head.Position + lookVector * 6 + Vector3.new(0, 1.1, 0)
+		local focusPos = head.Position + Vector3.new(0, 0.2, 0)
+		return CFrame.lookAt(camPos, focusPos)
+	end
+end
+
+local function startRecordingCamera(recordSeconds: number)
 	local character = LocalPlayer.Character
 	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 	local head = character and character:FindFirstChild("Head") :: BasePart?
@@ -9445,11 +9557,7 @@ local function startSelfieRecording()
 		return
 	end
 
-	-- Один із стандартних танців персонажа Roblox — випадковий щоразу,
-	-- щоб не набридало. Використовуємо PlayEmote (а не жорстко вбитий
-	-- AnimationId), бо стандартні танці вже є в будь-якого персонажа за
-	-- замовчуванням і повертають трек, який можна коректно зупинити.
-	local emoteName = DANCE_EMOTES[math.random(1, #DANCE_EMOTES)]
+	local emoteName = ACTION_EMOTES[math.random(1, #ACTION_EMOTES)]
 	local ok, track = pcall(function()
 		return (humanoid :: Humanoid):PlayEmote(emoteName)
 	end)
@@ -9457,28 +9565,27 @@ local function startSelfieRecording()
 		activeEmoteTrack = track :: AnimationTrack
 	end
 
+	local cameraStyle = CAMERA_STYLES[math.random(1, #CAMERA_STYLES)]
+	local startClock = os.clock()
+
 	local camera = workspace.CurrentCamera
 	if camera then
 		originalCameraType = camera.CameraType
 		camera.CameraType = Enum.CameraType.Scriptable
-		selfieConnection = RunService.RenderStepped:Connect(function()
+		cameraConnection = RunService.RenderStepped:Connect(function()
 			if not (head.Parent and hrp.Parent) then
 				return
 			end
-			-- Камера висить попереду персонажа й дивиться назад на нього —
-			-- класичний "селфі на телефон" ракурс блогера.
-			local lookVector = hrp.CFrame.LookVector
-			local camPos = head.Position + lookVector * 6 + Vector3.new(0, 1.1, 0)
-			local focusPos = head.Position + Vector3.new(0, 0.2, 0)
-			camera.CFrame = CFrame.lookAt(camPos, focusPos)
+			local progress = math.clamp((os.clock() - startClock) / recordSeconds, 0, 1)
+			camera.CFrame = computeCameraCFrame(cameraStyle, head, hrp, progress)
 		end)
 	end
 end
 
-local function stopSelfieRecording()
-	if selfieConnection then
-		selfieConnection:Disconnect()
-		selfieConnection = nil
+local function stopRecordingCamera()
+	if cameraConnection then
+		cameraConnection:Disconnect()
+		cameraConnection = nil
 	end
 	local camera = workspace.CurrentCamera
 	if camera and originalCameraType then
@@ -9773,7 +9880,7 @@ local function buildBackHeader(parent: Frame, titleText: string)
 	titleLabel.Parent = header
 end
 
--- ---- Сторінка ClipZap: запис відео (з "селфі"-камерою й танцем) ----
+-- ---- Сторінка ClipZap: запис відео (з різноманітними камерою й анімацією) ----
 local function startRecording()
 	if recording then
 		return
@@ -9787,7 +9894,7 @@ local function startRecording()
 	recHud.Visible = true
 	recBorder.Visible = true
 	startRecDotPulse()
-	startSelfieRecording()
+	startRecordingCamera(Economy.RecordSeconds)
 
 	task.spawn(function()
 		for i = Economy.RecordSeconds, 1, -1 do
@@ -9802,6 +9909,10 @@ local function startRecording()
 	end)
 end
 
+-- Скільки символів максимум приймаємо в нікнейм каналу (просто розумний
+-- ліміт для верстки, не пов'язано з жодним зовнішнім правилом).
+local MAX_NICKNAME_LENGTH = 20
+
 local function buildClipZapPage(app: PhoneConfig.AppConfig)
 	local page = Instance.new("Frame")
 	page.Name = app.Id
@@ -9811,18 +9922,212 @@ local function buildClipZapPage(app: PhoneConfig.AppConfig)
 	page.Parent = screen
 	buildBackHeader(page, `{app.Icon} {app.DisplayName}`)
 
+	-- ---- Стан 1: вибір нікнейму (показується, поки channelNickname == nil) ----
+	nicknameSetupFrame = Instance.new("Frame")
+	nicknameSetupFrame.Name = "NicknameSetup"
+	nicknameSetupFrame.Size = UDim2.new(1, -20, 1, -56)
+	nicknameSetupFrame.Position = UDim2.new(0, 10, 0, 52)
+	nicknameSetupFrame.BackgroundTransparency = 1
+	nicknameSetupFrame.Visible = true
+	nicknameSetupFrame.Parent = page
+
+	local setupIcon = Instance.new("TextLabel")
+	setupIcon.Size = UDim2.new(1, 0, 0, 40)
+	setupIcon.BackgroundTransparency = 1
+	setupIcon.Font = Enum.Font.GothamBold
+	setupIcon.TextSize = 32
+	setupIcon.Text = app.Icon
+	setupIcon.Parent = nicknameSetupFrame
+
+	local setupTitle = Instance.new("TextLabel")
+	setupTitle.Size = UDim2.new(1, 0, 0, 46)
+	setupTitle.Position = UDim2.new(0, 0, 0, 46)
+	setupTitle.BackgroundTransparency = 1
+	setupTitle.Font = Enum.Font.GothamBold
+	setupTitle.TextSize = 15
+	setupTitle.TextWrapped = true
+	setupTitle.TextColor3 = Color3.fromRGB(235, 238, 245)
+	setupTitle.Text = "Choose your creator name to get started!"
+	setupTitle.Parent = nicknameSetupFrame
+
+	nicknameBox = Instance.new("TextBox")
+	nicknameBox.Size = UDim2.new(1, 0, 0, 40)
+	nicknameBox.Position = UDim2.new(0, 0, 0, 100)
+	nicknameBox.BackgroundColor3 = Color3.fromRGB(32, 34, 44)
+	nicknameBox.BorderSizePixel = 0
+	nicknameBox.Font = Enum.Font.Gotham
+	nicknameBox.TextSize = 14
+	nicknameBox.TextColor3 = Color3.fromRGB(235, 238, 245)
+	nicknameBox.PlaceholderText = "e.g. SkyDancer99"
+	nicknameBox.PlaceholderColor3 = Color3.fromRGB(130, 134, 146)
+	nicknameBox.Text = ""
+	nicknameBox.ClearTextOnFocus = false
+	nicknameBox.Parent = nicknameSetupFrame
+	local nicknameBoxCorner = Instance.new("UICorner")
+	nicknameBoxCorner.CornerRadius = UDim.new(0, 12)
+	nicknameBoxCorner.Parent = nicknameBox
+
+	setupError = Instance.new("TextLabel")
+	setupError.Size = UDim2.new(1, 0, 0, 20)
+	setupError.Position = UDim2.new(0, 0, 0, 144)
+	setupError.BackgroundTransparency = 1
+	setupError.Font = Enum.Font.Gotham
+	setupError.TextSize = 12
+	setupError.TextColor3 = Color3.fromRGB(255, 130, 130)
+	setupError.Text = ""
+	setupError.Parent = nicknameSetupFrame
+
+	local confirmButton = Instance.new("TextButton")
+	confirmButton.Size = UDim2.new(1, 0, 0, 42)
+	confirmButton.Position = UDim2.new(0, 0, 0, 172)
+	confirmButton.BackgroundColor3 = app.AccentColor
+	confirmButton.BorderSizePixel = 0
+	confirmButton.Font = Enum.Font.GothamBold
+	confirmButton.TextSize = 15
+	confirmButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	confirmButton.Text = "✅ Confirm"
+	confirmButton.Parent = nicknameSetupFrame
+	local confirmCorner = Instance.new("UICorner")
+	confirmCorner.CornerRadius = UDim.new(0, 14)
+	confirmCorner.Parent = confirmButton
+
+	local function trySetNickname()
+		local trimmed = nicknameBox.Text:gsub("^%s+", ""):gsub("%s+$", "")
+		if trimmed == "" then
+			setupError.Text = "Please enter a name first!"
+			return
+		end
+		if #trimmed > MAX_NICKNAME_LENGTH then
+			trimmed = trimmed:sub(1, MAX_NICKNAME_LENGTH)
+		end
+		channelNickname = trimmed
+		setupError.Text = ""
+		refreshClipZapView()
+		for _, watcher in nicknameWatchers do
+			watcher()
+		end
+	end
+
+	confirmButton.MouseButton1Click:Connect(trySetNickname)
+	nicknameBox.FocusLost:Connect(function(enterPressed)
+		if enterPressed then
+			trySetNickname()
+		end
+	end)
+
+	-- ---- Стан 2: сам канал — профіль + статистика + запис відео ----
+	channelContent = Instance.new("Frame")
+	channelContent.Name = "ChannelContent"
+	channelContent.Size = UDim2.new(1, 0, 1, -46)
+	channelContent.Position = UDim2.new(0, 0, 0, 46)
+	channelContent.BackgroundTransparency = 1
+	channelContent.Visible = false
+	channelContent.Parent = page
+
+	local profileHeader = Instance.new("Frame")
+	profileHeader.Size = UDim2.new(1, -20, 0, 62)
+	profileHeader.Position = UDim2.new(0, 10, 0, 4)
+	profileHeader.BackgroundTransparency = 1
+	profileHeader.Parent = channelContent
+
+	avatarImage = Instance.new("ImageLabel")
+	avatarImage.Size = UDim2.new(0, 56, 0, 56)
+	avatarImage.Position = UDim2.new(0, 0, 0, 2)
+	avatarImage.BackgroundColor3 = Color3.fromRGB(40, 42, 54)
+	avatarImage.BorderSizePixel = 0
+	avatarImage.Image = avatarContent
+	avatarImage.Parent = profileHeader
+	local avatarCorner = Instance.new("UICorner")
+	avatarCorner.CornerRadius = UDim.new(1, 0)
+	avatarCorner.Parent = avatarImage
+	local avatarStroke = Instance.new("UIStroke")
+	avatarStroke.Color = app.AccentColor
+	avatarStroke.Thickness = 2
+	avatarStroke.Parent = avatarImage
+
+	nicknameLabel = Instance.new("TextLabel")
+	nicknameLabel.Size = UDim2.new(1, -68, 0, 24)
+	nicknameLabel.Position = UDim2.new(0, 68, 0, 8)
+	nicknameLabel.BackgroundTransparency = 1
+	nicknameLabel.Font = Enum.Font.GothamBold
+	nicknameLabel.TextSize = 16
+	nicknameLabel.TextColor3 = Color3.fromRGB(235, 238, 245)
+	nicknameLabel.TextXAlignment = Enum.TextXAlignment.Left
+	nicknameLabel.TextTruncate = Enum.TextTruncate.AtEnd
+	nicknameLabel.Text = "@creator"
+	nicknameLabel.Parent = profileHeader
+
+	local editNicknameButton = Instance.new("TextButton")
+	editNicknameButton.Size = UDim2.new(0, 80, 0, 18)
+	editNicknameButton.Position = UDim2.new(0, 68, 0, 34)
+	editNicknameButton.BackgroundTransparency = 1
+	editNicknameButton.Font = Enum.Font.Gotham
+	editNicknameButton.TextSize = 11
+	editNicknameButton.TextColor3 = Color3.fromRGB(150, 200, 255)
+	editNicknameButton.TextXAlignment = Enum.TextXAlignment.Left
+	editNicknameButton.Text = "✏️ Edit name"
+	editNicknameButton.Parent = profileHeader
+	editNicknameButton.MouseButton1Click:Connect(function()
+		nicknameBox.Text = channelNickname or ""
+		setupError.Text = ""
+		channelContent.Visible = false
+		nicknameSetupFrame.Visible = true
+	end)
+
+	local statsRow = Instance.new("Frame")
+	statsRow.Size = UDim2.new(1, -20, 0, 38)
+	statsRow.Position = UDim2.new(0, 10, 0, 72)
+	statsRow.BackgroundTransparency = 1
+	statsRow.Parent = channelContent
+	local statsLayout = Instance.new("UIListLayout")
+	statsLayout.FillDirection = Enum.FillDirection.Horizontal
+	statsLayout.HorizontalAlignment = Enum.HorizontalAlignment.SpaceEvenly
+	statsLayout.Parent = statsRow
+
+	local function buildStatCell(caption: string): TextLabel
+		local cell = Instance.new("Frame")
+		cell.Size = UDim2.new(0, 68, 1, 0)
+		cell.BackgroundTransparency = 1
+		cell.Parent = statsRow
+
+		local valueLabel = Instance.new("TextLabel")
+		valueLabel.Size = UDim2.new(1, 0, 0, 20)
+		valueLabel.BackgroundTransparency = 1
+		valueLabel.Font = Enum.Font.GothamBold
+		valueLabel.TextSize = 14
+		valueLabel.TextColor3 = Color3.fromRGB(235, 238, 245)
+		valueLabel.Text = "0"
+		valueLabel.Parent = cell
+
+		local captionLabel = Instance.new("TextLabel")
+		captionLabel.Size = UDim2.new(1, 0, 0, 16)
+		captionLabel.Position = UDim2.new(0, 0, 0, 20)
+		captionLabel.BackgroundTransparency = 1
+		captionLabel.Font = Enum.Font.Gotham
+		captionLabel.TextSize = 10
+		captionLabel.TextColor3 = Color3.fromRGB(160, 164, 176)
+		captionLabel.Text = caption
+		captionLabel.Parent = cell
+
+		return valueLabel
+	end
+
+	likesStatLabel = buildStatCell("❤️ Likes")
+	channelFollowersLabel = buildStatCell("👥 Followers")
+	videosStatLabel = buildStatCell("🎬 Videos")
+
 	recordButton = Instance.new("TextButton")
-	recordButton.Size = UDim2.new(0, 150, 0, 150)
-	recordButton.AnchorPoint = Vector2.new(0.5, 0.5)
-	recordButton.Position = UDim2.new(0.5, 0, 0.46, 0)
+	recordButton.Size = UDim2.new(0, 130, 0, 130)
+	recordButton.AnchorPoint = Vector2.new(0.5, 0)
+	recordButton.Position = UDim2.new(0.5, 0, 0, 128)
 	recordButton.BackgroundColor3 = app.AccentColor
 	recordButton.BorderSizePixel = 0
 	recordButton.Font = Enum.Font.GothamBold
-	recordButton.TextSize = 15
+	recordButton.TextSize = 14
 	recordButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 	recordButton.TextWrapped = true
 	recordButton.Text = "🔴 Record video"
-	recordButton.Parent = page
+	recordButton.Parent = channelContent
 	local recordCorner = Instance.new("UICorner")
 	recordCorner.CornerRadius = UDim.new(1, 0)
 	recordCorner.Parent = recordButton
@@ -9833,18 +10138,29 @@ local function buildClipZapPage(app: PhoneConfig.AppConfig)
 	recordStroke.Parent = recordButton
 
 	recordStatusLabel = Instance.new("TextLabel")
-	recordStatusLabel.Size = UDim2.new(1, -30, 0, 70)
+	recordStatusLabel.Size = UDim2.new(1, -30, 0, 60)
 	recordStatusLabel.AnchorPoint = Vector2.new(0.5, 0)
-	recordStatusLabel.Position = UDim2.new(0.5, 0, 0.76, 0)
+	recordStatusLabel.Position = UDim2.new(0.5, 0, 0, 268)
 	recordStatusLabel.BackgroundTransparency = 1
 	recordStatusLabel.Font = Enum.Font.Gotham
 	recordStatusLabel.TextSize = 13
 	recordStatusLabel.TextWrapped = true
 	recordStatusLabel.TextColor3 = Color3.fromRGB(200, 204, 214)
 	recordStatusLabel.Text = "Tap to film a new video!"
-	recordStatusLabel.Parent = page
+	recordStatusLabel.Parent = channelContent
 
 	recordButton.MouseButton1Click:Connect(startRecording)
+
+	refreshClipZapView = function()
+		local hasNickname = channelNickname ~= nil
+		nicknameSetupFrame.Visible = not hasNickname
+		channelContent.Visible = hasNickname
+		if hasNickname then
+			nicknameLabel.Text = `@{channelNickname}`
+		end
+	end
+	refreshClipZapView()
+
 	pages[app.Id] = page
 end
 
@@ -9869,6 +10185,25 @@ local function buildComingSoonPage(app: PhoneConfig.AppConfig)
 	msg.TextColor3 = Color3.fromRGB(190, 194, 204)
 	msg.Text = `🚧 {app.DisplayName} unlocks later as you grow!`
 	msg.Parent = page
+
+	-- Той самий нік з ClipZap "чекатиме" тут, щоб було видно, що канал
+	-- переноситься на всі платформи, а не створюється заново.
+	local carryOverLabel = Instance.new("TextLabel")
+	carryOverLabel.Size = UDim2.new(1, -40, 0, 20)
+	carryOverLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+	carryOverLabel.Position = UDim2.new(0.5, 0, 0.5, 56)
+	carryOverLabel.BackgroundTransparency = 1
+	carryOverLabel.Font = Enum.Font.GothamBold
+	carryOverLabel.TextSize = 13
+	carryOverLabel.TextColor3 = app.AccentColor
+	carryOverLabel.Text = ""
+	carryOverLabel.Parent = page
+
+	local function refreshCarryOverLabel()
+		carryOverLabel.Text = if channelNickname then `@{channelNickname} will carry over` else ""
+	end
+	refreshCarryOverLabel()
+	table.insert(nicknameWatchers, refreshCarryOverLabel)
 
 	pages[app.Id] = page
 end
@@ -9946,10 +10281,22 @@ refreshStats = function()
 	statsFollowersLabel.Text = `👥 {followersStat.Value}`
 	statsMoneyLabel.Text = `💵 ${moneyStat.Value}`
 	refreshLockedApps()
+
+	if likesStatLabel then
+		likesStatLabel.Text = tostring(totalLikesStat.Value)
+	end
+	if channelFollowersLabel then
+		channelFollowersLabel.Text = tostring(followersStat.Value)
+	end
+	if videosStatLabel then
+		videosStatLabel.Text = tostring(videoCountStat.Value)
+	end
 end
 
 followersStat.Changed:Connect(refreshStats)
 moneyStat.Changed:Connect(refreshStats)
+totalLikesStat.Changed:Connect(refreshStats)
+videoCountStat.Changed:Connect(refreshStats)
 refreshStats()
 
 -- ============================================================
@@ -9960,7 +10307,7 @@ recordVideoResult.OnClientEvent:Connect(function(result)
 	recordButton.AutoButtonColor = true
 	recordButton.Text = "🔴 Record video"
 
-	stopSelfieRecording()
+	stopRecordingCamera()
 	recHud.Visible = false
 	recBorder.Visible = false
 
